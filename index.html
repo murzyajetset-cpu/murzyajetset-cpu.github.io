@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Группа Lineage 2 — Сеты брони</title>
+<title>Группа Lineage 2 — Сеты брони и бижутерии</title>
 <style>
   body { font-family: Arial, sans-serif; background: #1e1e1e; color: #eee; margin: 20px; }
   h1 { color: #f0c040; }
@@ -11,7 +11,7 @@
   button { padding: 8px 12px; border: none; border-radius: 4px; background: #3a3a3a; color: #eee; cursor: pointer; }
   button:hover { background: #505050; }
   .table-wrap { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; min-width: 1500px; }
+  table { border-collapse: collapse; width: 100%; min-width: 1300px; }
   th, td { border: 1px solid #444; padding: 4px; text-align: left; vertical-align: middle; }
   th { background: #2a2a2a; color: #f0c040; position: sticky; top: 0; }
   input, select { background: #2b2b2b; color: #eee; border: 1px solid #555; border-radius: 3px; padding: 4px; width: 100%; box-sizing: border-box; }
@@ -22,17 +22,22 @@
   .set-panel { margin-top: 20px; padding: 15px; background: #252525; border-radius: 8px; border-left: 4px solid #f0c040; display: none; }
   .set-panel.active { display: block; }
   .set-panel h2 { margin: 0 0 10px 0; color: #f0c040; font-size: 1.2em; }
+  .set-panel h3 { margin: 15px 0 8px 0; color: #9cd; font-size: 1em; border-bottom: 1px solid #444; padding-bottom: 4px; }
+  .set-panel h3:first-of-type { margin-top: 0; }
   .set-panel .missing { color: #e88; }
+  .set-panel .complete { color: #8e8; font-weight: bold; }
   .set-panel .bonus-list { margin: 8px 0 0 0; padding-left: 20px; }
   .set-panel .bonus-list li { margin-bottom: 4px; }
-  .set-label { font-size: 0.8em; color: #aaa; margin-bottom: 2px; display: block; }
-  .set-cell { min-width: 130px; }
+  .set-label { font-size: 0.75em; color: #aaa; margin: 2px 0 1px 0; display: block; }
+  .set-cell { min-width: 140px; }
   .set-cell select { margin-bottom: 2px; }
+  .set-cell .set-group-title { font-size: 0.8em; color: #f0c040; margin-top: 6px; }
+  .set-cell .set-group-title:first-child { margin-top: 0; }
 </style>
 </head>
 <body>
 
-<h1>Группа Lineage 2 — Сеты брони</h1>
+<h1>Группа Lineage 2 — Сеты брони и бижутерии</h1>
 
 <div class="toolbar">
   <button id="addMember">Добавить персонажа</button>
@@ -51,11 +56,7 @@
         <th>Ур.</th>
         <th>Оружие</th>
         <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
-        <th>Серьга 1</th>
-        <th>Серьга 2</th>
-        <th>Ожерелье</th>
-        <th>Кольцо 1</th>
-        <th>Кольцо 2</th>
+        <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
         <th></th>
       </tr>
     </thead>
@@ -64,14 +65,12 @@
 </div>
 
 <div id="setPanel" class="set-panel">
-  <h2 id="setTitle">Сет не определён</h2>
+  <h2 id="setTitle">Сеты не определены</h2>
   <div id="setContent"></div>
 </div>
 
 <script>
-  // ==================== БАЗА СЕТОВ ====================
-  // Каждый сет содержит: name (название), type (Heavy/Light/Robe), pieces (предметы по слотам),
-  // bonuses (массив строк с бонусами полного сета).
+  // ==================== БАЗА СЕТОВ БРОНИ ====================
   const armorSets = [
     {
       id: 'dynasty_heavy',
@@ -100,7 +99,7 @@
         armor: 'Dynasty Leather Armor',
         gloves: 'Dynasty Leather Gloves',
         boots: 'Dynasty Leather Boots',
-        shield: '' // у легких сетов щит не входит
+        shield: ''
       },
       bonuses: [
         'DEX +1, STR +1, CON -1',
@@ -162,7 +161,6 @@
         'Resistance to Bleed/Hold/Sleep +50%',
         'Resistance to Magic Damage +2%',
         'Max HP +550',
-        'Resistance to Fire/Water/Wind/Earth +5',
         'Восстанавливает часть HP от нанесённого урона',
         'При заточке всех частей на +6: P. Def. и MP Recovery увеличены'
       ]
@@ -184,20 +182,136 @@
         'Critical Rate +171',
         'Resistance to Paralysis +50%',
         'Speed +3%',
-        'Resistance to Elements +5',
         'При заточке всех частей на +6: M. Def. и Evasion увеличены'
       ]
     }
   ];
 
+  // ==================== БАЗА СЕТОВ БИЖУТЕРИИ ====================
+  const jewelrySets = [
+    {
+      id: 'dynasty_jewelry',
+      name: 'Dynasty Jewelry Set',
+      pieces: {
+        earring1: 'Dynasty Earring',
+        earring2: 'Dynasty Earring',
+        necklace: 'Dynasty Necklace',
+        ring1: 'Dynasty Ring',
+        ring2: 'Dynasty Ring'
+      },
+      bonuses: [
+        'M. Def. +5',
+        'Max MP +150',
+        'Resistance to Poison +20%',
+        'Resistance to Bleed +20%',
+        'При заточке всех частей на +6: M. Def. +15'
+      ]
+    },
+    {
+      id: 'vesper_jewelry',
+      name: 'Vesper Jewelry Set',
+      pieces: {
+        earring1: 'Vesper Earring',
+        earring2: 'Vesper Earring',
+        necklace: 'Vesper Necklace',
+        ring1: 'Vesper Ring',
+        ring2: 'Vesper Ring'
+      },
+      bonuses: [
+        'M. Def. +7',
+        'Max MP +200',
+        'Resistance to Poison +30%',
+        'Resistance to Bleed +30%',
+        'При заточке всех частей на +6: M. Def. +20'
+      ]
+    },
+    {
+      id: 'elegia_jewelry',
+      name: 'Elegia Jewelry Set',
+      pieces: {
+        earring1: 'Elegia Earring',
+        earring2: 'Elegia Earring',
+        necklace: 'Elegia Necklace',
+        ring1: 'Elegia Ring',
+        ring2: 'Elegia Ring'
+      },
+      bonuses: [
+        'M. Def. +10',
+        'Max MP +250',
+        'Resistance to Poison +40%',
+        'Resistance to Bleed +40%',
+        'Resistance to Stun +30%',
+        'При заточке всех частей на +6: M. Def. +25'
+      ]
+    },
+    {
+      id: 'epic_earring_combo',
+      name: 'Epic Earring Combo (Zaken + Antharas)',
+      pieces: {
+        earring1: "Blessed Zaken's Earring",
+        earring2: "Blessed Antharas' Earring"
+      },
+      bonuses: [
+        'M. Def. +10, Max MP +300',
+        'Resistance to Bleed +30%',
+        'Resistance to Stun +30%',
+        'Восстанавливает 3% MP при получении урона'
+      ]
+    },
+    {
+      id: 'epic_ring_combo',
+      name: 'Epic Ring Combo (Baium + Ant Queen)',
+      pieces: {
+        ring1: 'Ring of Baium',
+        ring2: 'Ring of Queen Ant'
+      },
+      bonuses: [
+        'M. Def. +8, Max MP +250',
+        'Resistance to Poison +30%',
+        'Resistance to Hold +30%',
+        'Увеличивает точность и критический удар'
+      ]
+    },
+    {
+      id: 'epic_necklace_combo',
+      name: 'Epic Necklace Combo (Valakas + Frintezza)',
+      pieces: {
+        necklace: "Blessed Valakas' Necklace",
+        necklace2: 'Necklace of Frintezza'
+      },
+      bonuses: [
+        'M. Def. +12, Max MP +350',
+        'Resistance to Sleep +40%',
+        'Resistance to Paralysis +40%'
+      ]
+    }
+  ];
+
   // ==================== СПИСКИ ПРЕДМЕТОВ ====================
-  // Формируем списки предметов для каждого слота на основе базы сетов + добавляем пустой вариант.
-  function buildItemList(slot) {
+  function buildArmorList(slot) {
     const items = new Set(['']);
     armorSets.forEach(set => {
       const item = set.pieces[slot];
       if (item) items.add(item);
     });
+    return Array.from(items).sort((a, b) => a.localeCompare(b));
+  }
+
+  function buildJewelryList(slot) {
+    const items = new Set(['']);
+    jewelrySets.forEach(set => {
+      const item = set.pieces[slot];
+      if (item) items.add(item);
+    });
+    // Одиночные эпические предметы, не входящие в полные сеты
+    const singles = {
+      earring1: ["Blessed Zaken's Earring", "Blessed Antharas' Earring", 'Earring of Orfen'],
+      earring2: ["Blessed Zaken's Earring", "Blessed Antharas' Earring", 'Earring of Orfen'],
+      necklace: ["Blessed Valakas' Necklace", 'Necklace of Frintezza'],
+      ring1: ['Ring of Baium', 'Ring of Queen Ant'],
+      ring2: ['Ring of Baium', 'Ring of Queen Ant']
+    };
+    if (singles[slot]) singles[slot].forEach(i => items.add(i));
     return Array.from(items).sort((a, b) => a.localeCompare(b));
   }
 
@@ -209,23 +323,16 @@
       "Basalt Battlehammer", "Saint Spear", "Demon Splinter", "Dynasty Sword",
       "Icarus Hammer", "Vesper Cutter", "Eternal Core Sword"
     ],
-    helmet: buildItemList('helmet'),
-    armor: buildItemList('armor'),
-    gloves: buildItemList('gloves'),
-    boots: buildItemList('boots'),
-    shield: buildItemList('shield'),
-    earring: [
-      "", "Dynasty Earring", "Icarus Earring", "Vesper Earring", "Elegia Earring",
-      "Blessed Zaken's Earring", "Blessed Antharas' Earring", "Earring of Orfen"
-    ],
-    necklace: [
-      "", "Dynasty Necklace", "Icarus Necklace", "Vesper Necklace", "Elegia Necklace",
-      "Blessed Valakas' Necklace", "Necklace of Frintezza"
-    ],
-    ring: [
-      "", "Dynasty Ring", "Icarus Ring", "Vesper Ring", "Elegia Ring",
-      "Ring of Baium", "Ring of Queen Ant"
-    ]
+    helmet: buildArmorList('helmet'),
+    armor: buildArmorList('armor'),
+    gloves: buildArmorList('gloves'),
+    boots: buildArmorList('boots'),
+    shield: buildArmorList('shield'),
+    earring1: buildJewelryList('earring1'),
+    earring2: buildJewelryList('earring2'),
+    necklace: buildJewelryList('necklace'),
+    ring1: buildJewelryList('ring1'),
+    ring2: buildJewelryList('ring2')
   };
 
   const classes = [
@@ -234,6 +341,7 @@
 
   // ==================== СОСТОЯНИЕ ====================
   let members = [];
+  let activeMemberIndex = null;
   const partyBody = document.getElementById('partyBody');
   const setPanel = document.getElementById('setPanel');
   const setTitle = document.getElementById('setTitle');
@@ -262,88 +370,97 @@
     return input;
   }
 
-  // Определяем сет по выбранным предметам брони.
-  // Возвращает объект сета и список отсутствующих слотов, либо null.
-  function detectSet(member) {
-    const armorSlots = ['helmet', 'armor', 'gloves', 'boots', 'shield'];
-    const selected = {
-      helmet: member.helmet || '',
-      armor: member.armor || '',
-      gloves: member.gloves || '',
-      boots: member.boots || '',
-      shield: member.shield || ''
-    };
+  // Универсальная функция определения сета по списку слотов.
+  // Возвращает:
+  //   { set, missing: [] } — полный сет;
+  //   { set, missing: [...], matchedCount, totalRequired } — частичный сет;
+  //   null — ничего не подходит.
+  function detectSet(member, setsList, slots) {
+    const selected = {};
+    slots.forEach(s => { selected[s] = member[s] || ''; });
 
-    // Ищем сет, у которого все непустые слоты совпадают с выбранными.
-    for (const set of armorSets) {
-      let match = true;
+    let bestPartial = null;
+
+    for (const set of setsList) {
       let missing = [];
-      for (const slot of armorSlots) {
-        const setItem = set.pieces[slot];
-        const chosen = selected[slot];
-        if (setItem) {
-          if (chosen !== setItem) { match = false; break; }
-        } else {
-          // Если в сете нет предмета для этого слота, а у персонажа он выбран — несовпадение.
-          if (chosen) { match = false; break; }
-        }
-      }
-      if (match) return { set, missing: [] };
-
-      // Частичное совпадение: считаем, сколько предметов сета выбрано.
       let matchedCount = 0;
       let totalRequired = 0;
-      for (const slot of armorSlots) {
-        if (set.pieces[slot]) {
+      let hasForeignItem = false;
+
+      for (const slot of slots) {
+        const setItem = set.pieces[slot];
+        const chosen = selected[slot];
+
+        if (setItem) {
           totalRequired++;
-          if (selected[slot] === set.pieces[slot]) matchedCount++;
-        } else if (selected[slot]) {
-          // Выбран предмет не из этого сета — не может быть частичным совпадением.
-          matchedCount = -1;
-          break;
+          if (chosen === setItem) {
+            matchedCount++;
+          } else if (chosen === '') {
+            missing.push(slot);
+          } else {
+            hasForeignItem = true;
+          }
+        } else {
+          if (chosen) hasForeignItem = true;
         }
       }
-      if (matchedCount > 0 && matchedCount < totalRequired) {
-        // Нашли частичное совпадение — запомним отсутствующие слоты.
-        missing = armorSlots.filter(slot => set.pieces[slot] && selected[slot] !== set.pieces[slot]);
-        return { set, missing, matchedCount, totalRequired };
+
+      if (!hasForeignItem && matchedCount === totalRequired && totalRequired > 0) {
+        return { set, missing: [] };
+      }
+      if (!hasForeignItem && matchedCount > 0 && matchedCount < totalRequired) {
+        if (!bestPartial || matchedCount > bestPartial.matchedCount) {
+          bestPartial = { set, missing, matchedCount, totalRequired };
+        }
       }
     }
-    return null;
+    return bestPartial;
   }
 
-  // Обновляем панель с информацией о сете для выбранного персонажа.
-  // index — индекс персонажа в массиве members, для которого показываем сет.
-  function updateSetPanel(index) {
-    if (index === undefined || !members[index]) {
+  const armorSlots = ['helmet', 'armor', 'gloves', 'boots', 'shield'];
+  const jewelrySlots = ['earring1', 'earring2', 'necklace', 'ring1', 'ring2'];
+  const slotNames = {
+    helmet: 'шлем', armor: 'броня', gloves: 'перчатки', boots: 'ботинки', shield: 'щит',
+    earring1: 'серьга 1', earring2: 'серьга 2', necklace: 'ожерелье', ring1: 'кольцо 1', ring2: 'кольцо 2'
+  };
+
+  function renderSetSection(title, result) {
+    if (!result) {
+      return `<h3>${title}</h3><p class="missing">Сет не определён — выберите предметы из одного набора.</p>`;
+    }
+    const { set, missing, matchedCount, totalRequired } = result;
+    if (missing && missing.length === 0) {
+      let html = `<h3>${title}: <span class="complete">${set.name}${set.type ? ' (' + set.type + ')' : ''} — полный комплект</span></h3>`;
+      html += '<ul class="bonus-list">';
+      set.bonuses.forEach(b => { html += `<li>${b}</li>`; });
+      html += '</ul>';
+      return html;
+    }
+    const missingNames = missing.map(s => slotNames[s] || s).join(', ');
+    return `<h3>${title}: ${set.name} — <span class="missing">не хватает: ${missingNames}</span></h3>` +
+           `<p>Собрано ${matchedCount} из ${totalRequired} частей. Выберите недостающие предметы, чтобы активировать бонусы сета.</p>`;
+  }
+
+  function updateSetPanel() {
+    if (activeMemberIndex === null || !members[activeMemberIndex]) {
       setPanel.classList.remove('active');
       return;
     }
-    const member = members[index];
-    const result = detectSet(member);
+    const member = members[activeMemberIndex];
+    const armorResult = detectSet(member, armorSets, armorSlots);
+    const jewelryResult = detectSet(member, jewelrySets, jewelrySlots);
 
-    if (!result) {
-      setTitle.textContent = 'Сет не определён';
-      setContent.innerHTML = '<p class="missing">Выберите предметы из одного набора брони, чтобы увидеть бонусы.</p>';
+    if (!armorResult && !jewelryResult) {
+      setTitle.textContent = `Сеты не определены (${member.name || 'персонаж'})`;
+      setContent.innerHTML = '<p class="missing">Выберите предметы из одного набора брони или бижутерии, чтобы увидеть бонусы.</p>';
       setPanel.classList.add('active');
       return;
     }
 
-    const { set, missing, matchedCount, totalRequired } = result;
-    if (missing && missing.length === 0) {
-      // Полный сет
-      setTitle.textContent = `${set.name} (${set.type}) — полный комплект`;
-      let html = '<ul class="bonus-list">';
-      set.bonuses.forEach(b => { html += `<li>${b}</li>`; });
-      html += '</ul>';
-      setContent.innerHTML = html;
-    } else if (missing && missing.length > 0) {
-      // Частичный сет
-      const slotNames = { helmet: 'шлем', armor: 'броня', gloves: 'перчатки', boots: 'ботинки', shield: 'щит' };
-      const missingNames = missing.map(s => slotNames[s] || s).join(', ');
-      setTitle.textContent = `${set.name} — не хватает: ${missingNames}`;
-      setContent.innerHTML = `<p>Собрано ${matchedCount} из ${totalRequired} частей. Выберите недостающие предметы, чтобы активировать бонусы сета.</p>`;
-    }
+    setTitle.textContent = `Активный персонаж: ${member.name || 'без имени'}`;
+    setContent.innerHTML =
+      renderSetSection('Броня', armorResult) +
+      renderSetSection('Бижутерия', jewelryResult);
     setPanel.classList.add('active');
   }
 
@@ -354,7 +471,7 @@
     if (members.length === 0) {
       const tr = document.createElement('tr');
       const td = document.createElement('td');
-      td.colSpan = 11;
+      td.colSpan = 7;
       td.className = 'empty';
       td.textContent = 'Нет персонажей. Нажмите «Добавить персонажа».';
       tr.appendChild(td);
@@ -386,43 +503,53 @@
       tdWeapon.appendChild(createSelect(itemOptions.weapon, member.weapon || '', val => { member.weapon = val; }));
       tr.appendChild(tdWeapon);
 
-      // Сет брони — объединённый блок из 5 селектов
-      const tdSet = document.createElement('td');
-      tdSet.className = 'set-cell';
-      const setSlots = [
+      // Сет брони
+      const tdArmor = document.createElement('td');
+      tdArmor.className = 'set-cell';
+      const armorFields = [
         { key: 'helmet', label: 'Шлем' },
         { key: 'armor', label: 'Броня' },
         { key: 'gloves', label: 'Перчатки' },
         { key: 'boots', label: 'Ботинки' },
         { key: 'shield', label: 'Щит' }
       ];
-      setSlots.forEach(slot => {
+      armorFields.forEach(field => {
         const label = document.createElement('span');
         label.className = 'set-label';
-        label.textContent = slot.label;
-        tdSet.appendChild(label);
-        const select = createSelect(itemOptions[slot.key], member[slot.key] || '', val => {
-          member[slot.key] = val;
-          // Обновляем панель сета для этого персонажа
-          updateSetPanel(index);
+        label.textContent = field.label;
+        tdArmor.appendChild(label);
+        const select = createSelect(itemOptions[field.key], member[field.key] || '', val => {
+          member[field.key] = val;
+          activeMemberIndex = index;
+          updateSetPanel();
         });
-        tdSet.appendChild(select);
+        tdArmor.appendChild(select);
       });
-      tr.appendChild(tdSet);
+      tr.appendChild(tdArmor);
 
-      // Бижутерия
-      const jewelrySlots = [
-        { key: 'earring1', type: 'earring' },
-        { key: 'earring2', type: 'earring' },
-        { key: 'necklace', type: 'necklace' },
-        { key: 'ring1', type: 'ring' },
-        { key: 'ring2', type: 'ring' }
+      // Сет бижутерии
+      const tdJewelry = document.createElement('td');
+      tdJewelry.className = 'set-cell';
+      const jewelryFields = [
+        { key: 'earring1', label: 'Серьга 1' },
+        { key: 'earring2', label: 'Серьга 2' },
+        { key: 'necklace', label: 'Ожерелье' },
+        { key: 'ring1', label: 'Кольцо 1' },
+        { key: 'ring2', label: 'Кольцо 2' }
       ];
-      jewelrySlots.forEach(slot => {
-        const td = document.createElement('td');
-        td.appendChild(createSelect(itemOptions[slot.type], member[slot.key] || '', val => { member[slot.key] = val; }));
-        tr.appendChild(td);
+      jewelryFields.forEach(field => {
+        const label = document.createElement('span');
+        label.className = 'set-label';
+        label.textContent = field.label;
+        tdJewelry.appendChild(label);
+        const select = createSelect(itemOptions[field.key], member[field.key] || '', val => {
+          member[field.key] = val;
+          activeMemberIndex = index;
+          updateSetPanel();
+        });
+        tdJewelry.appendChild(select);
       });
+      tr.appendChild(tdJewelry);
 
       // Удаление
       const tdRemove = document.createElement('td');
@@ -432,8 +559,10 @@
       btnRemove.title = 'Удалить персонажа';
       btnRemove.addEventListener('click', () => {
         members.splice(index, 1);
-        setPanel.classList.remove('active');
+        if (activeMemberIndex === index) activeMemberIndex = null;
+        else if (activeMemberIndex > index) activeMemberIndex--;
         renderTable();
+        updateSetPanel();
       });
       tdRemove.appendChild(btnRemove);
       tr.appendChild(tdRemove);
@@ -475,7 +604,9 @@
     if (data) {
       try {
         members = JSON.parse(data);
+        activeMemberIndex = null;
         renderTable();
+        updateSetPanel();
         alert('Загружено из localStorage');
       } catch (e) {
         alert('Ошибка загрузки: ' + e.message);
@@ -498,7 +629,9 @@
   document.getElementById('clear').addEventListener('click', () => {
     if (confirm('Удалить всех персонажей?')) {
       members = [];
+      activeMemberIndex = null;
       renderTable();
+      updateSetPanel();
     }
   });
 
