@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Группа Lineage 2</title>
+<title>Группа Lineage 2 — Сеты брони</title>
 <style>
   body { font-family: Arial, sans-serif; background: #1e1e1e; color: #eee; margin: 20px; }
   h1 { color: #f0c040; }
@@ -11,7 +11,7 @@
   button { padding: 8px 12px; border: none; border-radius: 4px; background: #3a3a3a; color: #eee; cursor: pointer; }
   button:hover { background: #505050; }
   .table-wrap { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; min-width: 1400px; }
+  table { border-collapse: collapse; width: 100%; min-width: 1500px; }
   th, td { border: 1px solid #444; padding: 4px; text-align: left; vertical-align: middle; }
   th { background: #2a2a2a; color: #f0c040; position: sticky; top: 0; }
   input, select { background: #2b2b2b; color: #eee; border: 1px solid #555; border-radius: 3px; padding: 4px; width: 100%; box-sizing: border-box; }
@@ -19,11 +19,20 @@
   .remove-btn { background: #a33; color: white; padding: 4px 8px; }
   .remove-btn:hover { background: #c44; }
   .empty { color: #888; font-style: italic; }
+  .set-panel { margin-top: 20px; padding: 15px; background: #252525; border-radius: 8px; border-left: 4px solid #f0c040; display: none; }
+  .set-panel.active { display: block; }
+  .set-panel h2 { margin: 0 0 10px 0; color: #f0c040; font-size: 1.2em; }
+  .set-panel .missing { color: #e88; }
+  .set-panel .bonus-list { margin: 8px 0 0 0; padding-left: 20px; }
+  .set-panel .bonus-list li { margin-bottom: 4px; }
+  .set-label { font-size: 0.8em; color: #aaa; margin-bottom: 2px; display: block; }
+  .set-cell { min-width: 130px; }
+  .set-cell select { margin-bottom: 2px; }
 </style>
 </head>
 <body>
 
-<h1>Группа Lineage 2</h1>
+<h1>Группа Lineage 2 — Сеты брони</h1>
 
 <div class="toolbar">
   <button id="addMember">Добавить персонажа</button>
@@ -41,11 +50,7 @@
         <th>Класс</th>
         <th>Ур.</th>
         <th>Оружие</th>
-        <th>Броня</th>
-        <th>Шлем</th>
-        <th>Перчатки</th>
-        <th>Ботинки</th>
-        <th>Щит</th>
+        <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
         <th>Серьга 1</th>
         <th>Серьга 2</th>
         <th>Ожерелье</th>
@@ -58,8 +63,144 @@
   </table>
 </div>
 
+<div id="setPanel" class="set-panel">
+  <h2 id="setTitle">Сет не определён</h2>
+  <div id="setContent"></div>
+</div>
+
 <script>
-  // Списки предметов — можно дополнять и менять под свой сервер/хронику
+  // ==================== БАЗА СЕТОВ ====================
+  // Каждый сет содержит: name (название), type (Heavy/Light/Robe), pieces (предметы по слотам),
+  // bonuses (массив строк с бонусами полного сета).
+  const armorSets = [
+    {
+      id: 'dynasty_heavy',
+      name: 'Dynasty Heavy Set',
+      type: 'Heavy',
+      pieces: {
+        helmet: 'Dynasty Helmet',
+        armor: 'Dynasty Breastplate',
+        gloves: 'Dynasty Gauntlets',
+        boots: 'Dynasty Boots',
+        shield: 'Dynasty Shield'
+      },
+      bonuses: [
+        'STR +2, CON -1',
+        'P. Atk. +5.4%, Max HP +492',
+        'Resistance to Dark +8',
+        'При заточке всех частей на +6: P. Def. и Weight Gauge увеличены'
+      ]
+    },
+    {
+      id: 'dynasty_light',
+      name: 'Dynasty Light Set',
+      type: 'Light',
+      pieces: {
+        helmet: 'Dynasty Leather Helmet',
+        armor: 'Dynasty Leather Armor',
+        gloves: 'Dynasty Leather Gloves',
+        boots: 'Dynasty Leather Boots',
+        shield: '' // у легких сетов щит не входит
+      },
+      bonuses: [
+        'DEX +1, STR +1, CON -1',
+        'P. Atk. +4.6%, Max HP +418',
+        'Evasion +3',
+        'При заточке всех частей на +6: P. Def. и Weight Gauge увеличены'
+      ]
+    },
+    {
+      id: 'vesper_heavy',
+      name: 'Vesper Heavy Set',
+      type: 'Heavy',
+      pieces: {
+        helmet: 'Vesper Helmet',
+        armor: 'Vesper Breastplate',
+        gloves: 'Vesper Gauntlets',
+        boots: 'Vesper Boots',
+        shield: 'Vesper Shield'
+      },
+      bonuses: [
+        'STR +2, DEX -2',
+        'P. Atk./P. Def. +5.57%, Max HP +531',
+        'Resistance to Sleep/Hold +70%',
+        'При заточке всех частей на +6: P. Def. и MP Recovery увеличены'
+      ]
+    },
+    {
+      id: 'vesper_light',
+      name: 'Vesper Light Set',
+      type: 'Light',
+      pieces: {
+        helmet: 'Vesper Leather Helmet',
+        armor: 'Vesper Leather Armor',
+        gloves: 'Vesper Leather Gloves',
+        boots: 'Vesper Leather Boots',
+        shield: ''
+      },
+      bonuses: [
+        'STR +1, DEX +1, CON -2',
+        'Max MP +347.4, MP Recovery +5%',
+        'Evasion +3',
+        'При заточке всех частей на +6: P. Def. и MP Recovery увеличены'
+      ]
+    },
+    {
+      id: 'elegia_heavy',
+      name: 'Elegia Heavy Set',
+      type: 'Heavy',
+      pieces: {
+        helmet: 'Elegia Helmet',
+        armor: 'Elegia Breastplate',
+        gloves: 'Elegia Gauntlets',
+        boots: 'Elegia Boots',
+        shield: 'Elegia Shield'
+      },
+      bonuses: [
+        'STR +3, CON -2',
+        'P. Atk. +6.59%, Critical Rate +127',
+        'Resistance to Bleed/Hold/Sleep +50%',
+        'Resistance to Magic Damage +2%',
+        'Max HP +550',
+        'Resistance to Fire/Water/Wind/Earth +5',
+        'Восстанавливает часть HP от нанесённого урона',
+        'При заточке всех частей на +6: P. Def. и MP Recovery увеличены'
+      ]
+    },
+    {
+      id: 'elegia_light',
+      name: 'Elegia Light Set',
+      type: 'Light',
+      pieces: {
+        helmet: 'Elegia Leather Helmet',
+        armor: 'Elegia Leather Armor',
+        gloves: 'Elegia Leather Gloves',
+        boots: 'Elegia Leather Boots',
+        shield: ''
+      },
+      bonuses: [
+        'STR +1, DEX +2, CON -2',
+        'P. Atk. +6.59%, Attack Speed +6%',
+        'Critical Rate +171',
+        'Resistance to Paralysis +50%',
+        'Speed +3%',
+        'Resistance to Elements +5',
+        'При заточке всех частей на +6: M. Def. и Evasion увеличены'
+      ]
+    }
+  ];
+
+  // ==================== СПИСКИ ПРЕДМЕТОВ ====================
+  // Формируем списки предметов для каждого слота на основе базы сетов + добавляем пустой вариант.
+  function buildItemList(slot) {
+    const items = new Set(['']);
+    armorSets.forEach(set => {
+      const item = set.pieces[slot];
+      if (item) items.add(item);
+    });
+    return Array.from(items).sort((a, b) => a.localeCompare(b));
+  }
+
   const itemOptions = {
     weapon: [
       "", "Sword of Miracles", "Draconic Bow", "Dragon Hunter Axe", "Heaven's Divider",
@@ -68,28 +209,11 @@
       "Basalt Battlehammer", "Saint Spear", "Demon Splinter", "Dynasty Sword",
       "Icarus Hammer", "Vesper Cutter", "Eternal Core Sword"
     ],
-    armor: [
-      "", "Imperial Crusader Breastplate", "Draconic Leather Armor", "Major Arcana Robe",
-      "Dynasty Breastplate", "Dynasty Leather Armor", "Dynasty Robe",
-      "Icarus Breastplate", "Icarus Leather Armor", "Icarus Robe",
-      "Vesper Breastplate", "Vesper Leather Armor", "Vesper Robe",
-      "Elegia Breastplate", "Elegia Leather Armor", "Elegia Robe"
-    ],
-    helmet: [
-      "", "Imperial Crusader Helmet", "Draconic Leather Helmet", "Major Arcana Circlet",
-      "Dynasty Helmet", "Icarus Helmet", "Vesper Helmet", "Elegia Helmet"
-    ],
-    gloves: [
-      "", "Imperial Crusader Gauntlets", "Draconic Leather Gloves", "Major Arcana Gloves",
-      "Dynasty Gauntlets", "Icarus Gauntlets", "Vesper Gauntlets", "Elegia Gauntlets"
-    ],
-    boots: [
-      "", "Imperial Crusader Boots", "Draconic Leather Boots", "Major Arcana Boots",
-      "Dynasty Boots", "Icarus Boots", "Vesper Boots", "Elegia Boots"
-    ],
-    shield: [
-      "", "Imperial Crusader Shield", "Dynasty Shield", "Icarus Shield", "Vesper Shield", "Elegia Shield"
-    ],
+    helmet: buildItemList('helmet'),
+    armor: buildItemList('armor'),
+    gloves: buildItemList('gloves'),
+    boots: buildItemList('boots'),
+    shield: buildItemList('shield'),
     earring: [
       "", "Dynasty Earring", "Icarus Earring", "Vesper Earring", "Elegia Earring",
       "Blessed Zaken's Earring", "Blessed Antharas' Earring", "Earring of Orfen"
@@ -108,9 +232,14 @@
     "", "Tank", "Healer", "DD", "Mage", "Archer", "Dagger", "Summoner", "Bard", "Support"
   ];
 
+  // ==================== СОСТОЯНИЕ ====================
   let members = [];
   const partyBody = document.getElementById('partyBody');
+  const setPanel = document.getElementById('setPanel');
+  const setTitle = document.getElementById('setTitle');
+  const setContent = document.getElementById('setContent');
 
+  // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
   function createSelect(options, value, onChange) {
     const select = document.createElement('select');
     options.forEach(opt => {
@@ -133,17 +262,104 @@
     return input;
   }
 
+  // Определяем сет по выбранным предметам брони.
+  // Возвращает объект сета и список отсутствующих слотов, либо null.
+  function detectSet(member) {
+    const armorSlots = ['helmet', 'armor', 'gloves', 'boots', 'shield'];
+    const selected = {
+      helmet: member.helmet || '',
+      armor: member.armor || '',
+      gloves: member.gloves || '',
+      boots: member.boots || '',
+      shield: member.shield || ''
+    };
+
+    // Ищем сет, у которого все непустые слоты совпадают с выбранными.
+    for (const set of armorSets) {
+      let match = true;
+      let missing = [];
+      for (const slot of armorSlots) {
+        const setItem = set.pieces[slot];
+        const chosen = selected[slot];
+        if (setItem) {
+          if (chosen !== setItem) { match = false; break; }
+        } else {
+          // Если в сете нет предмета для этого слота, а у персонажа он выбран — несовпадение.
+          if (chosen) { match = false; break; }
+        }
+      }
+      if (match) return { set, missing: [] };
+
+      // Частичное совпадение: считаем, сколько предметов сета выбрано.
+      let matchedCount = 0;
+      let totalRequired = 0;
+      for (const slot of armorSlots) {
+        if (set.pieces[slot]) {
+          totalRequired++;
+          if (selected[slot] === set.pieces[slot]) matchedCount++;
+        } else if (selected[slot]) {
+          // Выбран предмет не из этого сета — не может быть частичным совпадением.
+          matchedCount = -1;
+          break;
+        }
+      }
+      if (matchedCount > 0 && matchedCount < totalRequired) {
+        // Нашли частичное совпадение — запомним отсутствующие слоты.
+        missing = armorSlots.filter(slot => set.pieces[slot] && selected[slot] !== set.pieces[slot]);
+        return { set, missing, matchedCount, totalRequired };
+      }
+    }
+    return null;
+  }
+
+  // Обновляем панель с информацией о сете для выбранного персонажа.
+  // index — индекс персонажа в массиве members, для которого показываем сет.
+  function updateSetPanel(index) {
+    if (index === undefined || !members[index]) {
+      setPanel.classList.remove('active');
+      return;
+    }
+    const member = members[index];
+    const result = detectSet(member);
+
+    if (!result) {
+      setTitle.textContent = 'Сет не определён';
+      setContent.innerHTML = '<p class="missing">Выберите предметы из одного набора брони, чтобы увидеть бонусы.</p>';
+      setPanel.classList.add('active');
+      return;
+    }
+
+    const { set, missing, matchedCount, totalRequired } = result;
+    if (missing && missing.length === 0) {
+      // Полный сет
+      setTitle.textContent = `${set.name} (${set.type}) — полный комплект`;
+      let html = '<ul class="bonus-list">';
+      set.bonuses.forEach(b => { html += `<li>${b}</li>`; });
+      html += '</ul>';
+      setContent.innerHTML = html;
+    } else if (missing && missing.length > 0) {
+      // Частичный сет
+      const slotNames = { helmet: 'шлем', armor: 'броня', gloves: 'перчатки', boots: 'ботинки', shield: 'щит' };
+      const missingNames = missing.map(s => slotNames[s] || s).join(', ');
+      setTitle.textContent = `${set.name} — не хватает: ${missingNames}`;
+      setContent.innerHTML = `<p>Собрано ${matchedCount} из ${totalRequired} частей. Выберите недостающие предметы, чтобы активировать бонусы сета.</p>`;
+    }
+    setPanel.classList.add('active');
+  }
+
+  // ==================== РЕНДЕР ТАБЛИЦЫ ====================
   function renderTable() {
     partyBody.innerHTML = '';
 
     if (members.length === 0) {
       const tr = document.createElement('tr');
       const td = document.createElement('td');
-      td.colSpan = 15;
+      td.colSpan = 11;
       td.className = 'empty';
       td.textContent = 'Нет персонажей. Нажмите «Добавить персонажа».';
       tr.appendChild(td);
       partyBody.appendChild(tr);
+      setPanel.classList.remove('active');
       return;
     }
 
@@ -165,24 +381,46 @@
       tdLevel.appendChild(createInput('number', member.level, val => { member.level = val; }, { min: 1, max: 85 }));
       tr.appendChild(tdLevel);
 
-      // Слоты экипировки
-      const slots = [
-        ['weapon', 'weapon'],
-        ['armor', 'armor'],
-        ['helmet', 'helmet'],
-        ['gloves', 'gloves'],
-        ['boots', 'boots'],
-        ['shield', 'shield'],
-        ['earring1', 'earring'],
-        ['earring2', 'earring'],
-        ['necklace', 'necklace'],
-        ['ring1', 'ring'],
-        ['ring2', 'ring']
-      ];
+      // Оружие
+      const tdWeapon = document.createElement('td');
+      tdWeapon.appendChild(createSelect(itemOptions.weapon, member.weapon || '', val => { member.weapon = val; }));
+      tr.appendChild(tdWeapon);
 
-      slots.forEach(([key, type]) => {
+      // Сет брони — объединённый блок из 5 селектов
+      const tdSet = document.createElement('td');
+      tdSet.className = 'set-cell';
+      const setSlots = [
+        { key: 'helmet', label: 'Шлем' },
+        { key: 'armor', label: 'Броня' },
+        { key: 'gloves', label: 'Перчатки' },
+        { key: 'boots', label: 'Ботинки' },
+        { key: 'shield', label: 'Щит' }
+      ];
+      setSlots.forEach(slot => {
+        const label = document.createElement('span');
+        label.className = 'set-label';
+        label.textContent = slot.label;
+        tdSet.appendChild(label);
+        const select = createSelect(itemOptions[slot.key], member[slot.key] || '', val => {
+          member[slot.key] = val;
+          // Обновляем панель сета для этого персонажа
+          updateSetPanel(index);
+        });
+        tdSet.appendChild(select);
+      });
+      tr.appendChild(tdSet);
+
+      // Бижутерия
+      const jewelrySlots = [
+        { key: 'earring1', type: 'earring' },
+        { key: 'earring2', type: 'earring' },
+        { key: 'necklace', type: 'necklace' },
+        { key: 'ring1', type: 'ring' },
+        { key: 'ring2', type: 'ring' }
+      ];
+      jewelrySlots.forEach(slot => {
         const td = document.createElement('td');
-        td.appendChild(createSelect(itemOptions[type], member[key] || '', val => { member[key] = val; }));
+        td.appendChild(createSelect(itemOptions[slot.type], member[slot.key] || '', val => { member[slot.key] = val; }));
         tr.appendChild(td);
       });
 
@@ -194,6 +432,7 @@
       btnRemove.title = 'Удалить персонажа';
       btnRemove.addEventListener('click', () => {
         members.splice(index, 1);
+        setPanel.classList.remove('active');
         renderTable();
       });
       tdRemove.appendChild(btnRemove);
@@ -203,14 +442,15 @@
     });
   }
 
+  // ==================== ДЕЙСТВИЯ ====================
   function addMember() {
     members.push({
       name: 'Персонаж ' + (members.length + 1),
       className: '',
       level: 1,
       weapon: '',
-      armor: '',
       helmet: '',
+      armor: '',
       gloves: '',
       boots: '',
       shield: '',
