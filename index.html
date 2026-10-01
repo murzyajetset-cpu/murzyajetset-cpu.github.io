@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Группа Lineage 2</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #1e1e1e; color: #eee; margin: 20px; }
+  h1 { color: #f0c040; }
+  .toolbar { margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  button { padding: 8px 12px; border: none; border-radius: 4px; background: #3a3a3a; color: #eee; cursor: pointer; }
+  button:hover { background: #505050; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 1400px; }
+  th, td { border: 1px solid #444; padding: 4px; text-align: left; vertical-align: middle; }
+  th { background: #2a2a2a; color: #f0c040; position: sticky; top: 0; }
+  input, select { background: #2b2b2b; color: #eee; border: 1px solid #555; border-radius: 3px; padding: 4px; width: 100%; box-sizing: border-box; }
+  input[type="number"] { width: 70px; }
+  .remove-btn { background: #a33; color: white; padding: 4px 8px; }
+  .remove-btn:hover { background: #c44; }
+  .empty { color: #888; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h1>Группа Lineage 2</h1>
+
+<div class="toolbar">
+  <button id="addMember">Добавить персонажа</button>
+  <button id="save">Сохранить</button>
+  <button id="load">Загрузить</button>
+  <button id="export">Экспорт JSON</button>
+  <button id="clear">Очистить</button>
+</div>
+
+<div class="table-wrap">
+  <table id="partyTable">
+    <thead>
+      <tr>
+        <th>Имя</th>
+        <th>Класс</th>
+        <th>Ур.</th>
+        <th>Оружие</th>
+        <th>Броня</th>
+        <th>Шлем</th>
+        <th>Перчатки</th>
+        <th>Ботинки</th>
+        <th>Щит</th>
+        <th>Серьга 1</th>
+        <th>Серьга 2</th>
+        <th>Ожерелье</th>
+        <th>Кольцо 1</th>
+        <th>Кольцо 2</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="partyBody"></tbody>
+  </table>
+</div>
+
+<script>
+  // Списки предметов — можно дополнять и менять под свой сервер/хронику
+  const itemOptions = {
+    weapon: [
+      "", "Sword of Miracles", "Draconic Bow", "Dragon Hunter Axe", "Heaven's Divider",
+      "Imperial Staff", "Arcana Mace", "Angel Slayer", "Tallum Blade", "Dark Legion's Edge",
+      "Sirra's Blade", "Barakiel's Axe", "Soul Separator", "Flaming Dragon Skull",
+      "Basalt Battlehammer", "Saint Spear", "Demon Splinter", "Dynasty Sword",
+      "Icarus Hammer", "Vesper Cutter", "Eternal Core Sword"
+    ],
+    armor: [
+      "", "Imperial Crusader Breastplate", "Draconic Leather Armor", "Major Arcana Robe",
+      "Dynasty Breastplate", "Dynasty Leather Armor", "Dynasty Robe",
+      "Icarus Breastplate", "Icarus Leather Armor", "Icarus Robe",
+      "Vesper Breastplate", "Vesper Leather Armor", "Vesper Robe",
+      "Elegia Breastplate", "Elegia Leather Armor", "Elegia Robe"
+    ],
+    helmet: [
+      "", "Imperial Crusader Helmet", "Draconic Leather Helmet", "Major Arcana Circlet",
+      "Dynasty Helmet", "Icarus Helmet", "Vesper Helmet", "Elegia Helmet"
+    ],
+    gloves: [
+      "", "Imperial Crusader Gauntlets", "Draconic Leather Gloves", "Major Arcana Gloves",
+      "Dynasty Gauntlets", "Icarus Gauntlets", "Vesper Gauntlets", "Elegia Gauntlets"
+    ],
+    boots: [
+      "", "Imperial Crusader Boots", "Draconic Leather Boots", "Major Arcana Boots",
+      "Dynasty Boots", "Icarus Boots", "Vesper Boots", "Elegia Boots"
+    ],
+    shield: [
+      "", "Imperial Crusader Shield", "Dynasty Shield", "Icarus Shield", "Vesper Shield", "Elegia Shield"
+    ],
+    earring: [
+      "", "Dynasty Earring", "Icarus Earring", "Vesper Earring", "Elegia Earring",
+      "Blessed Zaken's Earring", "Blessed Antharas' Earring", "Earring of Orfen"
+    ],
+    necklace: [
+      "", "Dynasty Necklace", "Icarus Necklace", "Vesper Necklace", "Elegia Necklace",
+      "Blessed Valakas' Necklace", "Necklace of Frintezza"
+    ],
+    ring: [
+      "", "Dynasty Ring", "Icarus Ring", "Vesper Ring", "Elegia Ring",
+      "Ring of Baium", "Ring of Queen Ant"
+    ]
+  };
+
+  const classes = [
+    "", "Tank", "Healer", "DD", "Mage", "Archer", "Dagger", "Summoner", "Bard", "Support"
+  ];
+
+  let members = [];
+  const partyBody = document.getElementById('partyBody');
+
+  function createSelect(options, value, onChange) {
+    const select = document.createElement('select');
+    options.forEach(opt => {
+      const option = document.createElement('option');
+      option.value = opt;
+      option.textContent = opt || '— пусто —';
+      if (opt === value) option.selected = true;
+      select.appendChild(option);
+    });
+    select.addEventListener('change', e => onChange(e.target.value));
+    return select;
+  }
+
+  function createInput(type, value, onChange, attrs = {}) {
+    const input = document.createElement('input');
+    input.type = type;
+    input.value = value;
+    Object.assign(input, attrs);
+    input.addEventListener('input', e => onChange(e.target.value));
+    return input;
+  }
+
+  function renderTable() {
+    partyBody.innerHTML = '';
+
+    if (members.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 15;
+      td.className = 'empty';
+      td.textContent = 'Нет персонажей. Нажмите «Добавить персонажа».';
+      tr.appendChild(td);
+      partyBody.appendChild(tr);
+      return;
+    }
+
+    members.forEach((member, index) => {
+      const tr = document.createElement('tr');
+
+      // Имя
+      const tdName = document.createElement('td');
+      tdName.appendChild(createInput('text', member.name, val => { member.name = val; }));
+      tr.appendChild(tdName);
+
+      // Класс
+      const tdClass = document.createElement('td');
+      tdClass.appendChild(createSelect(classes, member.className, val => { member.className = val; }));
+      tr.appendChild(tdClass);
+
+      // Уровень
+      const tdLevel = document.createElement('td');
+      tdLevel.appendChild(createInput('number', member.level, val => { member.level = val; }, { min: 1, max: 85 }));
+      tr.appendChild(tdLevel);
+
+      // Слоты экипировки
+      const slots = [
+        ['weapon', 'weapon'],
+        ['armor', 'armor'],
+        ['helmet', 'helmet'],
+        ['gloves', 'gloves'],
+        ['boots', 'boots'],
+        ['shield', 'shield'],
+        ['earring1', 'earring'],
+        ['earring2', 'earring'],
+        ['necklace', 'necklace'],
+        ['ring1', 'ring'],
+        ['ring2', 'ring']
+      ];
+
+      slots.forEach(([key, type]) => {
+        const td = document.createElement('td');
+        td.appendChild(createSelect(itemOptions[type], member[key] || '', val => { member[key] = val; }));
+        tr.appendChild(td);
+      });
+
+      // Удаление
+      const tdRemove = document.createElement('td');
+      const btnRemove = document.createElement('button');
+      btnRemove.textContent = '×';
+      btnRemove.className = 'remove-btn';
+      btnRemove.title = 'Удалить персонажа';
+      btnRemove.addEventListener('click', () => {
+        members.splice(index, 1);
+        renderTable();
+      });
+      tdRemove.appendChild(btnRemove);
+      tr.appendChild(tdRemove);
+
+      partyBody.appendChild(tr);
+    });
+  }
+
+  function addMember() {
+    members.push({
+      name: 'Персонаж ' + (members.length + 1),
+      className: '',
+      level: 1,
+      weapon: '',
+      armor: '',
+      helmet: '',
+      gloves: '',
+      boots: '',
+      shield: '',
+      earring1: '',
+      earring2: '',
+      necklace: '',
+      ring1: '',
+      ring2: ''
+    });
+    renderTable();
+  }
+
+  document.getElementById('addMember').addEventListener('click', addMember);
+
+  document.getElementById('save').addEventListener('click', () => {
+    localStorage.setItem('l2party', JSON.stringify(members));
+    alert('Сохранено в localStorage');
+  });
+
+  document.getElementById('load').addEventListener('click', () => {
+    const data = localStorage.getItem('l2party');
+    if (data) {
+      try {
+        members = JSON.parse(data);
+        renderTable();
+        alert('Загружено из localStorage');
+      } catch (e) {
+        alert('Ошибка загрузки: ' + e.message);
+      }
+    } else {
+      alert('Нет сохранённых данных');
+    }
+  });
+
+  document.getElementById('export').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(members, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lineage2_party.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('clear').addEventListener('click', () => {
+    if (confirm('Удалить всех персонажей?')) {
+      members = [];
+      renderTable();
+    }
+  });
+
+  // Стартовые персонажи
+  addMember();
+  addMember();
+  addMember();
+</script>
+
+</body>
+</html>
