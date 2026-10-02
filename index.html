@@ -48,6 +48,38 @@
     margin: 0 0 2px 0;
   }
   .subtitle { color: var(--text-secondary); font-size: 11px; margin: 0 0 14px 0; }
+
+  /* ===== Вкладки ===== */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--border-subtle);
+  }
+  .tab-btn {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s ease;
+  }
+  .tab-btn:hover { color: var(--accent-gold-dark); }
+  .tab-btn.active {
+    color: var(--accent-gold-dark);
+    border-bottom-color: var(--accent-gold);
+    font-weight: 700;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
   .toolbar {
     display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
     margin-bottom: 12px; padding: 8px 10px;
@@ -106,13 +138,13 @@
   .col-name { width: 110px; } .col-class { width: 230px; } .col-level { width: 52px; }
   .col-weapon { width: 150px; } .col-armor { width: 130px; } .col-jewelry { width: 130px; }
   .col-tattoo { width: 170px; } .col-comment { width: 150px; } .col-remove { width: 34px; }
-  input, select {
+  input, select, textarea {
     font-family: var(--font-body); font-size: 11px; color: var(--text-primary);
     background: var(--bg-input); border: 1px solid var(--border-subtle);
     border-radius: 4px; padding: 4px 6px; width: 100%;
     transition: border-color 0.15s, box-shadow 0.15s; outline: none;
   }
-  input:focus, select:focus { border-color: var(--accent-gold); box-shadow: 0 0 0 2px rgba(184,134,11,0.15); }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent-gold); box-shadow: 0 0 0 2px rgba(184,134,11,0.15); }
   input[type="number"] { width: 100%; }
   select {
     appearance: none; -webkit-appearance: none;
@@ -146,7 +178,202 @@
   .remove-btn:hover { background: rgba(217,45,32,0.1); border-color: var(--danger-red); }
   .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
 
-  /* ===== Область для генерации PDF ===== */
+  /* ===== Крафт и покупки ===== */
+  .craft-author-bar {
+    display: flex; gap: 8px; align-items: center;
+    margin-bottom: 12px; padding: 8px 10px;
+    background: var(--bg-panel); border: 1px solid var(--border-subtle);
+    border-radius: 8px; box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+    font-size: 11px;
+  }
+  .craft-author-bar label {
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .craft-author-bar input {
+    max-width: 260px;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .post-form {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+  }
+  .post-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 100px auto;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .post-form-row.post-form-main {
+    grid-template-columns: 1fr;
+  }
+  .post-form textarea {
+    min-height: 70px;
+    resize: vertical;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 8px 10px;
+  }
+  .post-form-bottom {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .post-form label {
+    display: block;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 3px;
+  }
+
+  .posts-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .post-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+    transition: box-shadow 0.15s ease;
+    border-left: 4px solid var(--accent-gold);
+  }
+  .post-card:hover { box-shadow: 0 3px 10px rgba(20,25,60,0.10); }
+  .post-card.type-craft { border-left-color: var(--accent-gold); }
+  .post-card.type-buy { border-left-color: var(--accent-blue); }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .post-author {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 12px;
+  }
+  .post-time {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+  .post-badge {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .post-badge.badge-craft {
+    background: rgba(184,134,11,0.12);
+    color: var(--accent-gold-dark);
+    border: 1px solid rgba(184,134,11,0.3);
+  }
+  .post-badge.badge-buy {
+    background: rgba(58,95,217,0.10);
+    color: var(--accent-blue);
+    border: 1px solid rgba(58,95,217,0.3);
+  }
+  .post-status {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: all 0.15s ease;
+  }
+  .post-status.status-new { background: #f0f2f8; color: var(--text-secondary); border: 1px solid var(--border-strong); }
+  .post-status.status-progress { background: rgba(240,165,0,0.12); color: #b06d00; border: 1px solid rgba(240,165,0,0.35); }
+  .post-status.status-done { background: rgba(31,157,85,0.10); color: var(--success-green); border: 1px solid rgba(31,157,85,0.35); }
+  .post-status:hover { transform: scale(1.05); }
+
+  .post-item-line {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .post-item-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .post-item-name {
+    font-weight: 600;
+    color: var(--accent-gold-dark);
+    font-size: 13px;
+  }
+  .post-text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 8px;
+  }
+  .post-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .post-footer button {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+  .post-edit-area {
+    margin-bottom: 8px;
+  }
+  .post-edit-area label {
+    display: block;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin: 6px 0 3px 0;
+  }
+  .post-edit-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 100px;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .empty-posts {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 12px;
+    background: var(--bg-panel);
+    border: 1px dashed var(--border-strong);
+    border-radius: 8px;
+  }
+
+  /* ===== PDF ===== */
   #pdfArea {
     position: fixed;
     top: 0; left: 0;
@@ -196,39 +423,93 @@
 <h1>КП DARAMs</h1>
 <p class="subtitle">Состав топовой гей-консты</p>
 
-<div class="toolbar">
-  <button id="addMember" class="primary">Добавить персонажа</button>
-  <button id="saveToFirebase" class="save-btn">Сохранить изменения</button>
-  <button id="downloadPDF" class="pdf-btn">Скачать PDF</button>
-  <div class="sync-status">
-    <span id="syncDot" class="sync-dot"></span>
-    <span id="syncText">Подключение…</span>
-    <span id="autoTimer" class="auto-timer">Автосейв: 30 с</span>
+<!-- ===== Вкладки ===== -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="group">Группа</button>
+  <button class="tab-btn" data-tab="craft">Крафт и покупки</button>
+</div>
+
+<!-- ===== Вкладка: Группа ===== -->
+<div id="tab-group" class="tab-content active">
+  <div class="toolbar">
+    <button id="addMember" class="primary">Добавить персонажа</button>
+    <button id="saveToFirebase" class="save-btn">Сохранить изменения</button>
+    <button id="downloadPDF" class="pdf-btn">Скачать PDF</button>
+    <div class="sync-status">
+      <span id="syncDot" class="sync-dot"></span>
+      <span id="syncText">Подключение…</span>
+      <span id="autoTimer" class="auto-timer">Автосейв: 30 с</span>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="partyTable">
+      <colgroup>
+        <col class="col-name"><col class="col-class"><col class="col-level">
+        <col class="col-weapon"><col class="col-armor"><col class="col-jewelry">
+        <col class="col-tattoo"><col class="col-comment"><col class="col-remove">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Имя</th>
+          <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба с уровнями)</span></th>
+          <th>Ур.</th>
+          <th>Оружие<br><span class="set-label">(грейд + тип + комментарий)</span></th>
+          <th>Сет брони<br><span class="set-label">(шлем / тело / низ / перчатки / ботинки / щит)</span></th>
+          <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
+          <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
+          <th>Комментарий<br><span class="set-label">(заметка о персонаже)</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="partyBody"></tbody>
+    </table>
   </div>
 </div>
 
-<div class="table-wrap">
-  <table id="partyTable">
-    <colgroup>
-      <col class="col-name"><col class="col-class"><col class="col-level">
-      <col class="col-weapon"><col class="col-armor"><col class="col-jewelry">
-      <col class="col-tattoo"><col class="col-comment"><col class="col-remove">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>Имя</th>
-        <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба с уровнями)</span></th>
-        <th>Ур.</th>
-        <th>Оружие<br><span class="set-label">(грейд + тип + комментарий)</span></th>
-        <th>Сет брони<br><span class="set-label">(шлем / тело / низ / перчатки / ботинки / щит)</span></th>
-        <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
-        <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
-        <th>Комментарий<br><span class="set-label">(заметка о персонаже)</span></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="partyBody"></tbody>
-  </table>
+<!-- ===== Вкладка: Крафт и покупки ===== -->
+<div id="tab-craft" class="tab-content">
+
+  <div class="craft-author-bar">
+    <label>Ваше имя:</label>
+    <input type="text" id="craftAuthorName" placeholder="Введите имя, чтобы посты были подписаны" maxlength="40">
+    <div class="sync-status">
+      <span id="postsSyncDot" class="sync-dot"></span>
+      <span id="postsSyncText">Подключение…</span>
+    </div>
+  </div>
+
+  <div class="post-form">
+    <div class="post-form-row">
+      <div>
+        <label>Тип</label>
+        <select id="newPostType">
+          <option value="craft">🔨 Крафт</option>
+          <option value="buy">💰 Покупка</option>
+        </select>
+      </div>
+      <div>
+        <label>Название предмета</label>
+        <input type="text" id="newPostItem" placeholder="напр. Dynasty Breastplate">
+      </div>
+      <div>
+        <label>Кол-во</label>
+        <input type="text" id="newPostQuantity" placeholder="1">
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button id="postPublishBtn" class="primary" style="padding:8px 16px;">Опубликовать</button>
+      </div>
+    </div>
+
+    <div class="post-form-row post-form-main">
+      <div>
+        <label>Описание</label>
+        <textarea id="newPostText" placeholder="Что нужно и для кого — материалы, рецепт, куски, сроки…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="posts-feed" id="postsFeed"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -241,6 +522,7 @@
   firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
   const db = firebase.database();
   const membersRef = db.ref('party_members');
+  const postsRef = db.ref('craft_posts');
 
   // ==================== ПРОФЕССИИ ====================
   const professions = [
@@ -299,177 +581,81 @@
     { name: 'Judicator', icon: '✨' }
   ];
 
-  // ==================== ОРУЖИЕ С LA2HUB.COM ====================
-  // Список составлен на основе данных с https://la2hub.com/catalog/interlude/weapon
-  // Иконки загружаются с https://la2hub.com/icons/items/weapon/{icon_name}.png
-  // Для предметов без известной иконки используется эмодзи-заглушка.
+  // ==================== ОРУЖИЕ ====================
   const weaponsData = [
-    // NG Grade
-    { name: 'Short Sword', grade: 'NG', icon: 'weapon_small_sword_i00' },
-    { name: 'Long Sword', grade: 'NG', icon: 'weapon_long_sword_i00' },
-    { name: 'Broadsword', grade: 'NG', icon: 'weapon_broad_sword_i00' },
-    { name: 'Club', grade: 'NG', icon: 'weapon_club_i00' },
-    { name: 'Mace', grade: 'NG', icon: 'weapon_mace_i00' },
-    { name: "Apprentice's Wand", grade: 'NG', icon: 'weapon_apprentice_wand_i00' },
-    { name: "Apprentice's Rod", grade: 'NG', icon: 'weapon_apprentice_rod_i00' },
-    { name: 'Willow Staff', grade: 'NG', icon: 'weapon_willow_staff_i00' },
-    { name: 'Cedar Staff', grade: 'NG', icon: 'weapon_cedar_staff_i00' },
-    { name: 'Dagger', grade: 'NG', icon: 'weapon_dagger_i00' },
-    { name: 'Bone Dagger', grade: 'NG', icon: 'weapon_bone_dagger_i00' },
-    { name: 'Knife', grade: 'NG', icon: 'weapon_knife_i00' },
-    { name: 'Short Bow', grade: 'NG', icon: 'weapon_short_bow_i00' },
-    { name: 'Bow', grade: 'NG', icon: 'weapon_bow_i00' },
-    { name: 'Short Spear', grade: 'NG', icon: 'weapon_short_spear_i00' },
-    { name: 'Great Spear', grade: 'NG', icon: 'weapon_great_spear_i00' },
-
-    // D Grade
-    { name: 'Gladius', grade: 'D', icon: 'weapon_gladius_i00' },
-    { name: 'Orcish Sword', grade: 'D', icon: 'weapon_orcish_sword_i00' },
-    { name: 'Falchion', grade: 'D', icon: 'weapon_falchion_i00' },
-    { name: 'Bastard Sword', grade: 'D', icon: 'weapon_bastard_sword_i00' },
-    { name: 'Claymore', grade: 'D', icon: 'weapon_claymore_i00' },
-    { name: 'Flamberge', grade: 'D', icon: 'weapon_flamberge_i00' },
-    { name: 'Stormbringer', grade: 'D', icon: 'weapon_stormbringer_i00' },
-    { name: 'Shamshir', grade: 'D', icon: 'weapon_shamshir_i00' },
-    { name: 'Katana', grade: 'D', icon: 'weapon_katana_i00' },
-    { name: 'Caliburs', grade: 'D', icon: 'weapon_caliburs_i00' },
-    { name: 'Sword of Delusion', grade: 'D', icon: 'weapon_sword_of_delusion_i00' },
-    { name: 'Tsurugi', grade: 'D', icon: 'weapon_tsurugi_i00' },
-    { name: 'Great Sword', grade: 'D', icon: 'weapon_great_sword_i00' },
-    { name: 'Sword of Damascus', grade: 'D', icon: 'weapon_sword_of_damascus_i00' },
-    { name: 'Tallum Blade', grade: 'D', icon: 'weapon_tallum_blade_i00' },
-    { name: 'Dragon Slayer', grade: 'D', icon: 'weapon_dragon_slayer_i00' },
-    { name: 'Sword of Magic', grade: 'D', icon: 'weapon_sword_of_magic_i00' },
-    { name: "Homunkulus's Sword", grade: 'D', icon: 'weapon_homunkulus_sword_i00' },
-    { name: 'Phantom Sword', grade: 'D', icon: 'weapon_phantom_sword_i00' },
-    { name: 'Tomahawk', grade: 'D', icon: 'weapon_tomahawk_i00' },
-    { name: 'Iron Hammer', grade: 'D', icon: 'weapon_iron_hammer_i00' },
-    { name: 'Morning Star', grade: 'D', icon: 'weapon_morning_star_i00' },
-    { name: 'Big Hammer', grade: 'D', icon: 'weapon_big_hammer_i00' },
-    { name: 'Goat Head Staff', grade: 'D', icon: 'weapon_goat_head_staff_i00' },
-    { name: 'Heavy War Axe', grade: 'D', icon: 'weapon_heavy_war_axe_i00' },
-    { name: "Sprite's Staff", grade: 'D', icon: 'weapon_sprites_staff_i00' },
-    { name: 'Winged Spear', grade: 'D', icon: 'weapon_winged_spear_i00' },
-    { name: 'Bec de Corbin', grade: 'D', icon: 'weapon_bec_de_corbin_i00' },
-    { name: 'Poleaxe', grade: 'D', icon: 'weapon_poleaxe_i00' },
-    { name: 'Scythe', grade: 'D', icon: 'weapon_scythe_i00' },
-    { name: 'Lance', grade: 'D', icon: 'weapon_lance_i00' },
-    { name: 'Halberd', grade: 'D', icon: 'weapon_halberd_i00' },
-    { name: "Apprentice's Spellbook", grade: 'D', icon: 'weapon_apprentice_spellbook_i00' },
-    { name: 'Voodoo Doll', grade: 'D', icon: 'weapon_voodoo_doll_i00' },
-
-    // C Grade
-    { name: 'Sword of Revolution', grade: 'C', icon: 'weapon_sword_of_revolution_i00' },
-    { name: 'Stormbringer Sword', grade: 'C', icon: 'weapon_stormbringer_sword_i00' },
-    { name: 'Elven Long Sword', grade: 'C', icon: 'weapon_elven_long_sword_i00' },
-    { name: 'Berserker Blade', grade: 'C', icon: 'weapon_berserker_blade_i00' },
-    { name: 'Tsurugi', grade: 'C', icon: 'weapon_tsurugi_i00' },
-    { name: 'Dragon Slayer', grade: 'C', icon: 'weapon_dragon_slayer_i00' },
-    { name: 'Cursed Dagger', grade: 'C', icon: 'weapon_cursed_dagger_i00' },
-    { name: 'Dark Elven Dagger', grade: 'C', icon: 'weapon_dark_elven_dagger_i00' },
-    { name: 'Crystal Dagger', grade: 'C', icon: 'weapon_crystal_dagger_i00' },
-    { name: 'Light Crossbow', grade: 'C', icon: 'weapon_light_crossbow_i00' },
-    { name: 'Crystallized Ice Bow', grade: 'C', icon: 'weapon_crystallized_ice_bow_i00' },
-    { name: 'Akat Long Bow', grade: 'C', icon: 'weapon_akat_long_bow_i00' },
-    { name: 'Cursed Staff', grade: 'C', icon: 'weapon_cursed_staff_i00' },
-    { name: 'Staff of Life', grade: 'C', icon: 'weapon_staff_of_life_i00' },
-    { name: 'Wizard Staff', grade: 'C', icon: 'weapon_wizard_staff_i00' },
-    { name: 'Battle Axe', grade: 'C', icon: 'weapon_battle_axe_i00' },
-    { name: 'Skull Graver', grade: 'C', icon: 'weapon_skull_graver_i00' },
-    { name: 'Bonebreaker', grade: 'C', icon: 'weapon_bonebreaker_i00' },
-    { name: 'Poleaxe', grade: 'C', icon: 'weapon_poleaxe_i00' },
-    { name: 'Orcish Glaive', grade: 'C', icon: 'weapon_orcish_glaive_i00' },
-    { name: 'Winged Spear', grade: 'C', icon: 'weapon_winged_spear_i00' },
-    { name: 'Dwarven Hammer', grade: 'C', icon: 'weapon_dwarven_hammer_i00' },
-    { name: 'Karik Horn', grade: 'C', icon: 'weapon_karik_horn_i00' },
-    { name: "Demon's Staff", grade: 'C', icon: 'weapon_demons_staff_i00' },
-    { name: "Ghoul's Staff", grade: 'C', icon: 'weapon_ghouls_staff_i00' },
-
-    // B Grade
-    { name: 'Sword of Valhalla', grade: 'B', icon: 'weapon_sword_of_valhalla_i00' },
-    { name: 'Great Sword', grade: 'B', icon: 'weapon_great_sword_i00' },
-    { name: 'Guardian Sword', grade: 'B', icon: 'weapon_guardian_sword_i00' },
-    { name: 'Art of Battle Axe', grade: 'B', icon: 'weapon_art_of_battle_axe_i00' },
-    { name: 'Berserker Blade', grade: 'B', icon: 'weapon_berserker_blade_i00' },
-    { name: 'Heavy Sword', grade: 'B', icon: 'weapon_heavy_sword_i00' },
-    { name: 'Grace Dagger', grade: 'B', icon: 'weapon_grace_dagger_i00' },
-    { name: 'Dark Screamer', grade: 'B', icon: 'weapon_dark_screamer_i00' },
-    { name: 'Kris', grade: 'B', icon: 'weapon_kris_i00' },
-    { name: 'Eminence Bow', grade: 'B', icon: 'weapon_eminence_bow_i00' },
-    { name: 'Bow of Peril', grade: 'B', icon: 'weapon_bow_of_peril_i00' },
-    { name: 'Dark Elven Long Bow', grade: 'B', icon: 'weapon_dark_elven_long_bow_i00' },
-    { name: 'Staff of Evil Spirits', grade: 'B', icon: 'weapon_staff_of_evil_spirits_i00' },
-    { name: 'Homunkulus Sword', grade: 'B', icon: 'weapon_homunkulus_sword_i00' },
-    { name: 'Sword of Limit', grade: 'B', icon: 'weapon_sword_of_limit_i00' },
-    { name: "Deadman's Glory", grade: 'B', icon: 'weapon_deadmans_glory_i00' },
-    { name: 'Chakram', grade: 'B', icon: 'weapon_chakram_i00' },
-    { name: 'Cursed Staff', grade: 'B', icon: 'weapon_cursed_staff_i00' },
-    { name: 'Star Buster', grade: 'B', icon: 'weapon_star_buster_i00' },
-    { name: 'Ice Storm Hammer', grade: 'B', icon: 'weapon_ice_storm_hammer_i00' },
-    { name: "Sprite's Staff", grade: 'B', icon: 'weapon_sprites_staff_i00' },
-    { name: "Kaim Vanul's Bones", grade: 'B', icon: 'weapon_kaim_vanuls_bones_i00' },
-    { name: 'Spell Breaker', grade: 'B', icon: 'weapon_spell_breaker_i00' },
-
-    // A Grade
-    { name: 'Sword of Miracles', grade: 'A', icon: 'weapon_sword_of_miracles_i00' },
-    { name: 'Dragon Slayer', grade: 'A', icon: 'weapon_dragon_slayer_i00' },
-    { name: 'Tallum Blade', grade: 'A', icon: 'weapon_tallum_blade_i00' },
-    { name: 'Angel Slayer', grade: 'A', icon: 'weapon_angel_slayer_i00' },
-    { name: "Dark Legion's Edge", grade: 'A', icon: 'weapon_dark_legions_edge_i00' },
-    { name: 'Soul Separator', grade: 'A', icon: 'weapon_soul_separator_i00' },
-    { name: 'Bloody Orchid', grade: 'A', icon: 'weapon_bloody_orchid_i00' },
-    { name: 'Soul Bow', grade: 'A', icon: 'weapon_soul_bow_i00' },
-    { name: 'Carnage Bow', grade: 'A', icon: 'weapon_carnage_bow_i00' },
-    { name: 'Imperial Staff', grade: 'A', icon: 'weapon_imperial_staff_i00' },
-    { name: 'Arcana Mace', grade: 'A', icon: 'weapon_arcana_mace_i00' },
-    { name: 'Dragon Hunter Axe', grade: 'A', icon: 'weapon_dragon_hunter_axe_i00' },
-    { name: "Barakiel's Axe", grade: 'A', icon: 'weapon_barakiels_axe_i00' },
-    { name: 'Flaming Dragon Skull', grade: 'A', icon: 'weapon_flaming_dragon_skull_i00' },
-    { name: 'Saint Spear', grade: 'A', icon: 'weapon_saint_spear_i00' },
-    { name: 'Demon Splinter', grade: 'A', icon: 'weapon_demon_splinter_i00' },
-    { name: 'Basalt Battlehammer', grade: 'A', icon: 'weapon_basalt_battlehammer_i00' },
-    { name: 'Meteor Shower', grade: 'A', icon: 'weapon_meteor_shower_i00' },
-    { name: 'Elysian', grade: 'A', icon: 'weapon_elysian_i00' },
-    { name: 'Dragon Grinder', grade: 'A', icon: 'weapon_dragon_grinder_i00' },
-
-    // S Grade
-    { name: 'Dynasty Sword', grade: 'S', icon: 'weapon_dynasty_sword_i00' },
-    { name: 'Dynasty Blade', grade: 'S', icon: 'weapon_dynasty_blade_i00' },
-    { name: 'Dynasty Phantom', grade: 'S', icon: 'weapon_dynasty_phantom_i00' },
-    { name: "Heaven's Divider", grade: 'S', icon: 'weapon_heavens_divider_i00' },
-    { name: "Sirra's Blade", grade: 'S', icon: 'weapon_sirras_blade_i00' },
-    { name: "Barakiel's Axe", grade: 'S', icon: 'weapon_barakiels_axe_i00' },
-    { name: 'Soul Separator', grade: 'S', icon: 'weapon_soul_separator_i00' },
-    { name: 'Draconic Bow', grade: 'S', icon: 'weapon_draconic_bow_i00' },
-    { name: 'Dragon Hunter Axe', grade: 'S', icon: 'weapon_dragon_hunter_axe_i00' },
-    { name: 'Imperial Staff', grade: 'S', icon: 'weapon_imperial_staff_i00' },
-    { name: 'Arcana Mace', grade: 'S', icon: 'weapon_arcana_mace_i00' },
-    { name: 'Angel Slayer', grade: 'S', icon: 'weapon_angel_slayer_i00' },
-    { name: 'Eternal Core Sword', grade: 'S', icon: 'weapon_eternal_core_sword_i00' },
-    { name: 'Vesper Cutter', grade: 'S', icon: 'weapon_vesper_cutter_i00' },
-    { name: 'Icarus Hammer', grade: 'S', icon: 'weapon_icarus_hammer_i00' },
-    { name: "Tallum Blade*Dark Legion's Edge", grade: 'S', icon: 'weapon_dual_tallum_dark_legion_i00' },
-    { name: 'Dual Dragon Slayer', grade: 'S', icon: 'weapon_dual_dragon_slayer_i00' }
+    { name: 'Short Sword', grade: 'NG' }, { name: 'Long Sword', grade: 'NG' },
+    { name: 'Broadsword', grade: 'NG' }, { name: 'Club', grade: 'NG' },
+    { name: 'Mace', grade: 'NG' }, { name: "Apprentice's Wand", grade: 'NG' },
+    { name: "Apprentice's Rod", grade: 'NG' }, { name: 'Willow Staff', grade: 'NG' },
+    { name: 'Cedar Staff', grade: 'NG' }, { name: 'Dagger', grade: 'NG' },
+    { name: 'Bone Dagger', grade: 'NG' }, { name: 'Knife', grade: 'NG' },
+    { name: 'Short Bow', grade: 'NG' }, { name: 'Bow', grade: 'NG' },
+    { name: 'Short Spear', grade: 'NG' }, { name: 'Great Spear', grade: 'NG' },
+    { name: 'Gladius', grade: 'D' }, { name: 'Orcish Sword', grade: 'D' },
+    { name: 'Falchion', grade: 'D' }, { name: 'Bastard Sword', grade: 'D' },
+    { name: 'Claymore', grade: 'D' }, { name: 'Flamberge', grade: 'D' },
+    { name: 'Stormbringer', grade: 'D' }, { name: 'Shamshir', grade: 'D' },
+    { name: 'Katana', grade: 'D' }, { name: 'Caliburs', grade: 'D' },
+    { name: 'Sword of Delusion', grade: 'D' }, { name: 'Tsurugi', grade: 'D' },
+    { name: 'Great Sword', grade: 'D' }, { name: 'Sword of Damascus', grade: 'D' },
+    { name: 'Tallum Blade', grade: 'D' }, { name: 'Dragon Slayer', grade: 'D' },
+    { name: 'Sword of Magic', grade: 'D' }, { name: "Homunkulus's Sword", grade: 'D' },
+    { name: 'Phantom Sword', grade: 'D' }, { name: 'Tomahawk', grade: 'D' },
+    { name: 'Iron Hammer', grade: 'D' }, { name: 'Morning Star', grade: 'D' },
+    { name: 'Big Hammer', grade: 'D' }, { name: 'Goat Head Staff', grade: 'D' },
+    { name: 'Heavy War Axe', grade: 'D' }, { name: "Sprite's Staff", grade: 'D' },
+    { name: 'Winged Spear', grade: 'D' }, { name: 'Bec de Corbin', grade: 'D' },
+    { name: 'Poleaxe', grade: 'D' }, { name: 'Scythe', grade: 'D' },
+    { name: 'Lance', grade: 'D' }, { name: 'Halberd', grade: 'D' },
+    { name: "Apprentice's Spellbook", grade: 'D' }, { name: 'Voodoo Doll', grade: 'D' },
+    { name: 'Sword of Revolution', grade: 'C' }, { name: 'Stormbringer Sword', grade: 'C' },
+    { name: 'Elven Long Sword', grade: 'C' }, { name: 'Berserker Blade', grade: 'C' },
+    { name: 'Cursed Dagger', grade: 'C' }, { name: 'Dark Elven Dagger', grade: 'C' },
+    { name: 'Crystal Dagger', grade: 'C' }, { name: 'Light Crossbow', grade: 'C' },
+    { name: 'Crystallized Ice Bow', grade: 'C' }, { name: 'Akat Long Bow', grade: 'C' },
+    { name: 'Cursed Staff', grade: 'C' }, { name: 'Staff of Life', grade: 'C' },
+    { name: 'Wizard Staff', grade: 'C' }, { name: 'Battle Axe', grade: 'C' },
+    { name: 'Skull Graver', grade: 'C' }, { name: 'Bonebreaker', grade: 'C' },
+    { name: 'Orcish Glaive', grade: 'C' }, { name: 'Dwarven Hammer', grade: 'C' },
+    { name: 'Karik Horn', grade: 'C' }, { name: "Demon's Staff", grade: 'C' },
+    { name: "Ghoul's Staff", grade: 'C' }, { name: 'Sword of Valhalla', grade: 'B' },
+    { name: 'Guardian Sword', grade: 'B' }, { name: 'Art of Battle Axe', grade: 'B' },
+    { name: 'Heavy Sword', grade: 'B' }, { name: 'Grace Dagger', grade: 'B' },
+    { name: 'Dark Screamer', grade: 'B' }, { name: 'Kris', grade: 'B' },
+    { name: 'Eminence Bow', grade: 'B' }, { name: 'Bow of Peril', grade: 'B' },
+    { name: 'Dark Elven Long Bow', grade: 'B' }, { name: 'Staff of Evil Spirits', grade: 'B' },
+    { name: 'Homunkulus Sword', grade: 'B' }, { name: 'Sword of Limit', grade: 'B' },
+    { name: "Deadman's Glory", grade: 'B' }, { name: 'Chakram', grade: 'B' },
+    { name: 'Star Buster', grade: 'B' }, { name: 'Ice Storm Hammer', grade: 'B' },
+    { name: "Kaim Vanul's Bones", grade: 'B' }, { name: 'Spell Breaker', grade: 'B' },
+    { name: 'Sword of Miracles', grade: 'A' }, { name: 'Angel Slayer', grade: 'A' },
+    { name: "Dark Legion's Edge", grade: 'A' }, { name: 'Soul Separator', grade: 'A' },
+    { name: 'Bloody Orchid', grade: 'A' }, { name: 'Soul Bow', grade: 'A' },
+    { name: 'Carnage Bow', grade: 'A' }, { name: 'Imperial Staff', grade: 'A' },
+    { name: 'Arcana Mace', grade: 'A' }, { name: 'Dragon Hunter Axe', grade: 'A' },
+    { name: "Barakiel's Axe", grade: 'A' }, { name: 'Flaming Dragon Skull', grade: 'A' },
+    { name: 'Saint Spear', grade: 'A' }, { name: 'Demon Splinter', grade: 'A' },
+    { name: 'Basalt Battlehammer', grade: 'A' }, { name: 'Meteor Shower', grade: 'A' },
+    { name: 'Elysian', grade: 'A' }, { name: 'Dragon Grinder', grade: 'A' },
+    { name: 'Dynasty Sword', grade: 'S' }, { name: 'Dynasty Blade', grade: 'S' },
+    { name: 'Dynasty Phantom', grade: 'S' }, { name: "Heaven's Divider", grade: 'S' },
+    { name: "Sirra's Blade", grade: 'S' }, { name: 'Draconic Bow', grade: 'S' },
+    { name: 'Eternal Core Sword', grade: 'S' }, { name: 'Vesper Cutter', grade: 'S' },
+    { name: 'Icarus Hammer', grade: 'S' }, { name: 'Dual Dragon Slayer', grade: 'S' }
   ];
 
-  // Группируем по грейдам для селекта
   const weaponsByGrade = {};
   weaponsData.forEach(w => {
-    if (!weaponsByGrade[`${w.grade} Grade`]) weaponsByGrade[`${w.grade} Grade`] = [];
-    weaponsByGrade[`${w.grade} Grade`].push(w.name);
+    const key = `${w.grade} Grade`;
+    if (!weaponsByGrade[key]) weaponsByGrade[key] = [];
+    weaponsByGrade[key].push(w.name);
   });
 
-  // Функция для получения иконки оружия
-  function getWeaponIcon(weaponName) {
-    const w = weaponsData.find(item => item.name === weaponName);
-    if (w && w.icon) {
-      return `https://la2hub.com/icons/items/weapon/${w.icon}.png`;
-    }
-    // Fallback: эмодзи по типу оружия
-    const n = weaponName.toLowerCase();
+  function weaponIcon(name) {
+    const n = name.toLowerCase();
     if (n.includes('bow') || n.includes('лук') || n.includes('crossbow')) return '🏹';
-    if (n.includes('staff') || n.includes('посох') || n.includes('mace') || n.includes('wand') || n.includes('rod')) return '🔮';
-    if (n.includes('dagger') || n.includes('кинжал') || n.includes('knife') || n.includes('kris')) return '🗡️';
+    if (n.includes('staff') || n.includes('mace') || n.includes('wand') || n.includes('rod')) return '🔮';
+    if (n.includes('dagger') || n.includes('knife') || n.includes('kris')) return '🗡️';
     if (n.includes('axe') || n.includes('hammer') || n.includes('club') || n.includes('blunt') || n.includes('star')) return '🔨';
     if (n.includes('spear') || n.includes('halberd') || n.includes('glaive') || n.includes('poleaxe') || n.includes('lance')) return '🔱';
     if (n.includes('fist') || n.includes('knuckle')) return '🥊';
@@ -477,17 +663,47 @@
     return '⚔️';
   }
 
+  // ==================== СОСТОЯНИЕ ====================
   let members = [];
+  let posts = [];
   const partyBody = document.getElementById('partyBody');
+  const postsFeed = document.getElementById('postsFeed');
   const syncDot = document.getElementById('syncDot');
   const syncText = document.getElementById('syncText');
   const autoTimerEl = document.getElementById('autoTimer');
+  const postsSyncDot = document.getElementById('postsSyncDot');
+  const postsSyncText = document.getElementById('postsSyncText');
+  const authorInput = document.getElementById('craftAuthorName');
 
   function setSyncStatus(status, text) {
     syncDot.className = 'sync-dot ' + status;
     syncText.textContent = text;
   }
+  function setPostsSyncStatus(status, text) {
+    postsSyncDot.className = 'sync-dot ' + status;
+    postsSyncText.textContent = text;
+  }
 
+  // Запоминаем автора в localStorage
+  const AUTHOR_KEY = 'l2party_author';
+  if (localStorage.getItem(AUTHOR_KEY)) {
+    authorInput.value = localStorage.getItem(AUTHOR_KEY);
+  }
+  authorInput.addEventListener('input', e => {
+    localStorage.setItem(AUTHOR_KEY, e.target.value);
+  });
+
+  // ==================== ВКЛАДКИ ====================
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ==================== ЧЛЕНЫ ГРУППЫ ====================
   function membersEqual(a, b) {
     if (a.length !== b.length) return false;
     const mapA = new Map(a.map(m => [m.id, m]));
@@ -659,10 +875,7 @@
       weaponsByGrade[grade].forEach(weaponName => {
         const opt = document.createElement('option');
         opt.value = weaponName;
-        // Используем эмодзи для селекта (браузеры не поддерживают img в option)
-        const icon = getWeaponIcon(weaponName);
-        const displayIcon = icon.startsWith('http') ? '⚔️' : icon;
-        opt.textContent = `${displayIcon} ${weaponName}`;
+        opt.textContent = `${weaponIcon(weaponName)} ${weaponName}`;
         if (weaponName === value) opt.selected = true;
         group.appendChild(opt);
       });
@@ -786,7 +999,6 @@
       }, { min: 1, max: 85 }, meta('level')));
       tr.appendChild(tdLevel);
 
-      // Оружие + комментарий
       const tdWeapon = document.createElement('td');
       const weaponWrap = document.createElement('div');
       weaponWrap.style.display = 'flex';
@@ -901,7 +1113,310 @@
     }
   }
 
-  // ==================== ЭКСПОРТ В PDF ====================
+  // ==================== КРАФТ И ПОКУПКИ ====================
+  let postSaveTimeouts = new Map();
+
+  function postsEqual(a, b) {
+    if (a.length !== b.length) return false;
+    const mapA = new Map(a.map(p => [p.id, p]));
+    for (const p of b) {
+      const old = mapA.get(p.id);
+      if (!old) return false;
+      const keys = new Set([...Object.keys(old), ...Object.keys(p)]);
+      for (const k of keys) {
+        if (k === 'id') continue;
+        if (String(old[k] ?? '') !== String(p[k] ?? '')) return false;
+      }
+    }
+    return true;
+  }
+
+  postsRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    const newPosts = [];
+    if (data) {
+      Object.keys(data).forEach(key => {
+        newPosts.push({ id: key, ...data[key] });
+      });
+      // Сортируем по времени создания (сначала новые)
+      newPosts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    }
+    if (postsEqual(posts, newPosts)) {
+      setPostsSyncStatus('online', 'Синхронизировано');
+      return;
+    }
+    posts = newPosts;
+    renderPosts();
+    setPostsSyncStatus('online', 'Синхронизировано');
+  }, (error) => {
+    console.error('Ошибка синхронизации постов:', error);
+    setPostsSyncStatus('offline', 'Ошибка: ' + error.code);
+  });
+
+  function debouncedSavePost(post) {
+    if (!post.id) return;
+    const existing = postSaveTimeouts.get(post.id);
+    if (existing) clearTimeout(existing);
+
+    postSaveTimeouts.set(post.id, setTimeout(() => {
+      const postData = { ...post };
+      delete postData.id;
+      postData.updatedAt = Date.now();
+
+      postsRef.child(post.id).update(postData)
+        .catch(err => console.error('Ошибка сохранения поста:', err));
+      postSaveTimeouts.delete(post.id);
+    }, 500));
+  }
+
+  function publishPost() {
+    const author = (authorInput.value || '').trim();
+    if (!author) {
+      alert('Сначала введите ваше имя в поле «Ваше имя» — иначе пост будет без подписи.');
+      authorInput.focus();
+      return;
+    }
+
+    const type = document.getElementById('newPostType').value;
+    const item = document.getElementById('newPostItem').value.trim();
+    const quantity = document.getElementById('newPostQuantity').value.trim();
+    const text = document.getElementById('newPostText').value.trim();
+
+    if (!item && !text) {
+      alert('Заполните хотя бы название предмета или описание.');
+      return;
+    }
+
+    const newPostRef = postsRef.push();
+    const newPost = {
+      author,
+      type,
+      item,
+      quantity,
+      text,
+      status: 'new',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+
+    newPostRef.set(newPost).then(() => {
+      document.getElementById('newPostItem').value = '';
+      document.getElementById('newPostQuantity').value = '';
+      document.getElementById('newPostText').value = '';
+    }).catch(err => {
+      console.error('Ошибка публикации:', err);
+      alert('Не удалось опубликовать пост: ' + err.message);
+    });
+  }
+
+  function deletePost(post) {
+    if (!post.id) return;
+    if (!confirm('Удалить этот пост?')) return;
+    postsRef.child(post.id).remove()
+      .catch(err => console.error('Ошибка удаления поста:', err));
+  }
+
+  function cycleStatus(post) {
+    // new -> progress -> done -> new
+    const order = ['new', 'progress', 'done'];
+    const currentIdx = order.indexOf(post.status || 'new');
+    post.status = order[(currentIdx + 1) % order.length];
+    debouncedSavePost(post);
+  }
+
+  const STATUS_LABELS = {
+    'new': 'В поиске',
+    'progress': 'В работе',
+    'done': 'Готово'
+  };
+
+  function formatDate(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'только что';
+    if (diff < 3600) return Math.floor(diff / 60) + ' мин назад';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' ч назад';
+    return d.toLocaleString('ru-RU', {
+      day: '2-digit', month: '2-digit', year: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  function renderPosts() {
+    postsFeed.innerHTML = '';
+
+    if (posts.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-posts';
+      empty.textContent = 'Пока нет постов. Опубликуйте первый — что нужно скрафтить или купить.';
+      postsFeed.appendChild(empty);
+      return;
+    }
+
+    posts.forEach(post => {
+      const card = document.createElement('div');
+      card.className = 'post-card ' + (post.type === 'buy' ? 'type-buy' : 'type-craft');
+
+      // Заголовок
+      const header = document.createElement('div');
+      header.className = 'post-header';
+
+      const author = document.createElement('span');
+      author.className = 'post-author';
+      author.textContent = post.author || 'Аноним';
+      header.appendChild(author);
+
+      const time = document.createElement('span');
+      time.className = 'post-time';
+      time.textContent = formatDate(post.createdAt);
+      header.appendChild(time);
+
+      const badge = document.createElement('span');
+      badge.className = 'post-badge ' + (post.type === 'buy' ? 'badge-buy' : 'badge-craft');
+      badge.textContent = post.type === 'buy' ? '💰 Покупка' : '🔨 Крафт';
+      header.appendChild(badge);
+
+      const status = document.createElement('span');
+      status.className = 'post-status status-' + (post.status || 'new');
+      status.textContent = STATUS_LABELS[post.status || 'new'];
+      status.title = 'Нажмите, чтобы сменить статус';
+      status.addEventListener('click', () => cycleStatus(post));
+      header.appendChild(status);
+
+      card.appendChild(header);
+
+      // Строка предмета
+      if (post.item) {
+        const itemLine = document.createElement('div');
+        itemLine.className = 'post-item-line';
+
+        const lbl = document.createElement('span');
+        lbl.className = 'post-item-label';
+        lbl.textContent = 'Предмет:';
+        itemLine.appendChild(lbl);
+
+        const itemName = document.createElement('span');
+        itemName.className = 'post-item-name';
+        itemName.textContent = post.item + (post.quantity ? ` × ${post.quantity}` : '');
+        itemLine.appendChild(itemName);
+
+        card.appendChild(itemLine);
+      }
+
+      // Описание
+      if (post.text) {
+        const text = document.createElement('div');
+        text.className = 'post-text';
+        text.textContent = post.text;
+        card.appendChild(text);
+      }
+
+      // Футер: редактировать / удалить
+      const footer = document.createElement('div');
+      footer.className = 'post-footer';
+
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Редактировать';
+      editBtn.addEventListener('click', () => toggleEditPost(card, post));
+      footer.appendChild(editBtn);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Удалить';
+      deleteBtn.style.borderColor = 'rgba(217,45,32,0.4)';
+      deleteBtn.style.color = 'var(--danger-red)';
+      deleteBtn.addEventListener('click', () => deletePost(post));
+      footer.appendChild(deleteBtn);
+
+      card.appendChild(footer);
+
+      postsFeed.appendChild(card);
+    });
+  }
+
+  function toggleEditPost(card, post) {
+    const existing = card.querySelector('.post-edit-area');
+    if (existing) {
+      // Уже открыто — сохраняем
+      const typeVal = existing.querySelector('.edit-type').value;
+      const itemVal = existing.querySelector('.edit-item').value.trim();
+      const qtyVal = existing.querySelector('.edit-qty').value.trim();
+      const textVal = existing.querySelector('.edit-text').value;
+
+      post.type = typeVal;
+      post.item = itemVal;
+      post.quantity = qtyVal;
+      post.text = textVal;
+      debouncedSavePost(post);
+
+      // Перерисовываем карточку
+      renderPosts();
+      return;
+    }
+
+    // Открываем форму редактирования
+    const area = document.createElement('div');
+    area.className = 'post-edit-area';
+
+    const row = document.createElement('div');
+    row.className = 'post-edit-row';
+
+    const typeSelect = document.createElement('select');
+    typeSelect.className = 'edit-type';
+    [['craft', '🔨 Крафт'], ['buy', '💰 Покупка']].forEach(([val, label]) => {
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = label;
+      if ((post.type || 'craft') === val) opt.selected = true;
+      typeSelect.appendChild(opt);
+    });
+    row.appendChild(typeSelect);
+
+    const itemInput = document.createElement('input');
+    itemInput.type = 'text';
+    itemInput.className = 'edit-item';
+    itemInput.value = post.item || '';
+    itemInput.placeholder = 'Название предмета';
+    row.appendChild(itemInput);
+
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'text';
+    qtyInput.className = 'edit-qty';
+    qtyInput.value = post.quantity || '';
+    qtyInput.placeholder = 'Кол-во';
+    row.appendChild(qtyInput);
+
+    area.appendChild(row);
+
+    const textLabel = document.createElement('label');
+    textLabel.textContent = 'Описание';
+    area.appendChild(textLabel);
+
+    const textArea = document.createElement('textarea');
+    textArea.className = 'edit-text';
+    textArea.value = post.text || '';
+    textArea.style.minHeight = '70px';
+    textArea.style.width = '100%';
+    textArea.style.resize = 'vertical';
+    area.appendChild(textArea);
+
+    const hint = document.createElement('div');
+    hint.style.fontSize = '10px';
+    hint.style.color = 'var(--text-muted)';
+    hint.style.marginTop = '6px';
+    hint.textContent = 'Нажмите «Редактировать» ещё раз, чтобы сохранить.';
+    area.appendChild(hint);
+
+    // Скрываем прежний контент карточки и вставляем форму
+    card.querySelectorAll('.post-item-line, .post-text').forEach(el => el.remove());
+    const footer = card.querySelector('.post-footer');
+    card.insertBefore(area, footer);
+  }
+
+  document.getElementById('postPublishBtn').addEventListener('click', publishPost);
+
+  // ==================== PDF ====================
   async function downloadPDF() {
     if (members.length === 0) {
       alert('Таблица пуста — нечего сохранять в PDF.');
@@ -990,7 +1505,7 @@
       const tdWeapon = document.createElement('td');
       tdWeapon.style.cssText = cellStyle;
       const weaponLine = document.createElement('div');
-      weaponLine.textContent = m.weapon ? `${getWeaponIcon(m.weapon)} ${m.weapon}` : '—';
+      weaponLine.textContent = m.weapon ? `${weaponIcon(m.weapon)} ${m.weapon}` : '—';
       if (!m.weapon) weaponLine.style.color = '#8a8da5';
       tdWeapon.appendChild(weaponLine);
       if (m.weaponComment) {
@@ -1003,37 +1518,26 @@
 
       const tdArmor = document.createElement('td');
       tdArmor.style.cssText = cellStyle + 'font-size:11px;';
-      [
-        ['Шлем', m.helmet],
-        ['Тело', m.armor],
-        ['Низ', m.legs],
-        ['Перчатки', m.gloves],
-        ['Ботинки', m.boots],
-        ['Щит', m.shield]
-      ].forEach(([label, val]) => {
-        const d = document.createElement('div');
-        d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
-        d.textContent = `${label}: ${val || '—'}`;
-        if (!val) d.style.color = '#8a8da5';
-        tdArmor.appendChild(d);
-      });
+      [['Шлем', m.helmet], ['Тело', m.armor], ['Низ', m.legs], ['Перчатки', m.gloves], ['Ботинки', m.boots], ['Щит', m.shield]]
+        .forEach(([label, val]) => {
+          const d = document.createElement('div');
+          d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
+          d.textContent = `${label}: ${val || '—'}`;
+          if (!val) d.style.color = '#8a8da5';
+          tdArmor.appendChild(d);
+        });
       tr.appendChild(tdArmor);
 
       const tdJewelry = document.createElement('td');
       tdJewelry.style.cssText = cellStyle + 'font-size:11px;';
-      [
-        ['Серьга 1', m.earring1],
-        ['Серьга 2', m.earring2],
-        ['Ожерелье', m.necklace],
-        ['Кольцо 1', m.ring1],
-        ['Кольцо 2', m.ring2]
-      ].forEach(([label, val]) => {
-        const d = document.createElement('div');
-        d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
-        d.textContent = `${label}: ${val || '—'}`;
-        if (!val) d.style.color = '#8a8da5';
-        tdJewelry.appendChild(d);
-      });
+      [['Серьга 1', m.earring1], ['Серьга 2', m.earring2], ['Ожерелье', m.necklace], ['Кольцо 1', m.ring1], ['Кольцо 2', m.ring2]]
+        .forEach(([label, val]) => {
+          const d = document.createElement('div');
+          d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
+          d.textContent = `${label}: ${val || '—'}`;
+          if (!val) d.style.color = '#8a8da5';
+          tdJewelry.appendChild(d);
+        });
       tr.appendChild(tdJewelry);
 
       const tdTattoo = document.createElement('td');
@@ -1066,16 +1570,10 @@
 
     try {
       const canvas = await html2canvas(pdfArea, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        width: pdfArea.scrollWidth,
-        height: pdfArea.scrollHeight,
-        windowWidth: pdfArea.scrollWidth,
-        windowHeight: pdfArea.scrollHeight,
-        scrollX: 0,
-        scrollY: 0
+        scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false,
+        width: pdfArea.scrollWidth, height: pdfArea.scrollHeight,
+        windowWidth: pdfArea.scrollWidth, windowHeight: pdfArea.scrollHeight,
+        scrollX: 0, scrollY: 0
       });
 
       if (!canvas || canvas.width === 0 || canvas.height === 0) {
@@ -1089,7 +1587,6 @@
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const margin = 8;
-
       const imgWidth = pageWidth - margin * 2;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
