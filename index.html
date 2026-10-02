@@ -575,67 +575,135 @@
     { name: 'Judicator', icon: '✨' }
   ];
 
-  // ==================== ОРУЖИЕ ====================
+  // ==================== ОРУЖИЕ (исправленные грейды) ====================
   const weaponsData = [
-    { name: 'Short Sword', grade: 'NG' }, { name: 'Long Sword', grade: 'NG' },
-    { name: 'Broadsword', grade: 'NG' }, { name: 'Club', grade: 'NG' },
-    { name: 'Mace', grade: 'NG' }, { name: "Apprentice's Wand", grade: 'NG' },
-    { name: "Apprentice's Rod", grade: 'NG' }, { name: 'Willow Staff', grade: 'NG' },
-    { name: 'Cedar Staff', grade: 'NG' }, { name: 'Dagger', grade: 'NG' },
-    { name: 'Bone Dagger', grade: 'NG' }, { name: 'Knife', grade: 'NG' },
-    { name: 'Short Bow', grade: 'NG' }, { name: 'Bow', grade: 'NG' },
-    { name: 'Short Spear', grade: 'NG' }, { name: 'Great Spear', grade: 'NG' },
-    { name: 'Gladius', grade: 'D' }, { name: 'Orcish Sword', grade: 'D' },
-    { name: 'Falchion', grade: 'D' }, { name: 'Bastard Sword', grade: 'D' },
-    { name: 'Claymore', grade: 'D' }, { name: 'Flamberge', grade: 'D' },
-    { name: 'Stormbringer', grade: 'D' }, { name: 'Shamshir', grade: 'D' },
-    { name: 'Katana', grade: 'D' }, { name: 'Caliburs', grade: 'D' },
-    { name: 'Sword of Delusion', grade: 'D' }, { name: 'Tsurugi', grade: 'D' },
-    { name: 'Great Sword', grade: 'D' }, { name: 'Sword of Damascus', grade: 'D' },
-    { name: 'Tallum Blade', grade: 'D' }, { name: 'Dragon Slayer', grade: 'D' },
-    { name: 'Sword of Magic', grade: 'D' }, { name: "Homunkulus's Sword", grade: 'D' },
-    { name: 'Phantom Sword', grade: 'D' }, { name: 'Tomahawk', grade: 'D' },
-    { name: 'Iron Hammer', grade: 'D' }, { name: 'Morning Star', grade: 'D' },
-    { name: 'Big Hammer', grade: 'D' }, { name: 'Goat Head Staff', grade: 'D' },
-    { name: 'Heavy War Axe', grade: 'D' }, { name: "Sprite's Staff", grade: 'D' },
-    { name: 'Winged Spear', grade: 'D' }, { name: 'Bec de Corbin', grade: 'D' },
-    { name: 'Poleaxe', grade: 'D' }, { name: 'Scythe', grade: 'D' },
-    { name: 'Lance', grade: 'D' }, { name: 'Halberd', grade: 'D' },
-    { name: "Apprentice's Spellbook", grade: 'D' }, { name: 'Voodoo Doll', grade: 'D' },
-    { name: 'Sword of Revolution', grade: 'C' }, { name: 'Stormbringer Sword', grade: 'C' },
-    { name: 'Elven Long Sword', grade: 'C' }, { name: 'Berserker Blade', grade: 'C' },
-    { name: 'Cursed Dagger', grade: 'C' }, { name: 'Dark Elven Dagger', grade: 'C' },
-    { name: 'Crystal Dagger', grade: 'C' }, { name: 'Light Crossbow', grade: 'C' },
-    { name: 'Crystallized Ice Bow', grade: 'C' }, { name: 'Akat Long Bow', grade: 'C' },
-    { name: 'Cursed Staff', grade: 'C' }, { name: 'Staff of Life', grade: 'C' },
-    { name: 'Wizard Staff', grade: 'C' }, { name: 'Battle Axe', grade: 'C' },
-    { name: 'Skull Graver', grade: 'C' }, { name: 'Bonebreaker', grade: 'C' },
-    { name: 'Orcish Glaive', grade: 'C' }, { name: 'Dwarven Hammer', grade: 'C' },
-    { name: 'Karik Horn', grade: 'C' }, { name: "Demon's Staff", grade: 'C' },
-    { name: "Ghoul's Staff", grade: 'C' }, { name: 'Sword of Valhalla', grade: 'B' },
-    { name: 'Guardian Sword', grade: 'B' }, { name: 'Art of Battle Axe', grade: 'B' },
-    { name: 'Heavy Sword', grade: 'B' }, { name: 'Grace Dagger', grade: 'B' },
-    { name: 'Dark Screamer', grade: 'B' }, { name: 'Kris', grade: 'B' },
-    { name: 'Eminence Bow', grade: 'B' }, { name: 'Bow of Peril', grade: 'B' },
-    { name: 'Dark Elven Long Bow', grade: 'B' }, { name: 'Staff of Evil Spirits', grade: 'B' },
-    { name: 'Homunkulus Sword', grade: 'B' }, { name: 'Sword of Limit', grade: 'B' },
-    { name: "Deadman's Glory", grade: 'B' }, { name: 'Chakram', grade: 'B' },
-    { name: 'Star Buster', grade: 'B' }, { name: 'Ice Storm Hammer', grade: 'B' },
-    { name: "Kaim Vanul's Bones", grade: 'B' }, { name: 'Spell Breaker', grade: 'B' },
-    { name: 'Sword of Miracles', grade: 'A' }, { name: 'Angel Slayer', grade: 'A' },
-    { name: "Dark Legion's Edge", grade: 'A' }, { name: 'Soul Separator', grade: 'A' },
-    { name: 'Bloody Orchid', grade: 'A' }, { name: 'Soul Bow', grade: 'A' },
-    { name: 'Carnage Bow', grade: 'A' }, { name: 'Imperial Staff', grade: 'A' },
-    { name: 'Arcana Mace', grade: 'A' }, { name: 'Dragon Hunter Axe', grade: 'A' },
-    { name: "Barakiel's Axe", grade: 'A' }, { name: 'Flaming Dragon Skull', grade: 'A' },
-    { name: 'Saint Spear', grade: 'A' }, { name: 'Demon Splinter', grade: 'A' },
-    { name: 'Basalt Battlehammer', grade: 'A' }, { name: 'Meteor Shower', grade: 'A' },
-    { name: 'Elysian', grade: 'A' }, { name: 'Dragon Grinder', grade: 'A' },
-    { name: 'Dynasty Sword', grade: 'S' }, { name: 'Dynasty Blade', grade: 'S' },
-    { name: 'Dynasty Phantom', grade: 'S' }, { name: "Heaven's Divider", grade: 'S' },
-    { name: "Sirra's Blade", grade: 'S' }, { name: 'Draconic Bow', grade: 'S' },
-    { name: 'Eternal Core Sword', grade: 'S' }, { name: 'Vesper Cutter', grade: 'S' },
-    { name: 'Icarus Hammer', grade: 'S' }, { name: 'Dual Dragon Slayer', grade: 'S' }
+    // NG (No Grade)
+    { name: 'Short Sword', grade: 'NG' },
+    { name: 'Long Sword', grade: 'NG' },
+    { name: 'Broadsword', grade: 'NG' },
+    { name: 'Club', grade: 'NG' },
+    { name: 'Mace', grade: 'NG' },
+    { name: "Apprentice's Wand", grade: 'NG' },
+    { name: "Apprentice's Rod", grade: 'NG' },
+    { name: 'Willow Staff', grade: 'NG' },
+    { name: 'Cedar Staff', grade: 'NG' },
+    { name: 'Dagger', grade: 'NG' },
+    { name: 'Bone Dagger', grade: 'NG' },
+    { name: 'Knife', grade: 'NG' },
+    { name: 'Short Bow', grade: 'NG' },
+    { name: 'Bow', grade: 'NG' },
+    { name: 'Short Spear', grade: 'NG' },
+    { name: 'Great Spear', grade: 'NG' },
+    { name: "Apprentice's Spellbook", grade: 'NG' },
+    { name: 'Voodoo Doll', grade: 'NG' },
+
+    // D Grade
+    { name: 'Gladius', grade: 'D' },
+    { name: 'Orcish Sword', grade: 'D' },
+    { name: 'Falchion', grade: 'D' },
+    { name: 'Bastard Sword', grade: 'D' },
+    { name: 'Claymore', grade: 'D' },
+    { name: 'Stormbringer', grade: 'D' },
+    { name: 'Caliburs', grade: 'D' },
+    { name: 'Great Sword', grade: 'D' },
+    { name: 'Sword of Damascus', grade: 'D' },
+    { name: 'Dragon Slayer', grade: 'D' },
+    { name: 'Sword of Magic', grade: 'D' },
+    { name: 'Phantom Sword', grade: 'D' },
+    { name: 'Tomahawk', grade: 'D' },
+    { name: 'Iron Hammer', grade: 'D' },
+    { name: 'Morning Star', grade: 'D' },
+    { name: 'Big Hammer', grade: 'D' },
+    { name: 'Goat Head Staff', grade: 'D' },
+    { name: 'Heavy War Axe', grade: 'D' },
+    { name: "Sprite's Staff", grade: 'D' },
+    { name: 'Lance', grade: 'D' },
+    { name: 'Halberd', grade: 'D' },
+    { name: 'Staff of Life', grade: 'D' },
+
+    // C Grade
+    { name: 'Sword of Revolution', grade: 'C' },
+    { name: 'Stormbringer Sword', grade: 'C' },
+    { name: 'Elven Long Sword', grade: 'C' },
+    { name: 'Berserker Blade', grade: 'C' },
+    { name: 'Flamberge', grade: 'C' },
+    { name: 'Katana', grade: 'C' },
+    { name: 'Shamshir', grade: 'C' },
+    { name: 'Tsurugi', grade: 'C' },
+    { name: 'Sword of Delusion', grade: 'C' },
+    { name: 'Sword of Limit', grade: 'C' },
+    { name: 'Cursed Dagger', grade: 'C' },
+    { name: 'Dark Elven Dagger', grade: 'C' },
+    { name: 'Crystal Dagger', grade: 'C' },
+    { name: 'Dark Screamer', grade: 'C' },
+    { name: 'Grace Dagger', grade: 'C' },
+    { name: 'Eminence Bow', grade: 'C' },
+    { name: 'Light Crossbow', grade: 'C' },
+    { name: 'Crystallized Ice Bow', grade: 'C' },
+    { name: 'Akat Long Bow', grade: 'C' },
+    { name: 'Cursed Staff', grade: 'C' },
+    { name: 'Battle Axe', grade: 'C' },
+    { name: 'Skull Graver', grade: 'C' },
+    { name: 'Bonebreaker', grade: 'C' },
+    { name: 'Orcish Glaive', grade: 'C' },
+    { name: 'Dwarven Hammer', grade: 'C' },
+    { name: 'Karik Horn', grade: 'C' },
+    { name: "Demon's Staff", grade: 'C' },
+    { name: "Ghoul's Staff", grade: 'C' },
+    { name: "Homunkulus's Sword", grade: 'C' },
+    { name: 'Winged Spear', grade: 'C' },
+    { name: 'Poleaxe', grade: 'C' },
+    { name: 'Bec de Corbin', grade: 'C' },
+    { name: 'Scythe', grade: 'C' },
+    { name: 'Chakram', grade: 'C' },
+
+    // B Grade
+    { name: 'Sword of Valhalla', grade: 'B' },
+    { name: 'Guardian Sword', grade: 'B' },
+    { name: 'Art of Battle Axe', grade: 'B' },
+    { name: 'Heavy Sword', grade: 'B' },
+    { name: 'Kris', grade: 'B' },
+    { name: 'Bow of Peril', grade: 'B' },
+    { name: 'Dark Elven Long Bow', grade: 'B' },
+    { name: 'Staff of Evil Spirits', grade: 'B' },
+    { name: 'Homunkulus Sword', grade: 'B' },
+    { name: "Deadman's Glory", grade: 'B' },
+    { name: 'Star Buster', grade: 'B' },
+    { name: 'Ice Storm Hammer', grade: 'B' },
+    { name: "Kaim Vanul's Bones", grade: 'B' },
+    { name: 'Spell Breaker', grade: 'B' },
+
+    // A Grade
+    { name: 'Sword of Miracles', grade: 'A' },
+    { name: 'Angel Slayer', grade: 'A' },
+    { name: "Dark Legion's Edge", grade: 'A' },
+    { name: 'Soul Separator', grade: 'A' },
+    { name: 'Bloody Orchid', grade: 'A' },
+    { name: 'Soul Bow', grade: 'A' },
+    { name: 'Carnage Bow', grade: 'A' },
+    { name: 'Imperial Staff', grade: 'A' },
+    { name: 'Arcana Mace', grade: 'A' },
+    { name: 'Dragon Hunter Axe', grade: 'A' },
+    { name: "Barakiel's Axe", grade: 'A' },
+    { name: 'Flaming Dragon Skull', grade: 'A' },
+    { name: 'Saint Spear', grade: 'A' },
+    { name: 'Demon Splinter', grade: 'A' },
+    { name: 'Basalt Battlehammer', grade: 'A' },
+    { name: 'Meteor Shower', grade: 'A' },
+    { name: 'Elysian', grade: 'A' },
+    { name: 'Dragon Grinder', grade: 'A' },
+
+    // S Grade
+    { name: 'Dynasty Sword', grade: 'S' },
+    { name: 'Dynasty Blade', grade: 'S' },
+    { name: 'Dynasty Phantom', grade: 'S' },
+    { name: "Heaven's Divider", grade: 'S' },
+    { name: "Sirra's Blade", grade: 'S' },
+    { name: 'Draconic Bow', grade: 'S' },
+    { name: 'Eternal Core Sword', grade: 'S' },
+    { name: 'Vesper Cutter', grade: 'S' },
+    { name: 'Icarus Hammer', grade: 'S' },
+    { name: 'Dual Dragon Slayer', grade: 'S' }
   ];
 
   const weaponsByGrade = {};
@@ -645,13 +713,11 @@
     weaponsByGrade[key].push(w.name);
   });
 
-  // Возвращает грейд оружия по названию (NG, D, C, B, A, S)
   function getWeaponGrade(weaponName) {
     const w = weaponsData.find(item => item.name === weaponName);
     return w ? w.grade : '';
   }
 
-  // Возвращает эмодзи-символ грейда для отображения в <select>
   function weaponGradeBadge(weaponName) {
     const g = getWeaponGrade(weaponName);
     const badges = {
@@ -665,15 +731,14 @@
     return badges[g] || '❔';
   }
 
-  // Возвращает цвет грейда как в игре Lineage 2
   function weaponGradeColor(grade) {
     return {
-      'NG': '#9e9e9e',  // серый
-      'D':  '#c8c8c8',  // светло-серый
-      'C':  '#4caf50',  // зелёный
-      'B':  '#3a7ce0',  // синий
-      'A':  '#9c27b0',  // пурпурный
-      'S':  '#e53935'   // красный
+      'NG': '#9e9e9e',
+      'D':  '#c8c8c8',
+      'C':  '#4caf50',
+      'B':  '#3a7ce0',
+      'A':  '#9c27b0',
+      'S':  '#e53935'
     }[grade] || '#8a8da5';
   }
 
@@ -1505,7 +1570,7 @@
       tdLevel.textContent = m.level || '—';
       tr.appendChild(tdLevel);
 
-      // Оружие — с цветной буквой грейда, как в игре
+      // Оружие с цветной буквой грейда
       const tdWeapon = document.createElement('td');
       tdWeapon.style.cssText = cellStyle;
       const weaponLine = document.createElement('div');
