@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>КП DARAMs</title>
+<title>Группа Lineage 2 — Общая таблица</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
@@ -27,9 +27,7 @@
     --font-body: 'Proxima Nova', 'Segoe UI', sans-serif;
     --font-display: 'Cinzel', 'Times New Roman', serif;
   }
-
   * { box-sizing: border-box; }
-
   body {
     font-family: var(--font-body);
     background: var(--bg-page);
@@ -40,7 +38,6 @@
     font-size: 12px;
     -webkit-font-smoothing: antialiased;
   }
-
   h1 {
     font-family: var(--font-display);
     font-weight: 700;
@@ -50,378 +47,113 @@
     text-transform: uppercase;
     margin: 0 0 2px 0;
   }
-
-  .subtitle {
-    color: var(--text-secondary);
-    font-size: 11px;
-    letter-spacing: 0.3px;
-    margin: 0 0 14px 0;
-  }
-
+  .subtitle { color: var(--text-secondary); font-size: 11px; margin: 0 0 14px 0; }
   .toolbar {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-bottom: 12px;
-    padding: 8px 10px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.06);
+    display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 12px; padding: 8px 10px;
+    background: var(--bg-panel); border: 1px solid var(--border-subtle);
+    border-radius: 8px; box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
-
   button {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--border-strong);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    background: var(--bg-panel-alt);
-    color: var(--text-primary);
+    font-family: var(--font-body); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.3px; text-transform: uppercase;
+    padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-strong);
+    cursor: pointer; transition: all 0.15s ease;
+    background: var(--bg-panel-alt); color: var(--text-primary);
   }
-
-  button:hover {
-    background: #eef0f8;
-    border-color: var(--accent-gold);
-    color: var(--accent-gold-dark);
-  }
-
+  button:hover { background: #eef0f8; border-color: var(--accent-gold); color: var(--accent-gold-dark); }
   button.primary {
     background: linear-gradient(180deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%);
-    color: #fff;
-    border-color: var(--accent-gold);
-    font-weight: 700;
+    color: #fff; border-color: var(--accent-gold); font-weight: 700;
   }
-
-  button.primary:hover {
-    background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
-    color: #fff;
+  button.primary:hover { background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%); color: #fff; }
+  button.danger { border-color: rgba(217,45,32,0.4); color: var(--danger-red); }
+  button.danger:hover { background: rgba(217,45,32,0.08); border-color: var(--danger-red); }
+  .sync-status {
+    font-size: 10px; margin-left: auto; letter-spacing: 0.3px;
+    display: flex; align-items: center; gap: 5px;
   }
-
-  .autosave-indicator {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-left: auto;
-    letter-spacing: 0.3px;
-  }
-
-  .autosave-indicator.saved {
-    color: var(--success-green);
-  }
-
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #bbb; }
+  .sync-dot.online { background: var(--success-green); box-shadow: 0 0 6px rgba(31,157,85,0.6); }
+  .sync-dot.offline { background: var(--danger-red); }
+  .sync-dot.syncing { background: #f0a500; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
   .table-wrap {
-    overflow-x: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border-subtle);
-    background: var(--bg-panel);
-    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.06);
+    overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-subtle);
+    background: var(--bg-panel); box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
-
   table {
-    border-collapse: collapse;
-    width: 100%;
-    min-width: 1050px;
-    font-size: 11px;
-    table-layout: fixed;
+    border-collapse: collapse; width: 100%; min-width: 1050px;
+    font-size: 11px; table-layout: fixed;
   }
-
-  th, td {
-    padding: 4px 5px;
-    text-align: left;
-    vertical-align: top;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
+  th, td { padding: 4px 5px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-subtle); }
   th {
     background: linear-gradient(180deg, #fafbfe 0%, #eef0f8 100%);
-    color: var(--accent-gold-dark);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    border-bottom: 2px solid var(--accent-gold);
+    color: var(--accent-gold-dark); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.4px; text-transform: uppercase;
+    position: sticky; top: 0; z-index: 2; border-bottom: 2px solid var(--accent-gold);
   }
-
-  th .set-label {
-    color: var(--text-muted);
-    font-size: 9px;
-    text-transform: none;
-    letter-spacing: 0.2px;
-    font-weight: 400;
-    display: block;
-    margin-top: 1px;
-  }
-
-  tbody tr {
-    transition: background 0.12s ease;
-  }
-
-  tbody tr:hover {
-    background: #fafbfe;
-  }
-
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  .col-name    { width: 110px; }
-  .col-class   { width: 150px; }
-  .col-level   { width: 52px; }
-  .col-weapon  { width: 130px; }
-  .col-armor   { width: 130px; }
-  .col-jewelry { width: 130px; }
-  .col-tattoo  { width: 170px; }
-  .col-comment { width: 160px; }
-  .col-remove  { width: 34px; }
-
+  th .set-label { color: var(--text-muted); font-size: 9px; text-transform: none; font-weight: 400; display: block; margin-top: 1px; }
+  tbody tr:hover { background: #fafbfe; }
+  tbody tr:last-child td { border-bottom: none; }
+  .col-name { width: 110px; } .col-class { width: 150px; } .col-level { width: 52px; }
+  .col-weapon { width: 130px; } .col-armor { width: 130px; } .col-jewelry { width: 130px; }
+  .col-tattoo { width: 170px; } .col-comment { width: 160px; } .col-remove { width: 34px; }
   input, select {
-    font-family: var(--font-body);
-    font-size: 11px;
-    color: var(--text-primary);
-    background: var(--bg-input);
-    border: 1px solid var(--border-subtle);
-    border-radius: 4px;
-    padding: 4px 6px;
-    width: 100%;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    outline: none;
+    font-family: var(--font-body); font-size: 11px; color: var(--text-primary);
+    background: var(--bg-input); border: 1px solid var(--border-subtle);
+    border-radius: 4px; padding: 4px 6px; width: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s; outline: none;
   }
-
-  input:focus, select:focus {
-    border-color: var(--accent-gold);
-    box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
-  }
-
-  input[type="number"] {
-    width: 100%;
-  }
-
+  input:focus, select:focus { border-color: var(--accent-gold); box-shadow: 0 0 0 2px rgba(184,134,11,0.15); }
+  input[type="number"] { width: 100%; }
   select {
-    appearance: none;
-    -webkit-appearance: none;
+    appearance: none; -webkit-appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b8860b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 6px center;
-    background-size: 10px;
+    background-repeat: no-repeat; background-position: right 6px center; background-size: 10px;
     padding-right: 20px;
   }
-
-  select option {
-    background: #fff;
-    color: var(--text-primary);
-  }
-
-  .prof-cell {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .prof-icon {
-    font-size: 16px;
-    line-height: 1;
-    flex-shrink: 0;
-    width: 20px;
-    text-align: center;
-  }
-
-  .prof-select {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .set-cell {
-    background: #fcfcff;
-  }
-
-  .set-label {
-    display: block;
-    font-size: 8px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin: 3px 0 1px 0;
-  }
-
-  .set-label:first-child {
-    margin-top: 0;
-  }
-
+  select option { background: #fff; color: var(--text-primary); }
+  .prof-cell { display: flex; align-items: center; gap: 6px; }
+  .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
+  .prof-select { flex: 1; min-width: 0; }
+  .set-cell { background: #fcfcff; }
+  .set-label { display: block; font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 3px 0 1px 0; }
+  .set-label:first-child { margin-top: 0; }
   .remove-btn {
-    background: transparent;
-    color: var(--danger-red);
-    border: 1px solid rgba(217, 45, 32, 0.35);
-    border-radius: 4px;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    font-size: 13px;
-    line-height: 1;
-    text-transform: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: transparent; color: var(--danger-red);
+    border: 1px solid rgba(217,45,32,0.35); border-radius: 4px;
+    width: 24px; height: 24px; padding: 0; font-size: 13px; line-height: 1;
+    text-transform: none; display: flex; align-items: center; justify-content: center;
   }
-
-  .remove-btn:hover {
-    background: rgba(217, 45, 32, 0.1);
-    border-color: var(--danger-red);
-    color: var(--danger-red);
-  }
-
-  .set-panel {
-    margin-top: 14px;
-    padding: 0;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.06);
-    display: none;
-    overflow: hidden;
-  }
-
-  .set-panel.active {
-    display: block;
-    animation: fadeIn 0.2s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .set-panel-header {
-    padding: 10px 14px 9px;
-    background: linear-gradient(90deg, rgba(184, 134, 11, 0.08) 0%, transparent 100%);
-    border-bottom: 1px solid var(--border-subtle);
-    border-left: 3px solid var(--accent-gold);
-  }
-
-  .set-panel h2 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: var(--accent-gold-dark);
-  }
-
-  .set-panel-body {
-    padding: 10px 14px 12px;
-  }
-
-  .set-panel h3 {
-    margin: 12px 0 6px 0;
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    color: var(--accent-blue);
-    border-bottom: 1px solid var(--border-subtle);
-    padding-bottom: 4px;
-  }
-
-  .set-panel h3:first-child {
-    margin-top: 0;
-  }
-
-  .set-panel h3 .complete {
-    color: var(--success-green);
-  }
-
-  .set-panel h3 .missing {
-    color: #b34233;
-  }
-
-  .set-panel p {
-    margin: 4px 0 0 0;
-    color: var(--text-secondary);
-    font-size: 11px;
-    line-height: 1.5;
-  }
-
-  .set-panel p.missing {
-    color: var(--text-muted);
-  }
-
-  .bonus-list {
-    margin: 4px 0 0 0;
-    padding-left: 0;
-    list-style: none;
-  }
-
-  .bonus-list li {
-    position: relative;
-    padding: 3px 0 3px 16px;
-    font-size: 11px;
-    color: var(--text-primary);
-    line-height: 1.5;
-  }
-
-  .bonus-list li::before {
-    content: "";
-    position: absolute;
-    left: 2px;
-    top: 8px;
-    width: 5px;
-    height: 5px;
-    background: var(--accent-gold);
-    transform: rotate(45deg);
-  }
-
-  .empty {
-    color: var(--text-muted);
-    font-style: italic;
-    text-align: center;
-    padding: 20px !important;
-  }
-
+  .remove-btn:hover { background: rgba(217,45,32,0.1); border-color: var(--danger-red); }
+  .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: #eef0f8; }
-  ::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
-    border-radius: 4px;
-  }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
 </style>
 </head>
 <body>
 
-<h1>КП DARAMs</h1>
-<p class="subtitle">Состав</p>
+<h1>Группа Lineage 2</h1>
+<p class="subtitle">Общая таблица с синхронизацией в реальном времени</p>
 
 <div class="toolbar">
   <button id="addMember" class="primary">Добавить персонажа</button>
-  <button id="save">Сохранить</button>
-  <button id="load">Загрузить</button>
-  <button id="export">Экспорт JSON</button>
-  <button id="clear">Очистить</button>
-  <span id="autosaveIndicator" class="autosave-indicator">Автосохранение включено</span>
+  <button id="clear" class="danger">Очистить всё</button>
+  <div class="sync-status">
+    <span id="syncDot" class="sync-dot"></span>
+    <span id="syncText">Подключение…</span>
+  </div>
 </div>
 
 <div class="table-wrap">
   <table id="partyTable">
     <colgroup>
-      <col class="col-name">
-      <col class="col-class">
-      <col class="col-level">
-      <col class="col-weapon">
-      <col class="col-armor">
-      <col class="col-jewelry">
-      <col class="col-tattoo">
-      <col class="col-comment">
-      <col class="col-remove">
+      <col class="col-name"><col class="col-class"><col class="col-level">
+      <col class="col-weapon"><col class="col-armor"><col class="col-jewelry">
+      <col class="col-tattoo"><col class="col-comment"><col class="col-remove">
     </colgroup>
     <thead>
       <tr>
@@ -440,380 +172,172 @@
   </table>
 </div>
 
-<div id="setPanel" class="set-panel">
-  <div class="set-panel-header">
-    <h2 id="setTitle">Сеты не определены</h2>
-  </div>
-  <div class="set-panel-body" id="setContent"></div>
-</div>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
 <script>
-  const STORAGE_KEY = 'l2party';
+  // ============================================================
+  // 🔑 ВАШ URL FIREBASE REALTIME DATABASE
+  // ============================================================
+  const FIREBASE_DB_URL = 'https://l2-party-default-rtdb.europe-west1.firebasedatabase.app/';
+  // ============================================================
 
-  // ==================== ПРОФЕССИИ LINEAGE 2 (HIGH FIVE) ====================
-  // Каждая профессия: { name, icon }
+  firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
+  const db = firebase.database();
+  const membersRef = db.ref('party_members');
+
+  // ==================== ПРОФЕССИИ ====================
   const professions = [
     { name: '', icon: '' },
-    // Люди — воины
-    { name: 'Human Fighter', icon: '⚔️' },
-    { name: 'Warrior', icon: '⚔️' },
-    { name: 'Gladiator', icon: '⚔️' },
-    { name: 'Warlord', icon: '⚔️' },
-    { name: 'Human Knight', icon: '🛡️' },
-    { name: 'Paladin', icon: '🛡️' },
-    { name: 'Dark Avenger', icon: '🛡️' },
-    { name: 'Rogue', icon: '🗡️' },
-    { name: 'Treasure Hunter', icon: '🗡️' },
-    { name: 'Hawkeye', icon: '🏹' },
-    // Люди — маги
-    { name: 'Human Mystic', icon: '🔮' },
-    { name: 'Human Wizard', icon: '🔮' },
-    { name: 'Sorcerer', icon: '🔮' },
-    { name: 'Necromancer', icon: '🔮' },
-    { name: 'Warlock', icon: '🐉' },
-    { name: 'Cleric', icon: '✨' },
-    { name: 'Bishop', icon: '✨' },
-    { name: 'Prophet', icon: '✨' },
-    // Эльфы — воины
-    { name: 'Elven Fighter', icon: '⚔️' },
-    { name: 'Elven Knight', icon: '🛡️' },
-    { name: 'Temple Knight', icon: '🛡️' },
-    { name: 'Swordsinger', icon: '🎵' },
-    { name: 'Elven Scout', icon: '🏹' },
-    { name: 'Plainswalker', icon: '🗡️' },
-    { name: 'Silver Ranger', icon: '🏹' },
-    // Эльфы — маги
-    { name: 'Elven Mystic', icon: '🔮' },
-    { name: 'Elven Wizard', icon: '🔮' },
-    { name: 'Spellsinger', icon: '🔮' },
-    { name: 'Elemental Summoner', icon: '🐉' },
-    { name: 'Oracle', icon: '✨' },
-    { name: 'Elder', icon: '✨' },
-    // Тёмные эльфы — воины
-    { name: 'Dark Fighter', icon: '⚔️' },
-    { name: 'Palus Knight', icon: '🛡️' },
-    { name: 'Shillien Knight', icon: '🛡️' },
-    { name: 'Bladedancer', icon: '🎵' },
-    { name: 'Assassin', icon: '🗡️' },
-    { name: 'Abyss Walker', icon: '🗡️' },
-    { name: 'Phantom Ranger', icon: '🏹' },
-    // Тёмные эльфы — маги
-    { name: 'Dark Mystic', icon: '🔮' },
-    { name: 'Dark Wizard', icon: '🔮' },
-    { name: 'Spellhowler', icon: '🔮' },
-    { name: 'Phantom Summoner', icon: '🐉' },
-    { name: 'Shillien Oracle', icon: '✨' },
-    { name: 'Shillien Elder', icon: '✨' },
-    // Орки — воины
-    { name: 'Orc Fighter', icon: '⚔️' },
-    { name: 'Orc Raider', icon: '⚔️' },
-    { name: 'Destroyer', icon: '⚔️' },
-    { name: 'Orc Monk', icon: '⚔️' },
-    { name: 'Tyrant', icon: '⚔️' },
-    // Орки — маги
-    { name: 'Orc Mage', icon: '🔮' },
-    { name: 'Orc Shaman', icon: '🔮' },
-    { name: 'Overlord', icon: '🔮' },
-    { name: 'Warcryer', icon: '🎵' },
-    // Гномы
-    { name: 'Dwarven Fighter', icon: '⛏️' },
-    { name: 'Scavenger', icon: '💰' },
-    { name: 'Bounty Hunter', icon: '💰' },
-    { name: 'Artisan', icon: '🔨' },
-    { name: 'Warsmith', icon: '🔨' },
-    // Третьи профессии (76+)
-    { name: 'Duelist', icon: '⚔️' },
-    { name: 'Dreadnought', icon: '⚔️' },
-    { name: 'Phoenix Knight', icon: '🛡️' },
-    { name: 'Hell Knight', icon: '🛡️' },
-    { name: 'Sagittarius', icon: '🏹' },
-    { name: 'Adventurer', icon: '🗡️' },
-    { name: 'Archmage', icon: '🔮' },
-    { name: 'Soultaker', icon: '🔮' },
-    { name: 'Arcana Lord', icon: '🐉' },
-    { name: 'Cardinal', icon: '✨' },
-    { name: 'Hierophant', icon: '✨' },
-    { name: "Eva's Templar", icon: '🛡️' },
-    { name: 'Sword Muse', icon: '🎵' },
-    { name: 'Wind Rider', icon: '🗡️' },
-    { name: 'Moonlight Sentinel', icon: '🏹' },
-    { name: 'Mystic Muse', icon: '🔮' },
-    { name: 'Elemental Master', icon: '🐉' },
-    { name: "Eva's Saint", icon: '✨' },
-    { name: 'Shillien Templar', icon: '🛡️' },
-    { name: 'Spectral Dancer', icon: '🎵' },
-    { name: 'Ghost Hunter', icon: '🗡️' },
-    { name: 'Ghost Sentinel', icon: '🏹' },
-    { name: 'Storm Screamer', icon: '🔮' },
-    { name: 'Spectral Master', icon: '🐉' },
-    { name: 'Shillien Saint', icon: '✨' },
-    { name: 'Titan', icon: '⚔️' },
-    { name: 'Grand Khavatari', icon: '⚔️' },
-    { name: 'Dominator', icon: '🔮' },
-    { name: 'Doomcryer', icon: '🎵' },
-    { name: 'Fortune Seeker', icon: '💰' },
-    { name: 'Maestro', icon: '🔨' },
-    // Камаэль
-    { name: 'Kamael M. Soldier', icon: '⚔️' },
-    { name: 'Kamael F. Soldier', icon: '⚔️' },
-    { name: 'Trooper', icon: '⚔️' },
-    { name: 'Warder', icon: '🛡️' },
-    { name: 'Berserker', icon: '⚔️' },
-    { name: 'Soul Breaker (M)', icon: '🗡️' },
-    { name: 'Soul Breaker (F)', icon: '🗡️' },
-    { name: 'Arbalester', icon: '🏹' },
-    { name: 'Doombringer', icon: '⚔️' },
-    { name: 'Soul Hound (M)', icon: '🐉' },
-    { name: 'Soul Hound (F)', icon: '🐉' },
-    { name: 'Trickster', icon: '🗡️' },
-    { name: 'Inspector', icon: '🔨' },
+    { name: 'Human Fighter', icon: '⚔️' }, { name: 'Warrior', icon: '⚔️' },
+    { name: 'Gladiator', icon: '⚔️' }, { name: 'Warlord', icon: '⚔️' },
+    { name: 'Human Knight', icon: '🛡️' }, { name: 'Paladin', icon: '🛡️' },
+    { name: 'Dark Avenger', icon: '🛡️' }, { name: 'Rogue', icon: '🗡️' },
+    { name: 'Treasure Hunter', icon: '🗡️' }, { name: 'Hawkeye', icon: '🏹' },
+    { name: 'Human Mystic', icon: '🔮' }, { name: 'Human Wizard', icon: '🔮' },
+    { name: 'Sorcerer', icon: '🔮' }, { name: 'Necromancer', icon: '🔮' },
+    { name: 'Warlock', icon: '🐉' }, { name: 'Cleric', icon: '✨' },
+    { name: 'Bishop', icon: '✨' }, { name: 'Prophet', icon: '✨' },
+    { name: 'Elven Fighter', icon: '⚔️' }, { name: 'Elven Knight', icon: '🛡️' },
+    { name: 'Temple Knight', icon: '🛡️' }, { name: 'Swordsinger', icon: '🎵' },
+    { name: 'Elven Scout', icon: '🏹' }, { name: 'Plainswalker', icon: '🗡️' },
+    { name: 'Silver Ranger', icon: '🏹' }, { name: 'Elven Mystic', icon: '🔮' },
+    { name: 'Elven Wizard', icon: '🔮' }, { name: 'Spellsinger', icon: '🔮' },
+    { name: 'Elemental Summoner', icon: '🐉' }, { name: 'Oracle', icon: '✨' },
+    { name: 'Elder', icon: '✨' }, { name: 'Dark Fighter', icon: '⚔️' },
+    { name: 'Palus Knight', icon: '🛡️' }, { name: 'Shillien Knight', icon: '🛡️' },
+    { name: 'Bladedancer', icon: '🎵' }, { name: 'Assassin', icon: '🗡️' },
+    { name: 'Abyss Walker', icon: '🗡️' }, { name: 'Phantom Ranger', icon: '🏹' },
+    { name: 'Dark Mystic', icon: '🔮' }, { name: 'Dark Wizard', icon: '🔮' },
+    { name: 'Spellhowler', icon: '🔮' }, { name: 'Phantom Summoner', icon: '🐉' },
+    { name: 'Shillien Oracle', icon: '✨' }, { name: 'Shillien Elder', icon: '✨' },
+    { name: 'Orc Fighter', icon: '⚔️' }, { name: 'Orc Raider', icon: '⚔️' },
+    { name: 'Destroyer', icon: '⚔️' }, { name: 'Orc Monk', icon: '⚔️' },
+    { name: 'Tyrant', icon: '⚔️' }, { name: 'Orc Mage', icon: '🔮' },
+    { name: 'Orc Shaman', icon: '🔮' }, { name: 'Overlord', icon: '🔮' },
+    { name: 'Warcryer', icon: '🎵' }, { name: 'Dwarven Fighter', icon: '⛏️' },
+    { name: 'Scavenger', icon: '💰' }, { name: 'Bounty Hunter', icon: '💰' },
+    { name: 'Artisan', icon: '🔨' }, { name: 'Warsmith', icon: '🔨' },
+    { name: 'Duelist', icon: '⚔️' }, { name: 'Dreadnought', icon: '⚔️' },
+    { name: 'Phoenix Knight', icon: '🛡️' }, { name: 'Hell Knight', icon: '🛡️' },
+    { name: 'Sagittarius', icon: '🏹' }, { name: 'Adventurer', icon: '🗡️' },
+    { name: 'Archmage', icon: '🔮' }, { name: 'Soultaker', icon: '🔮' },
+    { name: 'Arcana Lord', icon: '🐉' }, { name: 'Cardinal', icon: '✨' },
+    { name: 'Hierophant', icon: '✨' }, { name: "Eva's Templar", icon: '🛡️' },
+    { name: 'Sword Muse', icon: '🎵' }, { name: 'Wind Rider', icon: '🗡️' },
+    { name: 'Moonlight Sentinel', icon: '🏹' }, { name: 'Mystic Muse', icon: '🔮' },
+    { name: 'Elemental Master', icon: '🐉' }, { name: "Eva's Saint", icon: '✨' },
+    { name: 'Shillien Templar', icon: '🛡️' }, { name: 'Spectral Dancer', icon: '🎵' },
+    { name: 'Ghost Hunter', icon: '🗡️' }, { name: 'Ghost Sentinel', icon: '🏹' },
+    { name: 'Storm Screamer', icon: '🔮' }, { name: 'Spectral Master', icon: '🐉' },
+    { name: 'Shillien Saint', icon: '✨' }, { name: 'Titan', icon: '⚔️' },
+    { name: 'Grand Khavatari', icon: '⚔️' }, { name: 'Dominator', icon: '🔮' },
+    { name: 'Doomcryer', icon: '🎵' }, { name: 'Fortune Seeker', icon: '💰' },
+    { name: 'Maestro', icon: '🔨' }, { name: 'Kamael M. Soldier', icon: '⚔️' },
+    { name: 'Kamael F. Soldier', icon: '⚔️' }, { name: 'Trooper', icon: '⚔️' },
+    { name: 'Warder', icon: '🛡️' }, { name: 'Berserker', icon: '⚔️' },
+    { name: 'Soul Breaker (M)', icon: '🗡️' }, { name: 'Soul Breaker (F)', icon: '🗡️' },
+    { name: 'Arbalester', icon: '🏹' }, { name: 'Doombringer', icon: '⚔️' },
+    { name: 'Soul Hound (M)', icon: '🐉' }, { name: 'Soul Hound (F)', icon: '🐉' },
+    { name: 'Trickster', icon: '🗡️' }, { name: 'Inspector', icon: '🔨' },
     { name: 'Judicator', icon: '✨' }
   ];
 
-  // ==================== БАЗА СЕТОВ БРОНИ ====================
-  const armorSets = [
-    {
-      id: 'dynasty_heavy', name: 'Dynasty Heavy Set', type: 'Heavy',
-      pieces: {
-        helmet: 'Dynasty Helmet', armor: 'Dynasty Breastplate', gloves: 'Dynasty Gauntlets',
-        boots: 'Dynasty Boots', shield: 'Dynasty Shield'
-      },
-      bonuses: [
-        'STR +2, CON -1',
-        'P. Atk. +5.4%, Max HP +492',
-        'Resistance to Dark +8',
-        'При заточке всех частей на +6: P. Def. и Weight Gauge увеличены'
-      ]
-    },
-    {
-      id: 'dynasty_light', name: 'Dynasty Light Set', type: 'Light',
-      pieces: {
-        helmet: 'Dynasty Leather Helmet', armor: 'Dynasty Leather Armor',
-        gloves: 'Dynasty Leather Gloves', boots: 'Dynasty Leather Boots', shield: ''
-      },
-      bonuses: [
-        'DEX +1, STR +1, CON -1',
-        'P. Atk. +4.6%, Max HP +418',
-        'Evasion +3',
-        'При заточке всех частей на +6: P. Def. и Weight Gauge увеличены'
-      ]
-    },
-    {
-      id: 'vesper_heavy', name: 'Vesper Heavy Set', type: 'Heavy',
-      pieces: {
-        helmet: 'Vesper Helmet', armor: 'Vesper Breastplate', gloves: 'Vesper Gauntlets',
-        boots: 'Vesper Boots', shield: 'Vesper Shield'
-      },
-      bonuses: [
-        'STR +2, DEX -2',
-        'P. Atk./P. Def. +5.57%, Max HP +531',
-        'Resistance to Sleep/Hold +70%',
-        'При заточке всех частей на +6: P. Def. и MP Recovery увеличены'
-      ]
-    },
-    {
-      id: 'vesper_light', name: 'Vesper Light Set', type: 'Light',
-      pieces: {
-        helmet: 'Vesper Leather Helmet', armor: 'Vesper Leather Armor',
-        gloves: 'Vesper Leather Gloves', boots: 'Vesper Leather Boots', shield: ''
-      },
-      bonuses: [
-        'STR +1, DEX +1, CON -2',
-        'Max MP +347.4, MP Recovery +5%',
-        'Evasion +3',
-        'При заточке всех частей на +6: P. Def. и MP Recovery увеличены'
-      ]
-    },
-    {
-      id: 'elegia_heavy', name: 'Elegia Heavy Set', type: 'Heavy',
-      pieces: {
-        helmet: 'Elegia Helmet', armor: 'Elegia Breastplate', gloves: 'Elegia Gauntlets',
-        boots: 'Elegia Boots', shield: 'Elegia Shield'
-      },
-      bonuses: [
-        'STR +3, CON -2',
-        'P. Atk. +6.59%, Critical Rate +127',
-        'Resistance to Bleed/Hold/Sleep +50%',
-        'Resistance to Magic Damage +2%',
-        'Max HP +550',
-        'Восстанавливает часть HP от нанесённого урона',
-        'При заточке всех частей на +6: P. Def. и MP Recovery увеличены'
-      ]
-    },
-    {
-      id: 'elegia_light', name: 'Elegia Light Set', type: 'Light',
-      pieces: {
-        helmet: 'Elegia Leather Helmet', armor: 'Elegia Leather Armor',
-        gloves: 'Elegia Leather Gloves', boots: 'Elegia Leather Boots', shield: ''
-      },
-      bonuses: [
-        'STR +1, DEX +2, CON -2',
-        'P. Atk. +6.59%, Attack Speed +6%',
-        'Critical Rate +171',
-        'Resistance to Paralysis +50%',
-        'Speed +3%',
-        'При заточке всех частей на +6: M. Def. и Evasion увеличены'
-      ]
-    }
-  ];
-
-  // ==================== БАЗА СЕТОВ БИЖУТЕРИИ ====================
-  const jewelrySets = [
-    {
-      id: 'dynasty_jewelry', name: 'Dynasty Jewelry Set',
-      pieces: {
-        earring1: 'Dynasty Earring', earring2: 'Dynasty Earring',
-        necklace: 'Dynasty Necklace', ring1: 'Dynasty Ring', ring2: 'Dynasty Ring'
-      },
-      bonuses: [
-        'M. Def. +5', 'Max MP +150',
-        'Resistance to Poison +20%', 'Resistance to Bleed +20%',
-        'При заточке всех частей на +6: M. Def. +15'
-      ]
-    },
-    {
-      id: 'vesper_jewelry', name: 'Vesper Jewelry Set',
-      pieces: {
-        earring1: 'Vesper Earring', earring2: 'Vesper Earring',
-        necklace: 'Vesper Necklace', ring1: 'Vesper Ring', ring2: 'Vesper Ring'
-      },
-      bonuses: [
-        'M. Def. +7', 'Max MP +200',
-        'Resistance to Poison +30%', 'Resistance to Bleed +30%',
-        'При заточке всех частей на +6: M. Def. +20'
-      ]
-    },
-    {
-      id: 'elegia_jewelry', name: 'Elegia Jewelry Set',
-      pieces: {
-        earring1: 'Elegia Earring', earring2: 'Elegia Earring',
-        necklace: 'Elegia Necklace', ring1: 'Elegia Ring', ring2: 'Elegia Ring'
-      },
-      bonuses: [
-        'M. Def. +10', 'Max MP +250',
-        'Resistance to Poison +40%', 'Resistance to Bleed +40%',
-        'Resistance to Stun +30%',
-        'При заточке всех частей на +6: M. Def. +25'
-      ]
-    },
-    {
-      id: 'epic_earring_combo', name: 'Epic Earring Combo (Zaken + Antharas)',
-      pieces: {
-        earring1: "Blessed Zaken's Earring", earring2: "Blessed Antharas' Earring"
-      },
-      bonuses: [
-        'M. Def. +10, Max MP +300',
-        'Resistance to Bleed +30%', 'Resistance to Stun +30%',
-        'Восстанавливает 3% MP при получении урона'
-      ]
-    },
-    {
-      id: 'epic_ring_combo', name: 'Epic Ring Combo (Baium + Ant Queen)',
-      pieces: { ring1: 'Ring of Baium', ring2: 'Ring of Queen Ant' },
-      bonuses: [
-        'M. Def. +8, Max MP +250',
-        'Resistance to Poison +30%', 'Resistance to Hold +30%',
-        'Увеличивает точность и критический удар'
-      ]
-    },
-    {
-      id: 'epic_necklace_combo', name: 'Epic Necklace Combo (Valakas + Frintezza)',
-      pieces: { necklace: "Blessed Valakas' Necklace", necklace2: 'Necklace of Frintezza' },
-      bonuses: [
-        'M. Def. +12, Max MP +350',
-        'Resistance to Sleep +40%', 'Resistance to Paralysis +40%'
-      ]
-    }
-  ];
-
-  // ==================== СОСТОЯНИЕ ====================
   let members = [];
   let activeMemberIndex = null;
   const partyBody = document.getElementById('partyBody');
-  const setPanel = document.getElementById('setPanel');
-  const setTitle = document.getElementById('setTitle');
-  const setContent = document.getElementById('setContent');
-  const autosaveIndicator = document.getElementById('autosaveIndicator');
+  const syncDot = document.getElementById('syncDot');
+  const syncText = document.getElementById('syncText');
 
-  // ==================== АВТОСОХРАНЕНИЕ ====================
-  let saveTimeout = null;
-  function persist() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
-      flashSaved();
-    } catch (e) {
-      console.warn('Не удалось сохранить:', e);
+  function setSyncStatus(status, text) {
+    syncDot.className = 'sync-dot ' + status;
+    syncText.textContent = text;
+  }
+
+  // ==================== ПОДПИСКА НА ИЗМЕНЕНИЯ ====================
+  membersRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    members = [];
+    if (data) {
+      Object.keys(data).forEach(key => {
+        members.push({ id: key, ...data[key] });
+      });
     }
+    renderTable();
+    setSyncStatus('online', 'Синхронизировано');
+  }, (error) => {
+    console.error('Ошибка синхронизации:', error);
+    setSyncStatus('offline', 'Ошибка: ' + error.code);
+  });
+
+  // ==================== СОХРАНЕНИЕ ====================
+  let saveTimeouts = new Map();
+
+  function debouncedSave(member) {
+    if (!member.id) return;
+    const existing = saveTimeouts.get(member.id);
+    if (existing) clearTimeout(existing);
+
+    saveTimeouts.set(member.id, setTimeout(() => {
+      setSyncStatus('syncing', 'Сохранение…');
+      const memberData = { ...member };
+      delete memberData.id;
+
+      membersRef.child(member.id).update(memberData)
+        .then(() => setSyncStatus('online', 'Сохранено'))
+        .catch(err => {
+          console.error('Ошибка сохранения:', err);
+          setSyncStatus('offline', 'Ошибка сохранения');
+        });
+      saveTimeouts.delete(member.id);
+    }, 500));
   }
 
-  function persistDebounced() {
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(persist, 250);
-  }
-
-  function flashSaved() {
-    autosaveIndicator.textContent = '✓ Сохранено';
-    autosaveIndicator.classList.add('saved');
-    clearTimeout(flashSaved._t);
-    flashSaved._t = setTimeout(() => {
-      autosaveIndicator.textContent = 'Автосохранение включено';
-      autosaveIndicator.classList.remove('saved');
-    }, 1200);
-  }
-
-  function normalizeMember(m) {
-    const legacyTattoo = m.tattoos ?? '';
-    return {
-      name: m.name ?? '',
-      profession: m.profession ?? m.className ?? '',
-      level: m.level ?? 1,
-      weapon: m.weapon ?? '',
-      helmet: m.helmet ?? '',
-      armor: m.armor ?? '',
-      gloves: m.gloves ?? '',
-      boots: m.boots ?? '',
-      shield: m.shield ?? '',
-      earring1: m.earring1 ?? '',
-      earring2: m.earring2 ?? '',
-      necklace: m.necklace ?? '',
-      ring1: m.ring1 ?? '',
-      ring2: m.ring2 ?? '',
-      tattoo1: m.tattoo1 ?? legacyTattoo,
-      tattoo2: m.tattoo2 ?? '',
-      tattoo3: m.tattoo3 ?? '',
-      comment: m.comment ?? ''
+  // ==================== ДОБАВЛЕНИЕ ====================
+  function addMember() {
+    setSyncStatus('syncing', 'Добавление…');
+    const newMemberRef = membersRef.push();
+    const newMember = {
+      name: 'Персонаж ' + (members.length + 1),
+      profession: '', level: 1, weapon: '',
+      helmet: '', armor: '', gloves: '', boots: '', shield: '',
+      earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
+      tattoo1: '', tattoo2: '', tattoo3: '', comment: ''
     };
+    newMemberRef.set(newMember)
+      .then(() => setSyncStatus('online', 'Синхронизировано'))
+      .catch(err => {
+        console.error('Ошибка добавления:', err);
+        setSyncStatus('offline', 'Ошибка добавления');
+        alert('Не удалось добавить персонажа: ' + err.message + '\n\nПроверьте правила доступа в Firebase (Realtime Database → Rules).');
+      });
   }
 
-  function restore() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) return false;
-    try {
-      const parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) {
-        members = parsed.map(normalizeMember);
-        return true;
-      }
-    } catch (e) {
-      console.warn('Ошибка восстановления:', e);
-    }
-    return false;
+  // ==================== УДАЛЕНИЕ ====================
+  function deleteMember(member) {
+    if (!member.id) return;
+    setSyncStatus('syncing', 'Удаление…');
+    membersRef.child(member.id).remove()
+      .then(() => setSyncStatus('online', 'Синхронизировано'))
+      .catch(err => {
+        console.error('Ошибка удаления:', err);
+        setSyncStatus('offline', 'Ошибка удаления');
+      });
   }
 
-  // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
-  function createSelect(options, value, onChange) {
-    const select = document.createElement('select');
-    options.forEach(opt => {
-      const option = document.createElement('option');
-      option.value = opt;
-      option.textContent = opt || '— пусто —';
-      if (opt === value) option.selected = true;
-      select.appendChild(option);
-    });
-    select.addEventListener('change', e => onChange(e.target.value));
-    return select;
+  // ==================== ОЧИСТКА ====================
+  function clearAll() {
+    if (!confirm('Удалить ВСЕХ персонажей из общей таблицы? Это действие увидят все пользователи.')) return;
+    setSyncStatus('syncing', 'Очистка…');
+    membersRef.remove()
+      .then(() => setSyncStatus('online', 'Синхронизировано'))
+      .catch(err => {
+        console.error('Ошибка очистки:', err);
+        setSyncStatus('offline', 'Ошибка очистки');
+      });
   }
 
+  // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
   function createInput(type, value, onChange, attrs = {}) {
     const input = document.createElement('input');
     input.type = type;
@@ -823,90 +347,7 @@
     return input;
   }
 
-  function detectSet(member, setsList, slots) {
-    const selected = {};
-    slots.forEach(s => { selected[s] = member[s] || ''; });
-
-    let bestPartial = null;
-    for (const set of setsList) {
-      let missing = [];
-      let matchedCount = 0;
-      let totalRequired = 0;
-      let hasForeignItem = false;
-
-      for (const slot of slots) {
-        const setItem = set.pieces[slot];
-        const chosen = selected[slot];
-        if (setItem) {
-          totalRequired++;
-          if (chosen === setItem) matchedCount++;
-          else if (chosen === '') missing.push(slot);
-          else hasForeignItem = true;
-        } else {
-          if (chosen) hasForeignItem = true;
-        }
-      }
-
-      if (!hasForeignItem && matchedCount === totalRequired && totalRequired > 0) {
-        return { set, missing: [] };
-      }
-      if (!hasForeignItem && matchedCount > 0 && matchedCount < totalRequired) {
-        if (!bestPartial || matchedCount > bestPartial.matchedCount) {
-          bestPartial = { set, missing, matchedCount, totalRequired };
-        }
-      }
-    }
-    return bestPartial;
-  }
-
-  const armorSlots = ['helmet', 'armor', 'gloves', 'boots', 'shield'];
-  const jewelrySlots = ['earring1', 'earring2', 'necklace', 'ring1', 'ring2'];
-  const slotNames = {
-    helmet: 'шлем', armor: 'броня', gloves: 'перчатки', boots: 'ботинки', shield: 'щит',
-    earring1: 'серьга 1', earring2: 'серьга 2', necklace: 'ожерелье', ring1: 'кольцо 1', ring2: 'кольцо 2'
-  };
-
-  function renderSetSection(title, result) {
-    if (!result) {
-      return `<h3>${title}</h3><p class="missing">Сет не определён — введите названия предметов из одного набора.</p>`;
-    }
-    const { set, missing, matchedCount, totalRequired } = result;
-    if (missing && missing.length === 0) {
-      let html = `<h3>${title}: <span class="complete">${set.name}${set.type ? ' (' + set.type + ')' : ''} — полный комплект</span></h3>`;
-      html += '<ul class="bonus-list">';
-      set.bonuses.forEach(b => { html += `<li>${b}</li>`; });
-      html += '</ul>';
-      return html;
-    }
-    const missingNames = missing.map(s => slotNames[s] || s).join(', ');
-    return `<h3>${title}: ${set.name} — <span class="missing">не хватает: ${missingNames}</span></h3>` +
-           `<p>Собрано ${matchedCount} из ${totalRequired} частей. Введите недостающие предметы, чтобы активировать бонусы сета.</p>`;
-  }
-
-  function updateSetPanel() {
-    if (activeMemberIndex === null || !members[activeMemberIndex]) {
-      setPanel.classList.remove('active');
-      return;
-    }
-    const member = members[activeMemberIndex];
-    const armorResult = detectSet(member, armorSets, armorSlots);
-    const jewelryResult = detectSet(member, jewelrySets, jewelrySlots);
-
-    if (!armorResult && !jewelryResult) {
-      setTitle.textContent = `Сеты не определены (${member.name || 'персонаж'})`;
-      setContent.innerHTML = '<p class="missing">Введите названия предметов из одного набора брони или бижутерии, чтобы увидеть бонусы.</p>';
-      setPanel.classList.add('active');
-      return;
-    }
-
-    setTitle.textContent = `Активный персонаж: ${member.name || 'без имени'}`;
-    setContent.innerHTML =
-      renderSetSection('Броня', armorResult) +
-      renderSetSection('Бижутерия', jewelryResult);
-    setPanel.classList.add('active');
-  }
-
-  // ==================== РЕНДЕР ТАБЛИЦЫ ====================
+  // ==================== РЕНДЕР ====================
   function renderTable() {
     partyBody.innerHTML = '';
 
@@ -918,7 +359,6 @@
       td.textContent = 'Нет персонажей. Нажмите «Добавить персонажа».';
       tr.appendChild(td);
       partyBody.appendChild(tr);
-      setPanel.classList.remove('active');
       return;
     }
 
@@ -927,14 +367,13 @@
 
       // Имя
       const tdName = document.createElement('td');
-      tdName.appendChild(createInput('text', member.name, val => {
+      tdName.appendChild(createInput('text', member.name || '', val => {
         member.name = val;
-        persistDebounced();
-        if (activeMemberIndex === index) updateSetPanel();
+        debouncedSave(member);
       }));
       tr.appendChild(tdName);
 
-      // Профессия — выпадающий список + иконка
+      // Профессия
       const tdProf = document.createElement('td');
       const profWrap = document.createElement('div');
       profWrap.className = 'prof-cell';
@@ -957,7 +396,7 @@
         member.profession = e.target.value;
         const newProf = professions.find(p => p.name === e.target.value);
         iconSpan.textContent = newProf ? newProf.icon : '❓';
-        persistDebounced();
+        debouncedSave(member);
       });
 
       profWrap.appendChild(iconSpan);
@@ -967,21 +406,21 @@
 
       // Уровень
       const tdLevel = document.createElement('td');
-      tdLevel.appendChild(createInput('number', member.level, val => {
+      tdLevel.appendChild(createInput('number', member.level || 1, val => {
         member.level = val;
-        persistDebounced();
+        debouncedSave(member);
       }, { min: 1, max: 85 }));
       tr.appendChild(tdLevel);
 
-      // Оружие — текстовое поле
+      // Оружие
       const tdWeapon = document.createElement('td');
       tdWeapon.appendChild(createInput('text', member.weapon || '', val => {
         member.weapon = val;
-        persistDebounced();
+        debouncedSave(member);
       }, { placeholder: 'название оружия…' }));
       tr.appendChild(tdWeapon);
 
-      // Сет брони — текстовые поля
+      // Сет брони
       const tdArmor = document.createElement('td');
       tdArmor.className = 'set-cell';
       [
@@ -997,14 +436,12 @@
         tdArmor.appendChild(label);
         tdArmor.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
-          activeMemberIndex = index;
-          updateSetPanel();
-          persistDebounced();
+          debouncedSave(member);
         }, { placeholder: field.ph }));
       });
       tr.appendChild(tdArmor);
 
-      // Сет бижутерии — текстовые поля
+      // Сет бижутерии
       const tdJewelry = document.createElement('td');
       tdJewelry.className = 'set-cell';
       [
@@ -1020,9 +457,7 @@
         tdJewelry.appendChild(label);
         tdJewelry.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
-          activeMemberIndex = index;
-          updateSetPanel();
-          persistDebounced();
+          debouncedSave(member);
         }, { placeholder: field.ph }));
       });
       tr.appendChild(tdJewelry);
@@ -1041,7 +476,7 @@
         tdTattoo.appendChild(label);
         tdTattoo.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
-          persistDebounced();
+          debouncedSave(member);
         }, { placeholder: field.ph }));
       });
       tr.appendChild(tdTattoo);
@@ -1050,7 +485,7 @@
       const tdComment = document.createElement('td');
       tdComment.appendChild(createInput('text', member.comment || '', val => {
         member.comment = val;
-        persistDebounced();
+        debouncedSave(member);
       }, { placeholder: 'заметка…' }));
       tr.appendChild(tdComment);
 
@@ -1060,14 +495,7 @@
       btnRemove.textContent = '×';
       btnRemove.className = 'remove-btn';
       btnRemove.title = 'Удалить персонажа';
-      btnRemove.addEventListener('click', () => {
-        members.splice(index, 1);
-        if (activeMemberIndex === index) activeMemberIndex = null;
-        else if (activeMemberIndex > index) activeMemberIndex--;
-        persist();
-        renderTable();
-        updateSetPanel();
-      });
+      btnRemove.addEventListener('click', () => deleteMember(member));
       tdRemove.appendChild(btnRemove);
       tr.appendChild(tdRemove);
 
@@ -1075,71 +503,9 @@
     });
   }
 
-  // ==================== ДЕЙСТВИЯ ====================
-  function addMember() {
-    members.push({
-      name: 'Персонаж ' + (members.length + 1),
-      profession: '',
-      level: 1, weapon: '',
-      helmet: '', armor: '', gloves: '', boots: '', shield: '',
-      earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
-      tattoo1: '', tattoo2: '', tattoo3: '',
-      comment: ''
-    });
-    persist();
-    renderTable();
-  }
-
+  // ==================== СТАРТ ====================
   document.getElementById('addMember').addEventListener('click', addMember);
-
-  document.getElementById('save').addEventListener('click', () => {
-    persist();
-    alert('Сохранено в localStorage');
-  });
-
-  document.getElementById('load').addEventListener('click', () => {
-    if (restore()) {
-      activeMemberIndex = null;
-      renderTable();
-      updateSetPanel();
-      alert('Загружено из localStorage');
-    } else {
-      alert('Нет сохранённых данных');
-    }
-  });
-
-  document.getElementById('export').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(members, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'lineage2_party.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-
-  document.getElementById('clear').addEventListener('click', () => {
-    if (confirm('Удалить всех персонажей?')) {
-      members = [];
-      activeMemberIndex = null;
-      localStorage.removeItem(STORAGE_KEY);
-      renderTable();
-      updateSetPanel();
-    }
-  });
-
-  // ==================== ИНИЦИАЛИЗАЦИЯ ====================
-  if (!restore()) {
-    members = [
-      normalizeMember({ name: 'Персонаж 1' }),
-      normalizeMember({ name: 'Персонаж 2' }),
-      normalizeMember({ name: 'Персонаж 3' })
-    ];
-    persist();
-  }
-  renderTable();
-
-  window.addEventListener('beforeunload', persist);
+  document.getElementById('clear').addEventListener('click', clearAll);
 </script>
 
 </body>
