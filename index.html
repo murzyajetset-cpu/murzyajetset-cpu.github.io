@@ -83,7 +83,7 @@
     background: var(--bg-panel); box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
   table {
-    border-collapse: collapse; width: 100%; min-width: 1050px;
+    border-collapse: collapse; width: 100%; min-width: 1150px;
     font-size: 11px; table-layout: fixed;
   }
   th, td { padding: 4px 5px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-subtle); }
@@ -96,9 +96,9 @@
   th .set-label { color: var(--text-muted); font-size: 9px; text-transform: none; font-weight: 400; display: block; margin-top: 1px; }
   tbody tr:hover { background: #fafbfe; }
   tbody tr:last-child td { border-bottom: none; }
-  .col-name { width: 110px; } .col-class { width: 150px; } .col-level { width: 52px; }
+  .col-name { width: 110px; } .col-class { width: 175px; } .col-level { width: 52px; }
   .col-weapon { width: 130px; } .col-armor { width: 130px; } .col-jewelry { width: 130px; }
-  .col-tattoo { width: 170px; } .col-comment { width: 160px; } .col-remove { width: 34px; }
+  .col-tattoo { width: 170px; } .col-comment { width: 150px; } .col-remove { width: 34px; }
   input, select {
     font-family: var(--font-body); font-size: 11px; color: var(--text-primary);
     background: var(--bg-input); border: 1px solid var(--border-subtle);
@@ -114,9 +114,13 @@
     padding-right: 20px;
   }
   select option { background: #fff; color: var(--text-primary); }
-  .prof-cell { display: flex; align-items: center; gap: 6px; }
+  .prof-cell { display: flex; flex-direction: column; gap: 3px; }
+  .prof-main { display: flex; align-items: center; gap: 6px; }
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
   .prof-select { flex: 1; min-width: 0; }
+  .sub-group { display: flex; flex-direction: column; gap: 1px; }
+  .sub-label { font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 2px 0 0 0; }
+  .sub-select { font-size: 10px; padding: 3px 18px 3px 5px; background-size: 8px; }
   .set-cell { background: #fcfcff; }
   .set-label { display: block; font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 3px 0 1px 0; }
   .set-label:first-child { margin-top: 0; }
@@ -158,7 +162,7 @@
     <thead>
       <tr>
         <th>Имя</th>
-        <th>Профессия<br><span class="set-label">(иконка + название)</span></th>
+        <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба)</span></th>
         <th>Ур.</th>
         <th>Оружие<br><span class="set-label">(свободный ввод)</span></th>
         <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
@@ -244,7 +248,6 @@
   ];
 
   let members = [];
-  let activeMemberIndex = null;
   const partyBody = document.getElementById('partyBody');
   const syncDot = document.getElementById('syncDot');
   const syncText = document.getElementById('syncText');
@@ -299,7 +302,8 @@
     const newMemberRef = membersRef.push();
     const newMember = {
       name: 'Персонаж ' + (members.length + 1),
-      profession: '', level: 1, weapon: '',
+      profession: '', sub1: '', sub2: '', sub3: '',
+      level: 1, weapon: '',
       helmet: '', armor: '', gloves: '', boots: '', shield: '',
       earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
       tattoo1: '', tattoo2: '', tattoo3: '', comment: ''
@@ -347,6 +351,21 @@
     return input;
   }
 
+  // Создание select профессии (с эмодзи в опциях)
+  function buildProfessionSelect(value, onChange, extraClass = '') {
+    const select = document.createElement('select');
+    select.className = 'prof-select ' + extraClass;
+    professions.forEach(p => {
+      const option = document.createElement('option');
+      option.value = p.name;
+      option.textContent = p.name ? `${p.icon} ${p.name}` : '— не выбрано —';
+      if (p.name === value) option.selected = true;
+      select.appendChild(option);
+    });
+    select.addEventListener('change', e => onChange(e.target.value));
+    return select;
+  }
+
   // ==================== РЕНДЕР ====================
   function renderTable() {
     partyBody.innerHTML = '';
@@ -362,7 +381,7 @@
       return;
     }
 
-    members.forEach((member, index) => {
+    members.forEach((member) => {
       const tr = document.createElement('tr');
 
       // Имя
@@ -373,35 +392,55 @@
       }));
       tr.appendChild(tdName);
 
-      // Профессия
+      // Профессия + 3 саб-класса
       const tdProf = document.createElement('td');
-      const profWrap = document.createElement('div');
-      profWrap.className = 'prof-cell';
+      const profCell = document.createElement('div');
+      profCell.className = 'prof-cell';
+
+      // Основная профессия (с иконкой рядом)
+      const mainWrap = document.createElement('div');
+      mainWrap.className = 'prof-main';
 
       const iconSpan = document.createElement('span');
       iconSpan.className = 'prof-icon';
       const selectedProf = professions.find(p => p.name === member.profession);
       iconSpan.textContent = selectedProf ? selectedProf.icon : '❓';
 
-      const profSelect = document.createElement('select');
-      profSelect.className = 'prof-select';
-      professions.forEach(p => {
-        const option = document.createElement('option');
-        option.value = p.name;
-        option.textContent = p.name ? `${p.icon} ${p.name}` : '— выберите профессию —';
-        if (p.name === member.profession) option.selected = true;
-        profSelect.appendChild(option);
-      });
-      profSelect.addEventListener('change', e => {
-        member.profession = e.target.value;
-        const newProf = professions.find(p => p.name === e.target.value);
+      const mainSelect = buildProfessionSelect(member.profession || '', val => {
+        member.profession = val;
+        const newProf = professions.find(p => p.name === val);
         iconSpan.textContent = newProf ? newProf.icon : '❓';
         debouncedSave(member);
       });
 
-      profWrap.appendChild(iconSpan);
-      profWrap.appendChild(profSelect);
-      tdProf.appendChild(profWrap);
+      mainWrap.appendChild(iconSpan);
+      mainWrap.appendChild(mainSelect);
+      profCell.appendChild(mainWrap);
+
+      // Три саб-класса
+      [
+        { key: 'sub1', label: 'Саб-класс 1' },
+        { key: 'sub2', label: 'Саб-класс 2' },
+        { key: 'sub3', label: 'Саб-класс 3' }
+      ].forEach(field => {
+        const group = document.createElement('div');
+        group.className = 'sub-group';
+
+        const label = document.createElement('span');
+        label.className = 'sub-label';
+        label.textContent = field.label;
+
+        const subSelect = buildProfessionSelect(member[field.key] || '', val => {
+          member[field.key] = val;
+          debouncedSave(member);
+        }, 'sub-select');
+
+        group.appendChild(label);
+        group.appendChild(subSelect);
+        profCell.appendChild(group);
+      });
+
+      tdProf.appendChild(profCell);
       tr.appendChild(tdProf);
 
       // Уровень
