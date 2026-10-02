@@ -174,13 +174,13 @@
   }
 
   .col-name    { width: 110px; }
-  .col-class   { width: 110px; }
+  .col-class   { width: 150px; }
   .col-level   { width: 52px; }
-  .col-weapon  { width: 140px; }
-  .col-armor   { width: 140px; }
-  .col-jewelry { width: 140px; }
-  .col-tattoo  { width: 180px; }
-  .col-comment { width: 180px; }
+  .col-weapon  { width: 130px; }
+  .col-armor   { width: 130px; }
+  .col-jewelry { width: 130px; }
+  .col-tattoo  { width: 170px; }
+  .col-comment { width: 160px; }
   .col-remove  { width: 34px; }
 
   input, select {
@@ -218,6 +218,25 @@
   select option {
     background: #fff;
     color: var(--text-primary);
+  }
+
+  .prof-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .prof-icon {
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
+
+  .prof-select {
+    flex: 1;
+    min-width: 0;
   }
 
   .set-cell {
@@ -379,8 +398,8 @@
 </head>
 <body>
 
-<h1>КП DARAMs</h1>
-<p class="subtitle">Состав</p>
+<h1>Группа Lineage 2</h1>
+<p class="subtitle">Сеты брони и бижутерии — состав группы и экипировка</p>
 
 <div class="toolbar">
   <button id="addMember" class="primary">Добавить персонажа</button>
@@ -407,7 +426,7 @@
     <thead>
       <tr>
         <th>Имя</th>
-        <th>Класс</th>
+        <th>Профессия<br><span class="set-label">(иконка + название)</span></th>
         <th>Ур.</th>
         <th>Оружие<br><span class="set-label">(свободный ввод)</span></th>
         <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
@@ -430,6 +449,126 @@
 
 <script>
   const STORAGE_KEY = 'l2party';
+
+  // ==================== ПРОФЕССИИ LINEAGE 2 (HIGH FIVE) ====================
+  // Каждая профессия: { name, icon }
+  const professions = [
+    { name: '', icon: '' },
+    // Люди — воины
+    { name: 'Human Fighter', icon: '⚔️' },
+    { name: 'Warrior', icon: '⚔️' },
+    { name: 'Gladiator', icon: '⚔️' },
+    { name: 'Warlord', icon: '⚔️' },
+    { name: 'Human Knight', icon: '🛡️' },
+    { name: 'Paladin', icon: '🛡️' },
+    { name: 'Dark Avenger', icon: '🛡️' },
+    { name: 'Rogue', icon: '🗡️' },
+    { name: 'Treasure Hunter', icon: '🗡️' },
+    { name: 'Hawkeye', icon: '🏹' },
+    // Люди — маги
+    { name: 'Human Mystic', icon: '🔮' },
+    { name: 'Human Wizard', icon: '🔮' },
+    { name: 'Sorcerer', icon: '🔮' },
+    { name: 'Necromancer', icon: '🔮' },
+    { name: 'Warlock', icon: '🐉' },
+    { name: 'Cleric', icon: '✨' },
+    { name: 'Bishop', icon: '✨' },
+    { name: 'Prophet', icon: '✨' },
+    // Эльфы — воины
+    { name: 'Elven Fighter', icon: '⚔️' },
+    { name: 'Elven Knight', icon: '🛡️' },
+    { name: 'Temple Knight', icon: '🛡️' },
+    { name: 'Swordsinger', icon: '🎵' },
+    { name: 'Elven Scout', icon: '🏹' },
+    { name: 'Plainswalker', icon: '🗡️' },
+    { name: 'Silver Ranger', icon: '🏹' },
+    // Эльфы — маги
+    { name: 'Elven Mystic', icon: '🔮' },
+    { name: 'Elven Wizard', icon: '🔮' },
+    { name: 'Spellsinger', icon: '🔮' },
+    { name: 'Elemental Summoner', icon: '🐉' },
+    { name: 'Oracle', icon: '✨' },
+    { name: 'Elder', icon: '✨' },
+    // Тёмные эльфы — воины
+    { name: 'Dark Fighter', icon: '⚔️' },
+    { name: 'Palus Knight', icon: '🛡️' },
+    { name: 'Shillien Knight', icon: '🛡️' },
+    { name: 'Bladedancer', icon: '🎵' },
+    { name: 'Assassin', icon: '🗡️' },
+    { name: 'Abyss Walker', icon: '🗡️' },
+    { name: 'Phantom Ranger', icon: '🏹' },
+    // Тёмные эльфы — маги
+    { name: 'Dark Mystic', icon: '🔮' },
+    { name: 'Dark Wizard', icon: '🔮' },
+    { name: 'Spellhowler', icon: '🔮' },
+    { name: 'Phantom Summoner', icon: '🐉' },
+    { name: 'Shillien Oracle', icon: '✨' },
+    { name: 'Shillien Elder', icon: '✨' },
+    // Орки — воины
+    { name: 'Orc Fighter', icon: '⚔️' },
+    { name: 'Orc Raider', icon: '⚔️' },
+    { name: 'Destroyer', icon: '⚔️' },
+    { name: 'Orc Monk', icon: '⚔️' },
+    { name: 'Tyrant', icon: '⚔️' },
+    // Орки — маги
+    { name: 'Orc Mage', icon: '🔮' },
+    { name: 'Orc Shaman', icon: '🔮' },
+    { name: 'Overlord', icon: '🔮' },
+    { name: 'Warcryer', icon: '🎵' },
+    // Гномы
+    { name: 'Dwarven Fighter', icon: '⛏️' },
+    { name: 'Scavenger', icon: '💰' },
+    { name: 'Bounty Hunter', icon: '💰' },
+    { name: 'Artisan', icon: '🔨' },
+    { name: 'Warsmith', icon: '🔨' },
+    // Третьи профессии (76+)
+    { name: 'Duelist', icon: '⚔️' },
+    { name: 'Dreadnought', icon: '⚔️' },
+    { name: 'Phoenix Knight', icon: '🛡️' },
+    { name: 'Hell Knight', icon: '🛡️' },
+    { name: 'Sagittarius', icon: '🏹' },
+    { name: 'Adventurer', icon: '🗡️' },
+    { name: 'Archmage', icon: '🔮' },
+    { name: 'Soultaker', icon: '🔮' },
+    { name: 'Arcana Lord', icon: '🐉' },
+    { name: 'Cardinal', icon: '✨' },
+    { name: 'Hierophant', icon: '✨' },
+    { name: "Eva's Templar", icon: '🛡️' },
+    { name: 'Sword Muse', icon: '🎵' },
+    { name: 'Wind Rider', icon: '🗡️' },
+    { name: 'Moonlight Sentinel', icon: '🏹' },
+    { name: 'Mystic Muse', icon: '🔮' },
+    { name: 'Elemental Master', icon: '🐉' },
+    { name: "Eva's Saint", icon: '✨' },
+    { name: 'Shillien Templar', icon: '🛡️' },
+    { name: 'Spectral Dancer', icon: '🎵' },
+    { name: 'Ghost Hunter', icon: '🗡️' },
+    { name: 'Ghost Sentinel', icon: '🏹' },
+    { name: 'Storm Screamer', icon: '🔮' },
+    { name: 'Spectral Master', icon: '🐉' },
+    { name: 'Shillien Saint', icon: '✨' },
+    { name: 'Titan', icon: '⚔️' },
+    { name: 'Grand Khavatari', icon: '⚔️' },
+    { name: 'Dominator', icon: '🔮' },
+    { name: 'Doomcryer', icon: '🎵' },
+    { name: 'Fortune Seeker', icon: '💰' },
+    { name: 'Maestro', icon: '🔨' },
+    // Камаэль
+    { name: 'Kamael M. Soldier', icon: '⚔️' },
+    { name: 'Kamael F. Soldier', icon: '⚔️' },
+    { name: 'Trooper', icon: '⚔️' },
+    { name: 'Warder', icon: '🛡️' },
+    { name: 'Berserker', icon: '⚔️' },
+    { name: 'Soul Breaker (M)', icon: '🗡️' },
+    { name: 'Soul Breaker (F)', icon: '🗡️' },
+    { name: 'Arbalester', icon: '🏹' },
+    { name: 'Doombringer', icon: '⚔️' },
+    { name: 'Soul Hound (M)', icon: '🐉' },
+    { name: 'Soul Hound (F)', icon: '🐉' },
+    { name: 'Trickster', icon: '🗡️' },
+    { name: 'Inspector', icon: '🔨' },
+    { name: 'Judicator', icon: '✨' }
+  ];
 
   // ==================== БАЗА СЕТОВ БРОНИ ====================
   const armorSets = [
@@ -587,8 +726,6 @@
     }
   ];
 
-  const classes = ["", "Tank", "Healer", "DD", "Mage", "Archer", "Dagger", "Summoner", "Bard", "Support"];
-
   // ==================== СОСТОЯНИЕ ====================
   let members = [];
   let activeMemberIndex = null;
@@ -628,7 +765,7 @@
     const legacyTattoo = m.tattoos ?? '';
     return {
       name: m.name ?? '',
-      className: m.className ?? '',
+      profession: m.profession ?? m.className ?? '',
       level: m.level ?? 1,
       weapon: m.weapon ?? '',
       helmet: m.helmet ?? '',
@@ -797,13 +934,36 @@
       }));
       tr.appendChild(tdName);
 
-      // Класс — оставляем выпадающим списком
-      const tdClass = document.createElement('td');
-      tdClass.appendChild(createSelect(classes, member.className, val => {
-        member.className = val;
+      // Профессия — выпадающий список + иконка
+      const tdProf = document.createElement('td');
+      const profWrap = document.createElement('div');
+      profWrap.className = 'prof-cell';
+
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'prof-icon';
+      const selectedProf = professions.find(p => p.name === member.profession);
+      iconSpan.textContent = selectedProf ? selectedProf.icon : '❓';
+
+      const profSelect = document.createElement('select');
+      profSelect.className = 'prof-select';
+      professions.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.name;
+        option.textContent = p.name ? `${p.icon} ${p.name}` : '— выберите профессию —';
+        if (p.name === member.profession) option.selected = true;
+        profSelect.appendChild(option);
+      });
+      profSelect.addEventListener('change', e => {
+        member.profession = e.target.value;
+        const newProf = professions.find(p => p.name === e.target.value);
+        iconSpan.textContent = newProf ? newProf.icon : '❓';
         persistDebounced();
-      }));
-      tr.appendChild(tdClass);
+      });
+
+      profWrap.appendChild(iconSpan);
+      profWrap.appendChild(profSelect);
+      tdProf.appendChild(profWrap);
+      tr.appendChild(tdProf);
 
       // Уровень
       const tdLevel = document.createElement('td');
@@ -919,7 +1079,8 @@
   function addMember() {
     members.push({
       name: 'Персонаж ' + (members.length + 1),
-      className: '', level: 1, weapon: '',
+      profession: '',
+      level: 1, weapon: '',
       helmet: '', armor: '', gloves: '', boots: '', shield: '',
       earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
       tattoo1: '', tattoo2: '', tattoo3: '',
