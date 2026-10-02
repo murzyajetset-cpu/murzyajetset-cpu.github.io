@@ -6,7 +6,7 @@
 <title>КП DARAMs — Состав топовой гей-консты</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-page: #f4f5fa;
@@ -221,11 +221,6 @@
     font-size: 12px;
     line-height: 1.5;
     padding: 8px 10px;
-  }
-  .post-form-bottom {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 8px;
   }
   .post-form label {
     display: block;
@@ -575,7 +570,7 @@
     { name: 'Judicator', icon: '✨' }
   ];
 
-  // ==================== ОРУЖИЕ (исправленные грейды) ====================
+  // ==================== ОРУЖИЕ ====================
   const weaponsData = [
     // NG (No Grade)
     { name: 'Short Sword', grade: 'NG' },
@@ -718,23 +713,17 @@
     return w ? w.grade : '';
   }
 
+  // В <option> нет CSS — просто буква грейда в квадратных скобках
   function weaponGradeBadge(weaponName) {
     const g = getWeaponGrade(weaponName);
-    const badges = {
-      'NG': '🅽🅶',
-      'D':  '🅳',
-      'C':  '🅲',
-      'B':  '🅱',
-      'A':  '🅰',
-      'S':  '🅢'
-    };
-    return badges[g] || '❔';
+    return g ? `[${g}]` : '[?]';
   }
 
+  // Цвета грейдов как в игре
   function weaponGradeColor(grade) {
     return {
       'NG': '#9e9e9e',
-      'D':  '#c8c8c8',
+      'D':  '#8b8b8b',
       'C':  '#4caf50',
       'B':  '#3a7ce0',
       'A':  '#9c27b0',
@@ -1570,15 +1559,20 @@
       tdLevel.textContent = m.level || '—';
       tr.appendChild(tdLevel);
 
-      // Оружие с цветной буквой грейда
+      // ===== Оружие: жирный цветной грейд + название =====
       const tdWeapon = document.createElement('td');
       tdWeapon.style.cssText = cellStyle;
       const weaponLine = document.createElement('div');
       if (m.weapon) {
         const g = getWeaponGrade(m.weapon);
         const gradeLetter = document.createElement('span');
-        gradeLetter.textContent = `[${g || '?'}]`;
-        gradeLetter.style.cssText = `color:${weaponGradeColor(g)};font-weight:700;font-size:13px;margin-right:6px;`;
+        gradeLetter.textContent = `${g || '?'}`;
+        gradeLetter.style.cssText =
+          `color:${weaponGradeColor(g)};` +
+          `font-weight:800;` +
+          `font-size:14px;` +
+          `margin-right:7px;` +
+          `letter-spacing:0.5px;`;
         weaponLine.appendChild(gradeLetter);
         weaponLine.appendChild(document.createTextNode(m.weapon));
       } else {
