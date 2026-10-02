@@ -107,7 +107,9 @@
     border-left: 1px solid var(--border-subtle);
   }
   .table-wrap {
-    overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-subtle);
+    overflow-x: auto;
+    overflow-y: visible;
+    border-radius: 8px; border: 1px solid var(--border-subtle);
     background: var(--bg-panel); box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
   table {
@@ -202,9 +204,13 @@
     border-radius: 4px;
     box-shadow: 0 8px 24px rgba(20,25,60,0.20);
     overflow-y: auto;
+    overflow-x: hidden;
     z-index: 10000;
     font-family: var(--font-body);
     font-size: 11px;
+    min-height: 80px;
+    max-height: 320px;
+    overscroll-behavior: contain;
   }
   .weapon-dropdown[hidden] { display: none; }
   .weapon-group-title {
@@ -611,15 +617,20 @@
   const postsSyncText = document.getElementById('postsSyncText');
   const authorInput = document.getElementById('craftAuthorName');
 
+  // ==================== ГЛОБАЛЬНЫЕ ОБРАБОТЧИКИ ДЛЯ ДРОПДАУНОВ ====================
   // Закрытие всех кастомных дропдаунов при клике вне
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.weapon-select')) {
+    if (!e.target.closest('.weapon-select') && !e.target.closest('.weapon-dropdown')) {
       document.querySelectorAll('.weapon-dropdown').forEach(d => { d.hidden = true; });
       document.querySelectorAll('.weapon-trigger.open').forEach(t => t.classList.remove('open'));
     }
   });
-  // Закрытие при скролле
-  window.addEventListener('scroll', () => {
+
+  // Закрытие при скролле страницы — но НЕ при скролле внутри дропдауна
+  window.addEventListener('scroll', (e) => {
+    const target = e.target;
+    // Если скролл происходит внутри самого дропдауна — ничего не закрываем
+    if (target && target.closest && target.closest('.weapon-dropdown')) return;
     document.querySelectorAll('.weapon-dropdown').forEach(d => { d.hidden = true; });
     document.querySelectorAll('.weapon-trigger.open').forEach(t => t.classList.remove('open'));
   }, true);
@@ -854,7 +865,6 @@
       updateTrigger(val);
       dropdown.hidden = true;
       trigger.classList.remove('open');
-      // Обновим выделение в списке
       dropdown.querySelectorAll('.weapon-option').forEach(opt => {
         opt.classList.toggle('selected', opt.dataset.value === val);
       });
@@ -911,10 +921,10 @@
 
       // Позиционируем дропдаун
       const rect = trigger.getBoundingClientRect();
-      const dropdownHeight = 320;
+      const dropdownMaxHeight = 320;
       const spaceBelow = window.innerHeight - rect.bottom - 8;
       const spaceAbove = rect.top - 8;
-      const openUp = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+      const openUp = spaceBelow < dropdownMaxHeight && spaceAbove > spaceBelow;
 
       dropdown.style.position = 'fixed';
       dropdown.style.left = rect.left + 'px';
@@ -926,7 +936,7 @@
         dropdown.style.top = (rect.bottom + 2) + 'px';
         dropdown.style.bottom = 'auto';
       }
-      dropdown.style.maxHeight = Math.min(dropdownHeight, openUp ? spaceAbove : spaceBelow) + 'px';
+      dropdown.style.maxHeight = Math.min(dropdownMaxHeight, openUp ? spaceAbove : spaceBelow) + 'px';
 
       dropdown.hidden = false;
       trigger.classList.add('open');
