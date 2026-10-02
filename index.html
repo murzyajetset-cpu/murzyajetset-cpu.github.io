@@ -150,9 +150,7 @@
   .remove-btn:hover { background: rgba(217,45,32,0.1); border-color: var(--danger-red); }
   .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
 
-  /* ===== Область для генерации PDF =====
-     Полностью непрозрачная, лежит в DOM, но перекрыта оверлеем.
-     html2canvas снимает именно её — оверлей в кадр не попадает. */
+  /* ===== Область для генерации PDF ===== */
   #pdfArea {
     position: fixed;
     top: 0;
@@ -169,21 +167,7 @@
     min-width: 0 !important;
     border-collapse: collapse !important;
   }
-  #pdfArea th, #pdfArea td {
-    padding: 6px 6px !important;
-    border-bottom: 1px solid #e2e4ec !important;
-    vertical-align: top !important;
-    background: #fff !important;
-  }
-  #pdfArea th {
-    background: #fafbfe !important;
-    color: #8a6508 !important;
-    border-bottom: 2px solid #b8860b !important;
-    font-size: 10px !important;
-    text-align: left !important;
-  }
 
-  /* Оверлей, который перекрывает контейнер на время генерации */
   #pdfOverlay {
     position: fixed;
     inset: 0;
@@ -404,7 +388,6 @@
     syncText.textContent = text;
   }
 
-  // ==================== СРАВНЕНИЕ ====================
   function membersEqual(a, b) {
     if (a.length !== b.length) return false;
     const mapA = new Map(a.map(m => [m.id, m]));
@@ -420,7 +403,6 @@
     return true;
   }
 
-  // ==================== ПОДПИСКА ====================
   membersRef.on('value', (snapshot) => {
     const data = snapshot.val();
     const newMembers = [];
@@ -441,7 +423,6 @@
     setSyncStatus('offline', 'Ошибка: ' + error.code);
   });
 
-  // ==================== СОХРАНЕНИЕ ====================
   let saveTimeouts = new Map();
 
   function debouncedSave(member) {
@@ -464,7 +445,6 @@
     }, 500));
   }
 
-  // ==================== ПРИНУДИТЕЛЬНОЕ СОХРАНЕНИЕ ====================
   async function forceSaveAll() {
     if (members.length === 0) {
       setSyncStatus('online', 'Нечего сохранять');
@@ -487,7 +467,6 @@
     }
   }
 
-  // ==================== АВТОСИНХРОНИЗАЦИЯ 30 СЕК ====================
   let secondsLeft = 30;
   function tickTimer() {
     secondsLeft--;
@@ -499,7 +478,6 @@
   }
   setInterval(tickTimer, 1000);
 
-  // ==================== ДОБАВЛЕНИЕ ====================
   function addMember() {
     setSyncStatus('syncing', 'Добавление…');
     const newMemberRef = membersRef.push();
@@ -522,7 +500,6 @@
       });
   }
 
-  // ==================== УДАЛЕНИЕ ====================
   function deleteMember(member) {
     if (!member.id) return;
     setSyncStatus('syncing', 'Удаление…');
@@ -534,7 +511,6 @@
       });
   }
 
-  // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
   function createInput(type, value, onChange, attrs = {}, meta = null) {
     const input = document.createElement('input');
     input.type = type;
@@ -598,7 +574,6 @@
     return select;
   }
 
-  // ==================== РЕНДЕР ====================
   function renderTable() {
     const active = document.activeElement;
     let focusInfo = null;
@@ -631,7 +606,6 @@
       const mid = member.id;
       const meta = (field) => ({ memberId: mid, field });
 
-      // Имя
       const tdName = document.createElement('td');
       tdName.appendChild(createInput('text', member.name || '', val => {
         member.name = val;
@@ -639,7 +613,6 @@
       }, {}, meta('name')));
       tr.appendChild(tdName);
 
-      // Профессия + 3 саб-класса
       const tdProf = document.createElement('td');
       const profCell = document.createElement('div');
       profCell.className = 'prof-cell';
@@ -703,7 +676,6 @@
       tdProf.appendChild(profCell);
       tr.appendChild(tdProf);
 
-      // Уровень основной
       const tdLevel = document.createElement('td');
       tdLevel.appendChild(createInput('number', member.level || 1, val => {
         member.level = val;
@@ -711,7 +683,6 @@
       }, { min: 1, max: 85 }, meta('level')));
       tr.appendChild(tdLevel);
 
-      // Оружие + комментарий
       const tdWeapon = document.createElement('td');
       const weaponWrap = document.createElement('div');
       weaponWrap.style.display = 'flex';
@@ -733,7 +704,6 @@
       tdWeapon.appendChild(weaponWrap);
       tr.appendChild(tdWeapon);
 
-      // Сет брони
       const tdArmor = document.createElement('td');
       tdArmor.className = 'set-cell';
       [
@@ -755,7 +725,6 @@
       });
       tr.appendChild(tdArmor);
 
-      // Сет бижутерии
       const tdJewelry = document.createElement('td');
       tdJewelry.className = 'set-cell';
       [
@@ -776,7 +745,6 @@
       });
       tr.appendChild(tdJewelry);
 
-      // Татуировки
       const tdTattoo = document.createElement('td');
       tdTattoo.className = 'set-cell';
       [
@@ -795,7 +763,6 @@
       });
       tr.appendChild(tdTattoo);
 
-      // Комментарий
       const tdComment = document.createElement('td');
       tdComment.appendChild(createInput('text', member.comment || '', val => {
         member.comment = val;
@@ -803,7 +770,6 @@
       }, { placeholder: 'заметка…' }, meta('comment')));
       tr.appendChild(tdComment);
 
-      // Удаление
       const tdRemove = document.createElement('td');
       const btnRemove = document.createElement('button');
       btnRemove.textContent = '×';
@@ -816,7 +782,6 @@
       partyBody.appendChild(tr);
     });
 
-    // Восстановление фокуса
     if (focusInfo) {
       const el = partyBody.querySelector(
         `[data-member-id="${focusInfo.memberId}"][data-field="${focusInfo.field}"]`
@@ -832,7 +797,9 @@
     }
   }
 
-  // ==================== ЭКСПОРТ В PDF (html2canvas + jsPDF) ====================
+  // ==================== ЭКСПОРТ В PDF ====================
+  // Таблица для PDF строится НАПРЯМУЮ из массива members,
+  // чтобы не зависеть от особенностей cloneNode и выделения в <select>.
   async function downloadPDF() {
     if (members.length === 0) {
       alert('Таблица пуста — нечего сохранять в PDF.');
@@ -841,7 +808,6 @@
 
     setSyncStatus('syncing', 'Готовим PDF…');
 
-    // Оверлей, который перекроет контейнер на время генерации
     const overlay = document.createElement('div');
     overlay.id = 'pdfOverlay';
     overlay.innerHTML = '<div class="box"><span class="spinner"></span>Готовим PDF…</div>';
@@ -853,86 +819,164 @@
     // --- Заголовок и дата ---
     const title = document.createElement('h2');
     title.textContent = 'КП DARAMs — Состав топовой гей-консты';
-    title.style.margin = '0 0 4px 0';
-    title.style.color = '#b8860b';
-    title.style.fontFamily = "'Cinzel', serif";
-    title.style.fontSize = '22px';
-    title.style.letterSpacing = '0.04em';
+    title.style.cssText = "margin:0 0 4px 0;color:#b8860b;font-family:'Cinzel',serif;font-size:22px;letter-spacing:0.04em;";
     pdfArea.appendChild(title);
 
     const subtitle = document.createElement('p');
     subtitle.textContent = 'Сформировано: ' + new Date().toLocaleString('ru-RU');
-    subtitle.style.margin = '0 0 16px 0';
-    subtitle.style.color = '#5a5d75';
-    subtitle.style.fontSize = '12px';
+    subtitle.style.cssText = 'margin:0 0 16px 0;color:#5a5d75;font-size:12px;';
     pdfArea.appendChild(subtitle);
 
-    // --- Клон таблицы ---
-    const clone = document.getElementById('partyTable').cloneNode(true);
+    // --- Строим таблицу вручную из members ---
+    const table = document.createElement('table');
+    table.style.cssText = 'width:100%;border-collapse:collapse;table-layout:auto;font-size:12px;background:#fff;';
 
-    // Удаляем кнопки удаления и их колонку
-    clone.querySelectorAll('.remove-btn').forEach(b => {
-      const td = b.closest('td');
-      if (td) td.remove();
-    });
-    const headers = clone.querySelectorAll('thead th');
-    if (headers.length) headers[headers.length - 1].remove();
+    // Шапка
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    ['Имя', 'Профессия и саб-классы', 'Ур.', 'Оружие', 'Сет брони', 'Сет бижутерии', 'Татуировки', 'Комментарий']
+      .forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        th.style.cssText = 'padding:8px;background:#fafbfe;color:#8a6508;border-bottom:2px solid #b8860b;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;';
+        headerRow.appendChild(th);
+      });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
 
-    // Заменяем inputs и selects на текст
-    clone.querySelectorAll('input, select').forEach(el => {
-      const span = document.createElement('div');
-      if (el.tagName === 'SELECT') {
-        const opt = el.options[el.selectedIndex];
-        const txt = (opt && opt.textContent) ? opt.textContent : '';
-        span.textContent = (txt && !txt.startsWith('—')) ? txt : '—';
-      } else {
-        span.textContent = el.value || '—';
+    // Тело
+    const tbody = document.createElement('tbody');
+
+    const cellStyle = 'padding:8px;border-bottom:1px solid #e2e4ec;vertical-align:top;font-size:12px;';
+
+    members.forEach(m => {
+      const tr = document.createElement('tr');
+
+      // Имя
+      const tdName = document.createElement('td');
+      tdName.style.cssText = cellStyle;
+      tdName.textContent = m.name || '—';
+      tr.appendChild(tdName);
+
+      // Профессия + сабы
+      const tdProf = document.createElement('td');
+      tdProf.style.cssText = cellStyle;
+      const prof = professions.find(p => p.name === m.profession);
+      const profLine = document.createElement('div');
+      profLine.style.cssText = 'font-weight:600;font-size:12px;';
+      profLine.textContent = (prof && prof.name) ? `${prof.icon} ${prof.name}` : '—';
+      tdProf.appendChild(profLine);
+
+      [
+        { key: 'sub1', levelKey: 'sub1Level', num: 1 },
+        { key: 'sub2', levelKey: 'sub2Level', num: 2 },
+        { key: 'sub3', levelKey: 'sub3Level', num: 3 }
+      ].forEach(s => {
+        const subName = m[s.key];
+        const subLevel = m[s.levelKey];
+        if (subName || subLevel) {
+          const sub = professions.find(p => p.name === subName);
+          const line = document.createElement('div');
+          line.style.cssText = 'font-size:11px;color:#5a5d75;margin-top:3px;';
+          const labelText = `Саб ${s.num}: `;
+          const nameText = (sub && sub.name) ? `${sub.icon} ${sub.name}` : (subName || '—');
+          const levelText = subLevel ? ` (ур. ${subLevel})` : '';
+          line.textContent = labelText + nameText + levelText;
+          tdProf.appendChild(line);
+        }
+      });
+      tr.appendChild(tdProf);
+
+      // Уровень основной
+      const tdLevel = document.createElement('td');
+      tdLevel.style.cssText = cellStyle;
+      tdLevel.textContent = m.level || '—';
+      tr.appendChild(tdLevel);
+
+      // Оружие + комментарий
+      const tdWeapon = document.createElement('td');
+      tdWeapon.style.cssText = cellStyle;
+      const weaponLine = document.createElement('div');
+      weaponLine.textContent = m.weapon ? `${weaponIcon(m.weapon)} ${m.weapon}` : '—';
+      if (!m.weapon) weaponLine.style.color = '#8a8da5';
+      tdWeapon.appendChild(weaponLine);
+      if (m.weaponComment) {
+        const c = document.createElement('div');
+        c.style.cssText = 'font-size:11px;color:#8a8da5;margin-top:3px;';
+        c.textContent = m.weaponComment;
+        tdWeapon.appendChild(c);
       }
-      span.style.fontSize = '12px';
-      span.style.padding = '2px 0';
-      span.style.lineHeight = '1.4';
-      span.style.wordBreak = 'break-word';
-      span.style.color = (span.textContent === '—') ? '#8a8da5' : '#1a1d2e';
-      el.parentNode.replaceChild(span, el);
+      tr.appendChild(tdWeapon);
+
+      // Сет брони
+      const tdArmor = document.createElement('td');
+      tdArmor.style.cssText = cellStyle + 'font-size:11px;';
+      [
+        ['Шлем', m.helmet],
+        ['Тело', m.armor],
+        ['Низ', m.legs],
+        ['Перчатки', m.gloves],
+        ['Ботинки', m.boots],
+        ['Щит', m.shield]
+      ].forEach(([label, val]) => {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
+        d.textContent = `${label}: ${val || '—'}`;
+        if (!val) d.style.color = '#8a8da5';
+        tdArmor.appendChild(d);
+      });
+      tr.appendChild(tdArmor);
+
+      // Сет бижутерии
+      const tdJewelry = document.createElement('td');
+      tdJewelry.style.cssText = cellStyle + 'font-size:11px;';
+      [
+        ['Серьга 1', m.earring1],
+        ['Серьга 2', m.earring2],
+        ['Ожерелье', m.necklace],
+        ['Кольцо 1', m.ring1],
+        ['Кольцо 2', m.ring2]
+      ].forEach(([label, val]) => {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
+        d.textContent = `${label}: ${val || '—'}`;
+        if (!val) d.style.color = '#8a8da5';
+        tdJewelry.appendChild(d);
+      });
+      tr.appendChild(tdJewelry);
+
+      // Татуировки
+      const tdTattoo = document.createElement('td');
+      tdTattoo.style.cssText = cellStyle + 'font-size:11px;';
+      [m.tattoo1, m.tattoo2, m.tattoo3].forEach((t, i) => {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
+        d.textContent = `Тату ${i + 1}: ${t || '—'}`;
+        if (!t) d.style.color = '#8a8da5';
+        tdTattoo.appendChild(d);
+      });
+      tr.appendChild(tdTattoo);
+
+      // Комментарий
+      const tdComment = document.createElement('td');
+      tdComment.style.cssText = cellStyle;
+      tdComment.textContent = m.comment || '—';
+      if (!m.comment) tdComment.style.color = '#8a8da5';
+      tr.appendChild(tdComment);
+
+      tbody.appendChild(tr);
     });
 
-    // Приводим таблицу в читаемый вид
-    clone.style.tableLayout = 'auto';
-    clone.style.width = '100%';
-    clone.style.minWidth = '0';
-    clone.style.fontSize = '12px';
-    clone.style.borderCollapse = 'collapse';
-    clone.style.background = '#fff';
-
-    clone.querySelectorAll('th').forEach(th => {
-      th.style.fontSize = '11px';
-      th.style.padding = '8px 8px';
-      th.style.background = '#fafbfe';
-      th.style.color = '#8a6508';
-      th.style.borderBottom = '2px solid #b8860b';
-      th.style.textAlign = 'left';
-      th.style.verticalAlign = 'top';
-    });
-    clone.querySelectorAll('td').forEach(td => {
-      td.style.padding = '8px 8px';
-      td.style.borderBottom = '1px solid #e2e4ec';
-      td.style.verticalAlign = 'top';
-      td.style.background = '#fff';
-    });
-
-    // Обнуляем фиксированные ширины колонок
-    clone.querySelectorAll('colgroup').forEach(cg => cg.remove());
-
-    pdfArea.appendChild(clone);
+    table.appendChild(tbody);
+    pdfArea.appendChild(table);
     document.body.appendChild(pdfArea);
 
-    // Пауза, чтобы браузер отрисовал контейнер и подгрузил шрифты
+    // Пауза для отрисовки
     await new Promise(r => setTimeout(r, 400));
 
     const fileName = 'KP_DARAMs_' + new Date().toISOString().slice(0, 10) + '.pdf';
 
     try {
-      // Снимаем контейнер через html2canvas
       const canvas = await html2canvas(pdfArea, {
         scale: 2,
         useCORS: true,
@@ -946,7 +990,6 @@
         scrollY: 0
       });
 
-      // Проверка, что canvas не пустой
       if (!canvas || canvas.width === 0 || canvas.height === 0) {
         throw new Error('canvas пустой — не удалось отрисовать контейнер');
       }
@@ -955,8 +998,8 @@
       const { jsPDF } = window.jspdf;
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-      const pageWidth = pdf.internal.pageSize.getWidth();   // 297 мм
-      const pageHeight = pdf.internal.pageSize.getHeight(); // 210 мм
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
       const margin = 8;
 
       const imgWidth = pageWidth - margin * 2;
@@ -965,11 +1008,9 @@
       let heightLeft = imgHeight;
       let position = margin;
 
-      // Первая страница
       pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
       heightLeft -= (pageHeight - margin * 2);
 
-      // Последующие страницы — если контент не влез на одну
       while (heightLeft > 0) {
         position = margin - (imgHeight - heightLeft);
         pdf.addPage();
@@ -984,13 +1025,11 @@
       setSyncStatus('offline', 'Ошибка PDF');
       alert('Не удалось создать PDF: ' + err.message);
     } finally {
-      // Убираем контейнер и оверлей
       if (pdfArea.parentNode) pdfArea.parentNode.removeChild(pdfArea);
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }
   }
 
-  // ==================== СТАРТ ====================
   document.getElementById('addMember').addEventListener('click', addMember);
   document.getElementById('saveToFirebase').addEventListener('click', forceSaveAll);
   document.getElementById('downloadPDF').addEventListener('click', downloadPDF);
