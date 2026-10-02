@@ -192,7 +192,7 @@
         <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба с уровнями)</span></th>
         <th>Ур.</th>
         <th>Оружие<br><span class="set-label">(грейд + тип + комментарий)</span></th>
-        <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
+        <th>Сет брони<br><span class="set-label">(шлем / тело / низ / перчатки / ботинки / щит)</span></th>
         <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
         <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
         <th>Комментарий<br><span class="set-label">(заметка о персонаже)</span></th>
@@ -343,9 +343,6 @@
   }
 
   // ==================== СРАВНЕНИЕ СОСТОЯНИЙ ====================
-  // Возвращает true, если два набора данных идентичны.
-  // Используется, чтобы пропустить перерисовку, когда snapshot пришёл
-  // от собственного сохранения пользователя (иначе терялся бы фокус).
   function membersEqual(a, b) {
     if (a.length !== b.length) return false;
     const mapA = new Map(a.map(m => [m.id, m]));
@@ -371,8 +368,6 @@
       });
     }
 
-    // Если данные не изменились — не перерисовываем таблицу,
-    // чтобы не терять фокус и позицию курсора у активного поля.
     if (membersEqual(members, newMembers)) {
       setSyncStatus('online', 'Синхронизировано');
       return;
@@ -386,7 +381,7 @@
     setSyncStatus('offline', 'Ошибка: ' + error.code);
   });
 
-  // ==================== СОХРАНЕНИЕ (debounced, при вводе) ====================
+  // ==================== СОХРАНЕНИЕ (debounced) ====================
   let saveTimeouts = new Map();
 
   function debouncedSave(member) {
@@ -409,7 +404,7 @@
     }, 500));
   }
 
-  // ==================== ПРИНУДИТЕЛЬНОЕ СОХРАНЕНИЕ ВСЕХ ДАННЫХ ====================
+  // ==================== ПРИНУДИТЕЛЬНОЕ СОХРАНЕНИЕ ====================
   async function forceSaveAll() {
     if (members.length === 0) {
       setSyncStatus('online', 'Нечего сохранять');
@@ -457,7 +452,7 @@
       sub1Level: '', sub2Level: '', sub3Level: '',
       level: 1,
       weapon: '', weaponComment: '',
-      helmet: '', armor: '', gloves: '', boots: '', shield: '',
+      helmet: '', armor: '', legs: '', gloves: '', boots: '', shield: '',
       earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
       tattoo1: '', tattoo2: '', tattoo3: '', comment: ''
     };
@@ -483,7 +478,6 @@
   }
 
   // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
-  // meta = { memberId, field } — для сохранения фокуса при перерисовке
   function createInput(type, value, onChange, attrs = {}, meta = null) {
     const input = document.createElement('input');
     input.type = type;
@@ -549,7 +543,6 @@
 
   // ==================== РЕНДЕР ====================
   function renderTable() {
-    // --- Сохраняем информацию о фокусе и позиции курсора ---
     const active = document.activeElement;
     let focusInfo = null;
     if (active && active.dataset && active.dataset.field && active.dataset.memberId
@@ -573,7 +566,6 @@
       td.textContent = 'Нет персонажей. Нажмите «Добавить персонажа».';
       tr.appendChild(td);
       partyBody.appendChild(tr);
-      // Нечего восстанавливать — выходим
       return;
     }
 
@@ -590,7 +582,7 @@
       }, {}, meta('name')));
       tr.appendChild(tdName);
 
-      // Профессия + 3 саб-класса с уровнями
+      // Профессия + 3 саб-класса
       const tdProf = document.createElement('td');
       const profCell = document.createElement('div');
       profCell.className = 'prof-cell';
@@ -684,12 +676,13 @@
       tdWeapon.appendChild(weaponWrap);
       tr.appendChild(tdWeapon);
 
-      // Сет брони
+      // Сет брони: шлем / тело / низ / перчатки / ботинки / щит
       const tdArmor = document.createElement('td');
       tdArmor.className = 'set-cell';
       [
         { key: 'helmet', label: 'Шлем', ph: 'Dynasty Helmet' },
-        { key: 'armor', label: 'Броня', ph: 'Dynasty Breastplate' },
+        { key: 'armor', label: 'Тело', ph: 'Dynasty Breastplate' },
+        { key: 'legs', label: 'Низ', ph: 'Dynasty Gaiters' },
         { key: 'gloves', label: 'Перчатки', ph: 'Dynasty Gauntlets' },
         { key: 'boots', label: 'Ботинки', ph: 'Dynasty Boots' },
         { key: 'shield', label: 'Щит', ph: 'Dynasty Shield' }
@@ -766,7 +759,7 @@
       partyBody.appendChild(tr);
     });
 
-    // --- Восстанавливаем фокус и позицию курсора ---
+    // Восстановление фокуса
     if (focusInfo) {
       const el = partyBody.querySelector(
         `[data-member-id="${focusInfo.memberId}"][data-field="${focusInfo.field}"]`
@@ -776,7 +769,7 @@
         if (!focusInfo.isSelect && el.setSelectionRange && focusInfo.selectionStart != null) {
           try {
             el.setSelectionRange(focusInfo.selectionStart, focusInfo.selectionEnd);
-          } catch (e) { /* некоторые типы input не поддерживают selection */ }
+          } catch (e) { /* ignore */ }
         }
       }
     }
