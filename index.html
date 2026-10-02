@@ -9,22 +9,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-deep: #12141f;
-    --bg-page: #1b1d2e;
-    --bg-panel: #252840;
-    --bg-panel-alt: #2d3050;
-    --bg-input: #1a1c2e;
-    --border-subtle: #3a3d5c;
-    --border-strong: #4e5278;
-    --text-primary: #e8e9f0;
-    --text-secondary: #a0a3c0;
-    --text-muted: #6d7090;
-    --accent-gold: #f9c10b;
-    --accent-gold-dark: #da9a10;
-    --accent-gold-light: #fdca44;
-    --accent-blue: #7b9fff;
-    --success-green: #6ee7a0;
-    --danger-red: #fe4c25;
+    --bg-page: #f4f5fa;
+    --bg-panel: #ffffff;
+    --bg-panel-alt: #fafbfe;
+    --bg-input: #ffffff;
+    --border-subtle: #e2e4ec;
+    --border-strong: #cfd2de;
+    --text-primary: #1a1d2e;
+    --text-secondary: #5a5d75;
+    --text-muted: #8a8da5;
+    --accent-gold: #b8860b;
+    --accent-gold-dark: #8a6508;
+    --accent-gold-light: #d4a017;
+    --accent-blue: #3a5fd9;
+    --success-green: #1f9d55;
+    --danger-red: #d92d20;
     --font-body: 'Proxima Nova', 'Segoe UI', sans-serif;
     --font-display: 'Cinzel', 'Times New Roman', serif;
   }
@@ -34,134 +33,141 @@
   body {
     font-family: var(--font-body);
     background: var(--bg-page);
-    background-image:
-      radial-gradient(ellipse at 20% 0%, rgba(249, 193, 11, 0.06) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 100%, rgba(123, 159, 255, 0.05) 0%, transparent 55%);
     color: var(--text-primary);
     margin: 0;
-    padding: 24px 20px 60px;
+    padding: 16px 14px 40px;
     min-height: 100vh;
+    font-size: 12px;
     -webkit-font-smoothing: antialiased;
   }
 
   h1 {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 28px;
+    font-size: 20px;
     letter-spacing: 0.04em;
     color: var(--accent-gold);
     text-transform: uppercase;
-    margin: 0 0 4px 0;
-    text-shadow: 0 0 18px rgba(249, 193, 11, 0.25);
+    margin: 0 0 2px 0;
   }
 
   .subtitle {
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: 11px;
     letter-spacing: 0.3px;
-    margin: 0 0 22px 0;
+    margin: 0 0 14px 0;
   }
 
   /* ===== Панель инструментов ===== */
   .toolbar {
     display: flex;
-    gap: 10px;
+    gap: 6px;
     flex-wrap: wrap;
-    margin-bottom: 18px;
-    padding: 14px 16px;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 10px;
     background: var(--bg-panel);
     border: 1px solid var(--border-subtle);
-    border-radius: 12px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.06);
   }
 
   button {
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: 1px solid transparent;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     background: var(--bg-panel-alt);
     color: var(--text-primary);
-    border-color: var(--border-strong);
   }
 
   button:hover {
-    background: #363a60;
-    border-color: var(--accent-gold-dark);
-    color: var(--accent-gold-light);
+    background: #eef0f8;
+    border-color: var(--accent-gold);
+    color: var(--accent-gold-dark);
   }
 
   button.primary {
-    background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
-    color: #1a1a1a;
+    background: linear-gradient(180deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%);
+    color: #fff;
     border-color: var(--accent-gold);
     font-weight: 700;
-    box-shadow: 0 2px 12px rgba(249, 193, 11, 0.3);
   }
 
   button.primary:hover {
-    background: linear-gradient(180deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%);
-    color: #000;
-    box-shadow: 0 4px 18px rgba(249, 193, 11, 0.45);
+    background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
+    color: #fff;
+  }
+
+  .autosave-indicator {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: auto;
+    letter-spacing: 0.3px;
+  }
+
+  .autosave-indicator.saved {
+    color: var(--success-green);
   }
 
   /* ===== Таблица ===== */
   .table-wrap {
     overflow-x: auto;
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid var(--border-subtle);
     background: var(--bg-panel);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.06);
   }
 
   table {
     border-collapse: collapse;
     width: 100%;
-    min-width: 1200px;
+    min-width: 900px;
+    font-size: 11px;
   }
 
   th, td {
-    padding: 8px 10px;
+    padding: 4px 5px;
     text-align: left;
     vertical-align: top;
     border-bottom: 1px solid var(--border-subtle);
   }
 
   th {
-    background: linear-gradient(180deg, #2d3050 0%, #22254a 100%);
-    color: var(--accent-gold);
-    font-size: 12px;
+    background: linear-gradient(180deg, #fafbfe 0%, #eef0f8 100%);
+    color: var(--accent-gold-dark);
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     position: sticky;
     top: 0;
     z-index: 2;
-    border-bottom: 2px solid var(--accent-gold-dark);
+    border-bottom: 2px solid var(--accent-gold);
   }
 
   th .set-label {
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: 9px;
     text-transform: none;
     letter-spacing: 0.2px;
     font-weight: 400;
     display: block;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 
   tbody tr {
-    transition: background 0.15s ease;
+    transition: background 0.12s ease;
   }
 
   tbody tr:hover {
-    background: rgba(249, 193, 11, 0.035);
+    background: #fafbfe;
   }
 
   tbody tr:last-child td {
@@ -171,54 +177,54 @@
   /* ===== Поля ввода ===== */
   input, select {
     font-family: var(--font-body);
-    font-size: 13px;
+    font-size: 11px;
     color: var(--text-primary);
     background: var(--bg-input);
     border: 1px solid var(--border-subtle);
-    border-radius: 6px;
-    padding: 7px 9px;
+    border-radius: 4px;
+    padding: 4px 6px;
     width: 100%;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
   }
 
   input:focus, select:focus {
-    border-color: var(--accent-gold-dark);
-    box-shadow: 0 0 0 2px rgba(249, 193, 11, 0.15);
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
   }
 
   input[type="number"] {
-    width: 70px;
+    width: 48px;
   }
 
   select {
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f9c10b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b8860b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 14px;
-    padding-right: 28px;
+    background-position: right 6px center;
+    background-size: 10px;
+    padding-right: 20px;
   }
 
   select option {
-    background: var(--bg-input);
+    background: #fff;
     color: var(--text-primary);
   }
 
   /* ===== Ячейка сета ===== */
   .set-cell {
-    min-width: 150px;
-    background: rgba(255, 255, 255, 0.015);
+    min-width: 110px;
+    background: #fcfcff;
   }
 
   .set-label {
     display: block;
-    font-size: 10px;
+    font-size: 8px;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin: 6px 0 2px 0;
+    letter-spacing: 0.3px;
+    margin: 3px 0 1px 0;
   }
 
   .set-label:first-child {
@@ -229,12 +235,12 @@
   .remove-btn {
     background: transparent;
     color: var(--danger-red);
-    border: 1px solid rgba(254, 76, 37, 0.4);
-    border-radius: 6px;
-    width: 32px;
-    height: 32px;
+    border: 1px solid rgba(217, 45, 32, 0.35);
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
     padding: 0;
-    font-size: 16px;
+    font-size: 13px;
     line-height: 1;
     text-transform: none;
     display: flex;
@@ -243,64 +249,64 @@
   }
 
   .remove-btn:hover {
-    background: rgba(254, 76, 37, 0.15);
+    background: rgba(217, 45, 32, 0.1);
     border-color: var(--danger-red);
-    color: #ff7a5c;
+    color: var(--danger-red);
   }
 
   /* ===== Панель сета ===== */
   .set-panel {
-    margin-top: 22px;
+    margin-top: 14px;
     padding: 0;
     background: var(--bg-panel);
     border: 1px solid var(--border-subtle);
-    border-radius: 12px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(20, 25, 60, 0.06);
     display: none;
     overflow: hidden;
   }
 
   .set-panel.active {
     display: block;
-    animation: fadeIn 0.25s ease;
+    animation: fadeIn 0.2s ease;
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
+    from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   .set-panel-header {
-    padding: 16px 20px 14px;
-    background: linear-gradient(90deg, rgba(249, 193, 11, 0.10) 0%, transparent 100%);
+    padding: 10px 14px 9px;
+    background: linear-gradient(90deg, rgba(184, 134, 11, 0.08) 0%, transparent 100%);
     border-bottom: 1px solid var(--border-subtle);
-    border-left: 4px solid var(--accent-gold);
+    border-left: 3px solid var(--accent-gold);
   }
 
   .set-panel h2 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
-    color: var(--accent-gold);
+    color: var(--accent-gold-dark);
   }
 
   .set-panel-body {
-    padding: 16px 20px 20px;
+    padding: 10px 14px 12px;
   }
 
   .set-panel h3 {
-    margin: 18px 0 10px 0;
+    margin: 12px 0 6px 0;
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     color: var(--accent-blue);
     border-bottom: 1px solid var(--border-subtle);
-    padding-bottom: 6px;
+    padding-bottom: 4px;
   }
 
   .set-panel h3:first-child {
@@ -309,18 +315,17 @@
 
   .set-panel h3 .complete {
     color: var(--success-green);
-    text-shadow: 0 0 10px rgba(110, 231, 160, 0.35);
   }
 
   .set-panel h3 .missing {
-    color: #f0a0a0;
+    color: #b34233;
   }
 
   .set-panel p {
-    margin: 6px 0 0 0;
+    margin: 4px 0 0 0;
     color: var(--text-secondary);
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 11px;
+    line-height: 1.5;
   }
 
   .set-panel p.missing {
@@ -328,15 +333,15 @@
   }
 
   .bonus-list {
-    margin: 8px 0 0 0;
+    margin: 4px 0 0 0;
     padding-left: 0;
     list-style: none;
   }
 
   .bonus-list li {
     position: relative;
-    padding: 5px 0 5px 22px;
-    font-size: 13px;
+    padding: 3px 0 3px 16px;
+    font-size: 11px;
     color: var(--text-primary);
     line-height: 1.5;
   }
@@ -344,37 +349,34 @@
   .bonus-list li::before {
     content: "";
     position: absolute;
-    left: 4px;
-    top: 12px;
-    width: 6px;
-    height: 6px;
+    left: 2px;
+    top: 8px;
+    width: 5px;
+    height: 5px;
     background: var(--accent-gold);
     transform: rotate(45deg);
-    box-shadow: 0 0 6px rgba(249, 193, 11, 0.6);
   }
 
   .empty {
     color: var(--text-muted);
     font-style: italic;
     text-align: center;
-    padding: 24px !important;
+    padding: 20px !important;
   }
 
-  /* Скроллбар */
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #eef0f8; }
   ::-webkit-scrollbar-thumb {
     background: var(--border-strong);
-    border-radius: 5px;
-    border: 2px solid var(--bg-deep);
+    border-radius: 4px;
   }
-  ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold-dark); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
 </style>
 </head>
 <body>
 
-<h1>КП DARAMs</h1>
-<p class="subtitle">LU4 GAMMA</p>
+<h1>Группа Lineage 2</h1>
+<p class="subtitle">Сеты брони и бижутерии — состав группы и экипировка</p>
 
 <div class="toolbar">
   <button id="addMember" class="primary">Добавить персонажа</button>
@@ -382,6 +384,7 @@
   <button id="load">Загрузить</button>
   <button id="export">Экспорт JSON</button>
   <button id="clear">Очистить</button>
+  <span id="autosaveIndicator" class="autosave-indicator">Автосохранение включено</span>
 </div>
 
 <div class="table-wrap">
@@ -409,18 +412,15 @@
 </div>
 
 <script>
+  const STORAGE_KEY = 'l2party';
+
   // ==================== БАЗА СЕТОВ БРОНИ ====================
   const armorSets = [
     {
-      id: 'dynasty_heavy',
-      name: 'Dynasty Heavy Set',
-      type: 'Heavy',
+      id: 'dynasty_heavy', name: 'Dynasty Heavy Set', type: 'Heavy',
       pieces: {
-        helmet: 'Dynasty Helmet',
-        armor: 'Dynasty Breastplate',
-        gloves: 'Dynasty Gauntlets',
-        boots: 'Dynasty Boots',
-        shield: 'Dynasty Shield'
+        helmet: 'Dynasty Helmet', armor: 'Dynasty Breastplate', gloves: 'Dynasty Gauntlets',
+        boots: 'Dynasty Boots', shield: 'Dynasty Shield'
       },
       bonuses: [
         'STR +2, CON -1',
@@ -430,15 +430,10 @@
       ]
     },
     {
-      id: 'dynasty_light',
-      name: 'Dynasty Light Set',
-      type: 'Light',
+      id: 'dynasty_light', name: 'Dynasty Light Set', type: 'Light',
       pieces: {
-        helmet: 'Dynasty Leather Helmet',
-        armor: 'Dynasty Leather Armor',
-        gloves: 'Dynasty Leather Gloves',
-        boots: 'Dynasty Leather Boots',
-        shield: ''
+        helmet: 'Dynasty Leather Helmet', armor: 'Dynasty Leather Armor',
+        gloves: 'Dynasty Leather Gloves', boots: 'Dynasty Leather Boots', shield: ''
       },
       bonuses: [
         'DEX +1, STR +1, CON -1',
@@ -448,15 +443,10 @@
       ]
     },
     {
-      id: 'vesper_heavy',
-      name: 'Vesper Heavy Set',
-      type: 'Heavy',
+      id: 'vesper_heavy', name: 'Vesper Heavy Set', type: 'Heavy',
       pieces: {
-        helmet: 'Vesper Helmet',
-        armor: 'Vesper Breastplate',
-        gloves: 'Vesper Gauntlets',
-        boots: 'Vesper Boots',
-        shield: 'Vesper Shield'
+        helmet: 'Vesper Helmet', armor: 'Vesper Breastplate', gloves: 'Vesper Gauntlets',
+        boots: 'Vesper Boots', shield: 'Vesper Shield'
       },
       bonuses: [
         'STR +2, DEX -2',
@@ -466,15 +456,10 @@
       ]
     },
     {
-      id: 'vesper_light',
-      name: 'Vesper Light Set',
-      type: 'Light',
+      id: 'vesper_light', name: 'Vesper Light Set', type: 'Light',
       pieces: {
-        helmet: 'Vesper Leather Helmet',
-        armor: 'Vesper Leather Armor',
-        gloves: 'Vesper Leather Gloves',
-        boots: 'Vesper Leather Boots',
-        shield: ''
+        helmet: 'Vesper Leather Helmet', armor: 'Vesper Leather Armor',
+        gloves: 'Vesper Leather Gloves', boots: 'Vesper Leather Boots', shield: ''
       },
       bonuses: [
         'STR +1, DEX +1, CON -2',
@@ -484,15 +469,10 @@
       ]
     },
     {
-      id: 'elegia_heavy',
-      name: 'Elegia Heavy Set',
-      type: 'Heavy',
+      id: 'elegia_heavy', name: 'Elegia Heavy Set', type: 'Heavy',
       pieces: {
-        helmet: 'Elegia Helmet',
-        armor: 'Elegia Breastplate',
-        gloves: 'Elegia Gauntlets',
-        boots: 'Elegia Boots',
-        shield: 'Elegia Shield'
+        helmet: 'Elegia Helmet', armor: 'Elegia Breastplate', gloves: 'Elegia Gauntlets',
+        boots: 'Elegia Boots', shield: 'Elegia Shield'
       },
       bonuses: [
         'STR +3, CON -2',
@@ -505,15 +485,10 @@
       ]
     },
     {
-      id: 'elegia_light',
-      name: 'Elegia Light Set',
-      type: 'Light',
+      id: 'elegia_light', name: 'Elegia Light Set', type: 'Light',
       pieces: {
-        helmet: 'Elegia Leather Helmet',
-        armor: 'Elegia Leather Armor',
-        gloves: 'Elegia Leather Gloves',
-        boots: 'Elegia Leather Boots',
-        shield: ''
+        helmet: 'Elegia Leather Helmet', armor: 'Elegia Leather Armor',
+        gloves: 'Elegia Leather Gloves', boots: 'Elegia Leather Boots', shield: ''
       },
       bonuses: [
         'STR +1, DEX +2, CON -2',
@@ -529,99 +504,68 @@
   // ==================== БАЗА СЕТОВ БИЖУТЕРИИ ====================
   const jewelrySets = [
     {
-      id: 'dynasty_jewelry',
-      name: 'Dynasty Jewelry Set',
+      id: 'dynasty_jewelry', name: 'Dynasty Jewelry Set',
       pieces: {
-        earring1: 'Dynasty Earring',
-        earring2: 'Dynasty Earring',
-        necklace: 'Dynasty Necklace',
-        ring1: 'Dynasty Ring',
-        ring2: 'Dynasty Ring'
+        earring1: 'Dynasty Earring', earring2: 'Dynasty Earring',
+        necklace: 'Dynasty Necklace', ring1: 'Dynasty Ring', ring2: 'Dynasty Ring'
       },
       bonuses: [
-        'M. Def. +5',
-        'Max MP +150',
-        'Resistance to Poison +20%',
-        'Resistance to Bleed +20%',
+        'M. Def. +5', 'Max MP +150',
+        'Resistance to Poison +20%', 'Resistance to Bleed +20%',
         'При заточке всех частей на +6: M. Def. +15'
       ]
     },
     {
-      id: 'vesper_jewelry',
-      name: 'Vesper Jewelry Set',
+      id: 'vesper_jewelry', name: 'Vesper Jewelry Set',
       pieces: {
-        earring1: 'Vesper Earring',
-        earring2: 'Vesper Earring',
-        necklace: 'Vesper Necklace',
-        ring1: 'Vesper Ring',
-        ring2: 'Vesper Ring'
+        earring1: 'Vesper Earring', earring2: 'Vesper Earring',
+        necklace: 'Vesper Necklace', ring1: 'Vesper Ring', ring2: 'Vesper Ring'
       },
       bonuses: [
-        'M. Def. +7',
-        'Max MP +200',
-        'Resistance to Poison +30%',
-        'Resistance to Bleed +30%',
+        'M. Def. +7', 'Max MP +200',
+        'Resistance to Poison +30%', 'Resistance to Bleed +30%',
         'При заточке всех частей на +6: M. Def. +20'
       ]
     },
     {
-      id: 'elegia_jewelry',
-      name: 'Elegia Jewelry Set',
+      id: 'elegia_jewelry', name: 'Elegia Jewelry Set',
       pieces: {
-        earring1: 'Elegia Earring',
-        earring2: 'Elegia Earring',
-        necklace: 'Elegia Necklace',
-        ring1: 'Elegia Ring',
-        ring2: 'Elegia Ring'
+        earring1: 'Elegia Earring', earring2: 'Elegia Earring',
+        necklace: 'Elegia Necklace', ring1: 'Elegia Ring', ring2: 'Elegia Ring'
       },
       bonuses: [
-        'M. Def. +10',
-        'Max MP +250',
-        'Resistance to Poison +40%',
-        'Resistance to Bleed +40%',
+        'M. Def. +10', 'Max MP +250',
+        'Resistance to Poison +40%', 'Resistance to Bleed +40%',
         'Resistance to Stun +30%',
         'При заточке всех частей на +6: M. Def. +25'
       ]
     },
     {
-      id: 'epic_earring_combo',
-      name: 'Epic Earring Combo (Zaken + Antharas)',
+      id: 'epic_earring_combo', name: 'Epic Earring Combo (Zaken + Antharas)',
       pieces: {
-        earring1: "Blessed Zaken's Earring",
-        earring2: "Blessed Antharas' Earring"
+        earring1: "Blessed Zaken's Earring", earring2: "Blessed Antharas' Earring"
       },
       bonuses: [
         'M. Def. +10, Max MP +300',
-        'Resistance to Bleed +30%',
-        'Resistance to Stun +30%',
+        'Resistance to Bleed +30%', 'Resistance to Stun +30%',
         'Восстанавливает 3% MP при получении урона'
       ]
     },
     {
-      id: 'epic_ring_combo',
-      name: 'Epic Ring Combo (Baium + Ant Queen)',
-      pieces: {
-        ring1: 'Ring of Baium',
-        ring2: 'Ring of Queen Ant'
-      },
+      id: 'epic_ring_combo', name: 'Epic Ring Combo (Baium + Ant Queen)',
+      pieces: { ring1: 'Ring of Baium', ring2: 'Ring of Queen Ant' },
       bonuses: [
         'M. Def. +8, Max MP +250',
-        'Resistance to Poison +30%',
-        'Resistance to Hold +30%',
+        'Resistance to Poison +30%', 'Resistance to Hold +30%',
         'Увеличивает точность и критический удар'
       ]
     },
     {
-      id: 'epic_necklace_combo',
-      name: 'Epic Necklace Combo (Valakas + Frintezza)',
-      pieces: {
-        necklace: "Blessed Valakas' Necklace",
-        necklace2: 'Necklace of Frintezza'
-      },
+      id: 'epic_necklace_combo', name: 'Epic Necklace Combo (Valakas + Frintezza)',
+      pieces: { necklace: "Blessed Valakas' Necklace", necklace2: 'Necklace of Frintezza' },
       bonuses: [
         'M. Def. +12, Max MP +350',
-        'Resistance to Sleep +40%',
-        'Resistance to Paralysis +40%'
+        'Resistance to Sleep +40%', 'Resistance to Paralysis +40%'
       ]
     }
   ];
@@ -629,19 +573,13 @@
   // ==================== СПИСКИ ПРЕДМЕТОВ ====================
   function buildArmorList(slot) {
     const items = new Set(['']);
-    armorSets.forEach(set => {
-      const item = set.pieces[slot];
-      if (item) items.add(item);
-    });
+    armorSets.forEach(set => { const item = set.pieces[slot]; if (item) items.add(item); });
     return Array.from(items).sort((a, b) => a.localeCompare(b));
   }
 
   function buildJewelryList(slot) {
     const items = new Set(['']);
-    jewelrySets.forEach(set => {
-      const item = set.pieces[slot];
-      if (item) items.add(item);
-    });
+    jewelrySets.forEach(set => { const item = set.pieces[slot]; if (item) items.add(item); });
     const singles = {
       earring1: ["Blessed Zaken's Earring", "Blessed Antharas' Earring", 'Earring of Orfen'],
       earring2: ["Blessed Zaken's Earring", "Blessed Antharas' Earring", 'Earring of Orfen'],
@@ -673,9 +611,7 @@
     ring2: buildJewelryList('ring2')
   };
 
-  const classes = [
-    "", "Tank", "Healer", "DD", "Mage", "Archer", "Dagger", "Summoner", "Bard", "Support"
-  ];
+  const classes = ["", "Tank", "Healer", "DD", "Mage", "Archer", "Dagger", "Summoner", "Bard", "Support"];
 
   // ==================== СОСТОЯНИЕ ====================
   let members = [];
@@ -684,6 +620,48 @@
   const setPanel = document.getElementById('setPanel');
   const setTitle = document.getElementById('setTitle');
   const setContent = document.getElementById('setContent');
+  const autosaveIndicator = document.getElementById('autosaveIndicator');
+
+  // ==================== АВТОСОХРАНЕНИЕ ====================
+  let saveTimeout = null;
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
+      flashSaved();
+    } catch (e) {
+      console.warn('Не удалось сохранить:', e);
+    }
+  }
+
+  function persistDebounced() {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(persist, 250);
+  }
+
+  function flashSaved() {
+    autosaveIndicator.textContent = '✓ Сохранено';
+    autosaveIndicator.classList.add('saved');
+    clearTimeout(flashSaved._t);
+    flashSaved._t = setTimeout(() => {
+      autosaveIndicator.textContent = 'Автосохранение включено';
+      autosaveIndicator.classList.remove('saved');
+    }, 1200);
+  }
+
+  function restore() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) return false;
+    try {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        members = parsed;
+        return true;
+      }
+    } catch (e) {
+      console.warn('Ошибка восстановления:', e);
+    }
+    return false;
+  }
 
   // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
   function createSelect(options, value, onChange) {
@@ -713,7 +691,6 @@
     slots.forEach(s => { selected[s] = member[s] || ''; });
 
     let bestPartial = null;
-
     for (const set of setsList) {
       let missing = [];
       let matchedCount = 0;
@@ -723,16 +700,11 @@
       for (const slot of slots) {
         const setItem = set.pieces[slot];
         const chosen = selected[slot];
-
         if (setItem) {
           totalRequired++;
-          if (chosen === setItem) {
-            matchedCount++;
-          } else if (chosen === '') {
-            missing.push(slot);
-          } else {
-            hasForeignItem = true;
-          }
+          if (chosen === setItem) matchedCount++;
+          else if (chosen === '') missing.push(slot);
+          else hasForeignItem = true;
         } else {
           if (chosen) hasForeignItem = true;
         }
@@ -817,31 +789,43 @@
       const tr = document.createElement('tr');
 
       const tdName = document.createElement('td');
-      tdName.appendChild(createInput('text', member.name, val => { member.name = val; }));
+      tdName.appendChild(createInput('text', member.name, val => {
+        member.name = val;
+        persistDebounced();
+        if (activeMemberIndex === index) updateSetPanel();
+      }));
       tr.appendChild(tdName);
 
       const tdClass = document.createElement('td');
-      tdClass.appendChild(createSelect(classes, member.className, val => { member.className = val; }));
+      tdClass.appendChild(createSelect(classes, member.className, val => {
+        member.className = val;
+        persistDebounced();
+      }));
       tr.appendChild(tdClass);
 
       const tdLevel = document.createElement('td');
-      tdLevel.appendChild(createInput('number', member.level, val => { member.level = val; }, { min: 1, max: 85 }));
+      tdLevel.appendChild(createInput('number', member.level, val => {
+        member.level = val;
+        persistDebounced();
+      }, { min: 1, max: 85 }));
       tr.appendChild(tdLevel);
 
       const tdWeapon = document.createElement('td');
-      tdWeapon.appendChild(createSelect(itemOptions.weapon, member.weapon || '', val => { member.weapon = val; }));
+      tdWeapon.appendChild(createSelect(itemOptions.weapon, member.weapon || '', val => {
+        member.weapon = val;
+        persistDebounced();
+      }));
       tr.appendChild(tdWeapon);
 
       const tdArmor = document.createElement('td');
       tdArmor.className = 'set-cell';
-      const armorFields = [
+      [
         { key: 'helmet', label: 'Шлем' },
         { key: 'armor', label: 'Броня' },
         { key: 'gloves', label: 'Перчатки' },
         { key: 'boots', label: 'Ботинки' },
         { key: 'shield', label: 'Щит' }
-      ];
-      armorFields.forEach(field => {
+      ].forEach(field => {
         const label = document.createElement('span');
         label.className = 'set-label';
         label.textContent = field.label;
@@ -850,6 +834,7 @@
           member[field.key] = val;
           activeMemberIndex = index;
           updateSetPanel();
+          persistDebounced();
         });
         tdArmor.appendChild(select);
       });
@@ -857,14 +842,13 @@
 
       const tdJewelry = document.createElement('td');
       tdJewelry.className = 'set-cell';
-      const jewelryFields = [
+      [
         { key: 'earring1', label: 'Серьга 1' },
         { key: 'earring2', label: 'Серьга 2' },
         { key: 'necklace', label: 'Ожерелье' },
         { key: 'ring1', label: 'Кольцо 1' },
         { key: 'ring2', label: 'Кольцо 2' }
-      ];
-      jewelryFields.forEach(field => {
+      ].forEach(field => {
         const label = document.createElement('span');
         label.className = 'set-label';
         label.textContent = field.label;
@@ -873,6 +857,7 @@
           member[field.key] = val;
           activeMemberIndex = index;
           updateSetPanel();
+          persistDebounced();
         });
         tdJewelry.appendChild(select);
       });
@@ -887,6 +872,7 @@
         members.splice(index, 1);
         if (activeMemberIndex === index) activeMemberIndex = null;
         else if (activeMemberIndex > index) activeMemberIndex--;
+        persist();
         renderTable();
         updateSetPanel();
       });
@@ -901,42 +887,27 @@
   function addMember() {
     members.push({
       name: 'Персонаж ' + (members.length + 1),
-      className: '',
-      level: 1,
-      weapon: '',
-      helmet: '',
-      armor: '',
-      gloves: '',
-      boots: '',
-      shield: '',
-      earring1: '',
-      earring2: '',
-      necklace: '',
-      ring1: '',
-      ring2: ''
+      className: '', level: 1, weapon: '',
+      helmet: '', armor: '', gloves: '', boots: '', shield: '',
+      earring1: '', earring2: '', necklace: '', ring1: '', ring2: ''
     });
+    persist();
     renderTable();
   }
 
   document.getElementById('addMember').addEventListener('click', addMember);
 
   document.getElementById('save').addEventListener('click', () => {
-    localStorage.setItem('l2party', JSON.stringify(members));
+    persist();
     alert('Сохранено в localStorage');
   });
 
   document.getElementById('load').addEventListener('click', () => {
-    const data = localStorage.getItem('l2party');
-    if (data) {
-      try {
-        members = JSON.parse(data);
-        activeMemberIndex = null;
-        renderTable();
-        updateSetPanel();
-        alert('Загружено из localStorage');
-      } catch (e) {
-        alert('Ошибка загрузки: ' + e.message);
-      }
+    if (restore()) {
+      activeMemberIndex = null;
+      renderTable();
+      updateSetPanel();
+      alert('Загружено из localStorage');
     } else {
       alert('Нет сохранённых данных');
     }
@@ -956,14 +927,26 @@
     if (confirm('Удалить всех персонажей?')) {
       members = [];
       activeMemberIndex = null;
+      localStorage.removeItem(STORAGE_KEY);
       renderTable();
       updateSetPanel();
     }
   });
 
-  addMember();
-  addMember();
-  addMember();
+  // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+  // Пытаемся восстановить данные; если их нет — создаём трёх персонажей.
+  if (!restore()) {
+    members = [
+      { name: 'Персонаж 1', className: '', level: 1, weapon: '', helmet: '', armor: '', gloves: '', boots: '', shield: '', earring1: '', earring2: '', necklace: '', ring1: '', ring2: '' },
+      { name: 'Персонаж 2', className: '', level: 1, weapon: '', helmet: '', armor: '', gloves: '', boots: '', shield: '', earring1: '', earring2: '', necklace: '', ring1: '', ring2: '' },
+      { name: 'Персонаж 3', className: '', level: 1, weapon: '', helmet: '', armor: '', gloves: '', boots: '', shield: '', earring1: '', earring2: '', necklace: '', ring1: '', ring2: '' }
+    ];
+    persist();
+  }
+  renderTable();
+
+  // Подстраховка: сохраняем перед закрытием/перезагрузкой страницы
+  window.addEventListener('beforeunload', persist);
 </script>
 
 </body>
