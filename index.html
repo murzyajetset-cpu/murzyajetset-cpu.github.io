@@ -76,6 +76,15 @@
     border-color: var(--success-green);
     color: var(--success-green);
   }
+  button.pdf-btn {
+    border-color: rgba(58,95,217,0.5);
+    color: var(--accent-blue);
+  }
+  button.pdf-btn:hover {
+    background: rgba(58,95,217,0.08);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+  }
   .sync-status {
     font-size: 10px; margin-left: auto; letter-spacing: 0.3px;
     display: flex; align-items: center; gap: 5px;
@@ -158,6 +167,17 @@
   }
   .remove-btn:hover { background: rgba(217,45,32,0.1); border-color: var(--danger-red); }
   .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
+
+  /* Область для генерации PDF (скрыта от пользователя) */
+  #pdfArea {
+    position: fixed;
+    left: -99999px;
+    top: 0;
+    background: #fff;
+    padding: 20px;
+    font-family: 'Proxima Nova', 'Segoe UI', sans-serif;
+  }
+
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: #eef0f8; }
   ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
@@ -172,6 +192,7 @@
 <div class="toolbar">
   <button id="addMember" class="primary">Добавить персонажа</button>
   <button id="saveToFirebase" class="save-btn">Сохранить изменения</button>
+  <button id="downloadPDF" class="pdf-btn">Скачать PDF</button>
   <div class="sync-status">
     <span id="syncDot" class="sync-dot"></span>
     <span id="syncText">Подключение…</span>
@@ -205,6 +226,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
   const FIREBASE_DB_URL = 'https://l2-party-default-rtdb.europe-west1.firebasedatabase.app/';
@@ -342,7 +364,7 @@
     syncText.textContent = text;
   }
 
-  // ==================== СРАВНЕНИЕ СОСТОЯНИЙ ====================
+  // ==================== СРАВНЕНИЕ ====================
   function membersEqual(a, b) {
     if (a.length !== b.length) return false;
     const mapA = new Map(a.map(m => [m.id, m]));
@@ -358,7 +380,7 @@
     return true;
   }
 
-  // ==================== ПОДПИСКА НА ИЗМЕНЕНИЯ ====================
+  // ==================== ПОДПИСКА ====================
   membersRef.on('value', (snapshot) => {
     const data = snapshot.val();
     const newMembers = [];
@@ -367,12 +389,10 @@
         newMembers.push({ id: key, ...data[key] });
       });
     }
-
     if (membersEqual(members, newMembers)) {
       setSyncStatus('online', 'Синхронизировано');
       return;
     }
-
     members = newMembers;
     renderTable();
     setSyncStatus('online', 'Синхронизировано');
@@ -381,7 +401,7 @@
     setSyncStatus('offline', 'Ошибка: ' + error.code);
   });
 
-  // ==================== СОХРАНЕНИЕ (debounced) ====================
+  // ==================== СОХРАНЕНИЕ ====================
   let saveTimeouts = new Map();
 
   function debouncedSave(member) {
@@ -410,7 +430,6 @@
       setSyncStatus('online', 'Нечего сохранять');
       return;
     }
-
     setSyncStatus('syncing', 'Принудительное сохранение…');
     try {
       const updates = {};
@@ -428,9 +447,8 @@
     }
   }
 
-  // ==================== АВТОСИНХРОНИЗАЦИЯ КАЖДЫЕ 30 СЕКУНД ====================
+  // ==================== АВТОСИНХРОНИЗАЦИЯ 30 СЕК ====================
   let secondsLeft = 30;
-
   function tickTimer() {
     secondsLeft--;
     if (secondsLeft <= 0) {
@@ -439,7 +457,6 @@
     }
     autoTimerEl.textContent = 'Автосейв: ' + secondsLeft + ' с';
   }
-
   setInterval(tickTimer, 1000);
 
   // ==================== ДОБАВЛЕНИЕ ====================
@@ -676,7 +693,7 @@
       tdWeapon.appendChild(weaponWrap);
       tr.appendChild(tdWeapon);
 
-      // Сет брони: шлем / тело / низ / перчатки / ботинки / щит
+      // Сет брони
       const tdArmor = document.createElement('td');
       tdArmor.className = 'set-cell';
       [
@@ -775,9 +792,120 @@
     }
   }
 
+  // ==================== ЭКСПОРТ В PDF ====================
+  async function downloadPDF() {
+    if (members.length === 0) {
+      alert('Таблица пуста — нечего сохранять в PDF.');
+      return;
+    }
+
+    setSyncStatus('syncing', 'Готовим PDF…');
+
+    // Создаём контейнер для печати
+    const pdfArea = document.createElement('div');
+    pdfArea.id = 'pdfArea';
+
+    // Заголовок
+    const title = document.createElement('h2');
+    title.textContent = 'КП DARAMs — Состав топовой гей-консты';
+    title.style.margin = '0 0 4px 0';
+    title.style.color = '#b8860b';
+    title.style.fontFamily = "'Cinzel', serif";
+    title.style.fontSize = '16px';
+    title.style.letterSpacing = '0.04em';
+    pdfArea.appendChild(title);
+
+    const subtitle = document.createElement('p');
+    subtitle.textContent = 'Сформировано: ' + new Date().toLocaleString('ru-RU');
+    subtitle.style.margin = '0 0 14px 0';
+    subtitle.style.color = '#5a5d75';
+    subtitle.style.fontSize = '10px';
+    pdfArea.appendChild(subtitle);
+
+    // Клонируем таблицу
+    const clone = document.getElementById('partyTable').cloneNode(true);
+
+    // Удаляем кнопки удаления
+    clone.querySelectorAll('.remove-btn').forEach(b => b.remove());
+
+    // Заменяем inputs и selects на текст
+    clone.querySelectorAll('input, select').forEach(el => {
+      const span = document.createElement('div');
+      if (el.tagName === 'SELECT') {
+        const opt = el.options[el.selectedIndex];
+        span.textContent = (opt && opt.textContent) ? opt.textContent : '—';
+      } else {
+        span.textContent = el.value || '—';
+      }
+      span.style.fontSize = '10px';
+      span.style.padding = '2px 0';
+      span.style.lineHeight = '1.3';
+      span.style.wordBreak = 'break-word';
+      span.style.color = '#1a1d2e';
+      if ((span.textContent === '—' || span.textContent === '') && el.tagName !== 'SELECT') {
+        span.style.color = '#8a8da5';
+      }
+      el.parentNode.replaceChild(span, el);
+    });
+
+    // Заменяем иконку-эмодзи на текстовую
+    clone.querySelectorAll('.prof-icon').forEach(el => {
+      el.style.fontSize = '12px';
+      el.style.width = '16px';
+    });
+
+    // Убираем горизонтальный скролл
+    clone.style.minWidth = 'auto';
+    clone.style.width = '100%';
+    clone.style.tableLayout = 'auto';
+    clone.style.fontSize = '10px';
+
+    clone.querySelectorAll('th').forEach(th => {
+      th.style.fontSize = '9px';
+      th.style.padding = '4px 5px';
+    });
+    clone.querySelectorAll('td').forEach(td => {
+      td.style.padding = '4px 5px';
+      td.style.verticalAlign = 'top';
+    });
+
+    pdfArea.appendChild(clone);
+    document.body.appendChild(pdfArea);
+
+    // Ждём отрисовку
+    await new Promise(r => setTimeout(r, 100));
+
+    const fileName = 'KP_DARAMs_' + new Date().toISOString().slice(0, 10) + '.pdf';
+
+    try {
+      await html2pdf().set({
+        margin: [6, 6, 6, 6],
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak: { mode: ['css', 'legacy'] }
+      }).from(pdfArea).save();
+
+      setSyncStatus('online', 'PDF сохранён');
+    } catch (err) {
+      console.error('Ошибка генерации PDF:', err);
+      setSyncStatus('offline', 'Ошибка PDF');
+      alert('Не удалось создать PDF: ' + err.message);
+    } finally {
+      document.body.removeChild(pdfArea);
+    }
+  }
+
   // ==================== СТАРТ ====================
   document.getElementById('addMember').addEventListener('click', addMember);
   document.getElementById('saveToFirebase').addEventListener('click', forceSaveAll);
+  document.getElementById('downloadPDF').addEventListener('click', downloadPDF);
 </script>
 
 </body>
