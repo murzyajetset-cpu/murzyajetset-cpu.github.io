@@ -83,7 +83,7 @@
     background: var(--bg-panel); box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
   table {
-    border-collapse: collapse; width: 100%; min-width: 1200px;
+    border-collapse: collapse; width: 100%; min-width: 1250px;
     font-size: 11px; table-layout: fixed;
   }
   th, td { padding: 4px 5px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-subtle); }
@@ -96,7 +96,7 @@
   th .set-label { color: var(--text-muted); font-size: 9px; text-transform: none; font-weight: 400; display: block; margin-top: 1px; }
   tbody tr:hover { background: #fafbfe; }
   tbody tr:last-child td { border-bottom: none; }
-  .col-name { width: 110px; } .col-class { width: 175px; } .col-level { width: 52px; }
+  .col-name { width: 110px; } .col-class { width: 230px; } .col-level { width: 52px; }
   .col-weapon { width: 150px; } .col-armor { width: 130px; } .col-jewelry { width: 130px; }
   .col-tattoo { width: 170px; } .col-comment { width: 150px; } .col-remove { width: 34px; }
   input, select {
@@ -121,8 +121,12 @@
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
   .prof-select { flex: 1; min-width: 0; }
   .sub-group { display: flex; flex-direction: column; gap: 1px; }
+  .sub-row { display: flex; align-items: center; gap: 4px; }
+  .sub-row .sub-select { flex: 1; min-width: 0; }
+  .sub-row .sub-level { width: 48px; flex-shrink: 0; text-align: center; }
   .sub-label { font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 2px 0 0 0; }
   .sub-select { font-size: 10px; padding: 3px 18px 3px 5px; background-size: 8px; }
+  .sub-level { font-size: 10px; padding: 3px 4px; }
   .set-cell { background: #fcfcff; }
   .set-label { display: block; font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 3px 0 1px 0; }
   .set-label:first-child { margin-top: 0; }
@@ -142,7 +146,7 @@
 </head>
 <body>
 
-<h1>КП DARAMs</h1>
+<h1>Группа Lineage 2</h1>
 <p class="subtitle">Общая таблица с синхронизацией в реальном времени</p>
 
 <div class="toolbar">
@@ -164,7 +168,7 @@
     <thead>
       <tr>
         <th>Имя</th>
-        <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба)</span></th>
+        <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба с уровнями)</span></th>
         <th>Ур.</th>
         <th>Оружие<br><span class="set-label">(грейд + тип + комментарий)</span></th>
         <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
@@ -245,8 +249,6 @@
   ];
 
   // ==================== ОРУЖИЕ ПО ГРЕЙДАМ ====================
-  // Эмодзи отражают тип оружия: ⚔️ меч, 🏹 лук, 🔮 посох, 🗡️ кинжал, 🔨 дубина,
-  // 🔱 копьё, 🪓 топор, 🥊 кастет, 🎯 арбалет, 🌀 парное оружие.
   const weaponsByGrade = {
     'NG (No Grade)': [
       'Деревянный Меч', 'Короткий Меч', 'Длинный Меч', 'Широкий Меч',
@@ -296,7 +298,6 @@
     ]
   };
 
-  // ==================== ЭМОДЗИ ДЛЯ ТИПОВ ОРУЖИЯ ====================
   function weaponIcon(name) {
     const n = name.toLowerCase();
     if (n.includes('bow') || n.includes('лук') || n.includes('арбалет') || n.includes('crossbow')) return '🏹';
@@ -306,7 +307,7 @@
     if (n.includes('spear') || n.includes('копьё') || n.includes('halberd') || n.includes('glaive') || n.includes('poleaxe') || n.includes('pike')) return '🔱';
     if (n.includes('fist') || n.includes('кастет') || n.includes('knuckle')) return '🥊';
     if (n.includes('dual') || n.includes('парн')) return '🌀';
-    return '⚔️'; // мечи по умолчанию
+    return '⚔️';
   }
 
   let members = [];
@@ -319,7 +320,7 @@
     syncText.textContent = text;
   }
 
-  // ==================== ПОДПИСКА НА ИЗМЕНЕНИЯ ====================
+  // ==================== ПОДПИСКА ====================
   membersRef.on('value', (snapshot) => {
     const data = snapshot.val();
     members = [];
@@ -365,6 +366,7 @@
     const newMember = {
       name: 'Персонаж ' + (members.length + 1),
       profession: '', sub1: '', sub2: '', sub3: '',
+      sub1Level: '', sub2Level: '', sub3Level: '',
       level: 1,
       weapon: '', weaponComment: '',
       helmet: '', armor: '', gloves: '', boots: '', shield: '',
@@ -428,10 +430,8 @@
     return select;
   }
 
-  // Создание select оружия с группами по грейдам
   function buildWeaponSelect(value, onChange) {
     const select = document.createElement('select');
-    // Пустая опция
     const emptyOpt = document.createElement('option');
     emptyOpt.value = '';
     emptyOpt.textContent = '— выберите оружие —';
@@ -481,11 +481,12 @@
       }));
       tr.appendChild(tdName);
 
-      // Профессия + 3 саб-класса
+      // Профессия + 3 саб-класса с уровнями
       const tdProf = document.createElement('td');
       const profCell = document.createElement('div');
       profCell.className = 'prof-cell';
 
+      // Основная профессия
       const mainWrap = document.createElement('div');
       mainWrap.className = 'prof-main';
 
@@ -505,29 +506,48 @@
       mainWrap.appendChild(mainSelect);
       profCell.appendChild(mainWrap);
 
+      // Саб-классы: список + уровень
       [
-        { key: 'sub1', label: 'Саб-класс 1' },
-        { key: 'sub2', label: 'Саб-класс 2' },
-        { key: 'sub3', label: 'Саб-класс 3' }
+        { key: 'sub1', levelKey: 'sub1Level', label: 'Саб-класс 1' },
+        { key: 'sub2', levelKey: 'sub2Level', label: 'Саб-класс 2' },
+        { key: 'sub3', levelKey: 'sub3Level', label: 'Саб-класс 3' }
       ].forEach(field => {
         const group = document.createElement('div');
         group.className = 'sub-group';
+
         const label = document.createElement('span');
         label.className = 'sub-label';
         label.textContent = field.label;
+
+        const row = document.createElement('div');
+        row.className = 'sub-row';
+
         const subSelect = buildProfessionSelect(member[field.key] || '', val => {
           member[field.key] = val;
           debouncedSave(member);
         }, 'sub-select');
+
+        const levelInput = createInput('number', member[field.levelKey] || '', val => {
+          member[field.levelKey] = val;
+          debouncedSave(member);
+        }, {
+          class: 'sub-level',
+          min: 1,
+          max: 85,
+          placeholder: 'ур.'
+        });
+
+        row.appendChild(subSelect);
+        row.appendChild(levelInput);
         group.appendChild(label);
-        group.appendChild(subSelect);
+        group.appendChild(row);
         profCell.appendChild(group);
       });
 
       tdProf.appendChild(profCell);
       tr.appendChild(tdProf);
 
-      // Уровень
+      // Уровень основной
       const tdLevel = document.createElement('td');
       tdLevel.appendChild(createInput('number', member.level || 1, val => {
         member.level = val;
