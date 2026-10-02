@@ -83,7 +83,7 @@
     background: var(--bg-panel); box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
   table {
-    border-collapse: collapse; width: 100%; min-width: 1150px;
+    border-collapse: collapse; width: 100%; min-width: 1200px;
     font-size: 11px; table-layout: fixed;
   }
   th, td { padding: 4px 5px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-subtle); }
@@ -97,7 +97,7 @@
   tbody tr:hover { background: #fafbfe; }
   tbody tr:last-child td { border-bottom: none; }
   .col-name { width: 110px; } .col-class { width: 175px; } .col-level { width: 52px; }
-  .col-weapon { width: 130px; } .col-armor { width: 130px; } .col-jewelry { width: 130px; }
+  .col-weapon { width: 150px; } .col-armor { width: 130px; } .col-jewelry { width: 130px; }
   .col-tattoo { width: 170px; } .col-comment { width: 150px; } .col-remove { width: 34px; }
   input, select {
     font-family: var(--font-body); font-size: 11px; color: var(--text-primary);
@@ -114,6 +114,8 @@
     padding-right: 20px;
   }
   select option { background: #fff; color: var(--text-primary); }
+  select optgroup { background: #f0f2f8; color: var(--accent-gold-dark); font-weight: 700; font-style: normal; }
+  .weapon-comment { margin-top: 3px; font-size: 10px; padding: 3px 5px; }
   .prof-cell { display: flex; flex-direction: column; gap: 3px; }
   .prof-main { display: flex; align-items: center; gap: 6px; }
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
@@ -164,7 +166,7 @@
         <th>Имя</th>
         <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба)</span></th>
         <th>Ур.</th>
-        <th>Оружие<br><span class="set-label">(свободный ввод)</span></th>
+        <th>Оружие<br><span class="set-label">(грейд + тип + комментарий)</span></th>
         <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
         <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
         <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
@@ -180,12 +182,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
 <script>
-  // ============================================================
-  // 🔑 ВАШ URL FIREBASE REALTIME DATABASE
-  // ============================================================
   const FIREBASE_DB_URL = 'https://l2-party-default-rtdb.europe-west1.firebasedatabase.app/';
-  // ============================================================
-
   firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
   const db = firebase.database();
   const membersRef = db.ref('party_members');
@@ -247,6 +244,71 @@
     { name: 'Judicator', icon: '✨' }
   ];
 
+  // ==================== ОРУЖИЕ ПО ГРЕЙДАМ ====================
+  // Эмодзи отражают тип оружия: ⚔️ меч, 🏹 лук, 🔮 посох, 🗡️ кинжал, 🔨 дубина,
+  // 🔱 копьё, 🪓 топор, 🥊 кастет, 🎯 арбалет, 🌀 парное оружие.
+  const weaponsByGrade = {
+    'NG (No Grade)': [
+      'Деревянный Меч', 'Короткий Меч', 'Длинный Меч', 'Широкий Меч',
+      'Деревянная Дубина', 'Каменная Дубина', 'Лук Новичка',
+      'Кинжал Новичка', 'Кулак Новичка'
+    ],
+    'D Grade': [
+      'Falchion', 'Sword of Reflection', 'Elven Sword',
+      'Bastard Sword', 'Claymore', 'Two-Handed Sword',
+      'Dagger of Sacrifice', 'Misericorde', 'Stiletto',
+      'Bow of Forest', 'Composite Bow', 'Long Bow',
+      'Club of Nature', 'Mace of Judgment', 'Heavy War Axe',
+      'Spear of Wind', 'Halberd', 'Iron Spear'
+    ],
+    'C Grade': [
+      'Sword of Revolution', 'Stormbringer Sword', 'Elven Long Sword',
+      'Berserker Blade', 'Tsurugi', 'Dragon Slayer',
+      'Cursed Dagger', 'Dark Elven Dagger', 'Crystal Dagger',
+      'Light Crossbow', 'Crystallized Ice Bow', 'Akat Long Bow',
+      'Cursed Staff', 'Staff of Life', 'Wizard Staff',
+      'Battle Axe', 'Skull Graver', 'Bonebreaker',
+      'Poleaxe', 'Orcish Glaive', 'Winged Spear'
+    ],
+    'B Grade': [
+      'Sword of Valhalla', 'Great Sword', 'Guardian Sword',
+      'Art of Battle Axe', 'Berserker Blade', 'Heavy Sword',
+      'Grace Dagger', 'Dark Screamer', 'Kris',
+      'Eminence Bow', 'Bow of Peril', 'Dark Elven Long Bow',
+      'Staff of Evil Spirits', 'Homunkulus Sword', 'Sword of Limit',
+      'Deadman\'s Glory', 'Chakram', 'Cursed Staff'
+    ],
+    'A Grade': [
+      'Sword of Miracles', 'Dragon Slayer', 'Tallum Blade',
+      'Angel Slayer', 'Dark Legion\'s Edge', 'Soul Separator',
+      'Bloody Orchid', 'Soul Bow', 'Carnage Bow',
+      'Imperial Staff', 'Arcana Mace', 'Dragon Hunter Axe',
+      'Barakiel\'s Axe', 'Flaming Dragon Skull', 'Saint Spear',
+      'Demon Splinter', 'Basalt Battlehammer'
+    ],
+    'S Grade': [
+      'Dynasty Sword', 'Dynasty Blade', 'Dynasty Phantom',
+      'Heaven\'s Divider', 'Sirra\'s Blade', 'Barakiel\'s Axe',
+      'Soul Separator', 'Draconic Bow', 'Dragon Hunter Axe',
+      'Imperial Staff', 'Arcana Mace', 'Angel Slayer',
+      'Eternal Core Sword', 'Vesper Cutter', 'Icarus Hammer',
+      'Tallum Blade*Dark Legion\'s Edge', 'Dual Dragon Slayer'
+    ]
+  };
+
+  // ==================== ЭМОДЗИ ДЛЯ ТИПОВ ОРУЖИЯ ====================
+  function weaponIcon(name) {
+    const n = name.toLowerCase();
+    if (n.includes('bow') || n.includes('лук') || n.includes('арбалет') || n.includes('crossbow')) return '🏹';
+    if (n.includes('staff') || n.includes('посох') || n.includes('mace') || n.includes('жезл') || n.includes('wand') || n.includes('book')) return '🔮';
+    if (n.includes('dagger') || n.includes('кинжал') || n.includes('нож') || n.includes('kris') || n.includes('stiletto')) return '🗡️';
+    if (n.includes('axe') || n.includes('топор') || n.includes('hammer') || n.includes('дубина') || n.includes('club') || n.includes('blunt')) return '🔨';
+    if (n.includes('spear') || n.includes('копьё') || n.includes('halberd') || n.includes('glaive') || n.includes('poleaxe') || n.includes('pike')) return '🔱';
+    if (n.includes('fist') || n.includes('кастет') || n.includes('knuckle')) return '🥊';
+    if (n.includes('dual') || n.includes('парн')) return '🌀';
+    return '⚔️'; // мечи по умолчанию
+  }
+
   let members = [];
   const partyBody = document.getElementById('partyBody');
   const syncDot = document.getElementById('syncDot');
@@ -303,7 +365,8 @@
     const newMember = {
       name: 'Персонаж ' + (members.length + 1),
       profession: '', sub1: '', sub2: '', sub3: '',
-      level: 1, weapon: '',
+      level: 1,
+      weapon: '', weaponComment: '',
       helmet: '', armor: '', gloves: '', boots: '', shield: '',
       earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
       tattoo1: '', tattoo2: '', tattoo3: '', comment: ''
@@ -313,7 +376,7 @@
       .catch(err => {
         console.error('Ошибка добавления:', err);
         setSyncStatus('offline', 'Ошибка добавления');
-        alert('Не удалось добавить персонажа: ' + err.message + '\n\nПроверьте правила доступа в Firebase (Realtime Database → Rules).');
+        alert('Не удалось добавить персонажа: ' + err.message);
       });
   }
 
@@ -351,7 +414,6 @@
     return input;
   }
 
-  // Создание select профессии (с эмодзи в опциях)
   function buildProfessionSelect(value, onChange, extraClass = '') {
     const select = document.createElement('select');
     select.className = 'prof-select ' + extraClass;
@@ -362,6 +424,33 @@
       if (p.name === value) option.selected = true;
       select.appendChild(option);
     });
+    select.addEventListener('change', e => onChange(e.target.value));
+    return select;
+  }
+
+  // Создание select оружия с группами по грейдам
+  function buildWeaponSelect(value, onChange) {
+    const select = document.createElement('select');
+    // Пустая опция
+    const emptyOpt = document.createElement('option');
+    emptyOpt.value = '';
+    emptyOpt.textContent = '— выберите оружие —';
+    if (!value) emptyOpt.selected = true;
+    select.appendChild(emptyOpt);
+
+    Object.keys(weaponsByGrade).forEach(grade => {
+      const group = document.createElement('optgroup');
+      group.label = grade;
+      weaponsByGrade[grade].forEach(weaponName => {
+        const opt = document.createElement('option');
+        opt.value = weaponName;
+        opt.textContent = `${weaponIcon(weaponName)} ${weaponName}`;
+        if (weaponName === value) opt.selected = true;
+        group.appendChild(opt);
+      });
+      select.appendChild(group);
+    });
+
     select.addEventListener('change', e => onChange(e.target.value));
     return select;
   }
@@ -397,7 +486,6 @@
       const profCell = document.createElement('div');
       profCell.className = 'prof-cell';
 
-      // Основная профессия (с иконкой рядом)
       const mainWrap = document.createElement('div');
       mainWrap.className = 'prof-main';
 
@@ -417,7 +505,6 @@
       mainWrap.appendChild(mainSelect);
       profCell.appendChild(mainWrap);
 
-      // Три саб-класса
       [
         { key: 'sub1', label: 'Саб-класс 1' },
         { key: 'sub2', label: 'Саб-класс 2' },
@@ -425,16 +512,13 @@
       ].forEach(field => {
         const group = document.createElement('div');
         group.className = 'sub-group';
-
         const label = document.createElement('span');
         label.className = 'sub-label';
         label.textContent = field.label;
-
         const subSelect = buildProfessionSelect(member[field.key] || '', val => {
           member[field.key] = val;
           debouncedSave(member);
         }, 'sub-select');
-
         group.appendChild(label);
         group.appendChild(subSelect);
         profCell.appendChild(group);
@@ -451,12 +535,26 @@
       }, { min: 1, max: 85 }));
       tr.appendChild(tdLevel);
 
-      // Оружие
+      // Оружие + комментарий
       const tdWeapon = document.createElement('td');
-      tdWeapon.appendChild(createInput('text', member.weapon || '', val => {
+      const weaponWrap = document.createElement('div');
+      weaponWrap.style.display = 'flex';
+      weaponWrap.style.flexDirection = 'column';
+      weaponWrap.style.gap = '2px';
+
+      const weaponSelect = buildWeaponSelect(member.weapon || '', val => {
         member.weapon = val;
         debouncedSave(member);
-      }, { placeholder: 'название оружия…' }));
+      });
+      weaponWrap.appendChild(weaponSelect);
+
+      const weaponCommentInput = createInput('text', member.weaponComment || '', val => {
+        member.weaponComment = val;
+        debouncedSave(member);
+      }, { placeholder: '+16 [Focus] / SA / заметка…', class: 'weapon-comment' });
+      weaponWrap.appendChild(weaponCommentInput);
+
+      tdWeapon.appendChild(weaponWrap);
       tr.appendChild(tdWeapon);
 
       // Сет брони
