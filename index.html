@@ -58,7 +58,6 @@
     margin: 0 0 14px 0;
   }
 
-  /* ===== Панель инструментов ===== */
   .toolbar {
     display: flex;
     gap: 6px;
@@ -116,7 +115,6 @@
     color: var(--success-green);
   }
 
-  /* ===== Таблица ===== */
   .table-wrap {
     overflow-x: auto;
     border-radius: 8px;
@@ -128,7 +126,7 @@
   table {
     border-collapse: collapse;
     width: 100%;
-    min-width: 1000px;
+    min-width: 1050px;
     font-size: 11px;
     table-layout: fixed;
   }
@@ -182,11 +180,10 @@
   .col-weapon  { width: 130px; }
   .col-armor   { width: 130px; }
   .col-jewelry { width: 130px; }
-  .col-tattoo  { width: 150px; }
+  .col-tattoo  { width: 180px; }
   .col-comment { width: 180px; }
   .col-remove  { width: 34px; }
 
-  /* ===== Поля ввода ===== */
   input, select {
     font-family: var(--font-body);
     font-size: 11px;
@@ -224,7 +221,6 @@
     color: var(--text-primary);
   }
 
-  /* ===== Ячейка сета ===== */
   .set-cell {
     background: #fcfcff;
   }
@@ -242,7 +238,6 @@
     margin-top: 0;
   }
 
-  /* ===== Кнопка удаления ===== */
   .remove-btn {
     background: transparent;
     color: var(--danger-red);
@@ -265,7 +260,6 @@
     color: var(--danger-red);
   }
 
-  /* ===== Панель сета ===== */
   .set-panel {
     margin-top: 14px;
     padding: 0;
@@ -419,7 +413,7 @@
         <th>Оружие</th>
         <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
         <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
-        <th>Татуировки<br><span class="set-label">(напр. +4 STR -4 CON)</span></th>
+        <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
         <th>Комментарий<br><span class="set-label">(заметка о персонаже)</span></th>
         <th></th>
       </tr>
@@ -672,8 +666,9 @@
     }, 1200);
   }
 
-  // Нормализуем данные: добавляем отсутствующие поля (для совместимости со старыми сохранениями)
+  // Нормализация + миграция старых сохранений (tattoos -> tattoo1)
   function normalizeMember(m) {
+    const legacyTattoo = m.tattoos ?? '';
     return {
       name: m.name ?? '',
       className: m.className ?? '',
@@ -689,7 +684,9 @@
       necklace: m.necklace ?? '',
       ring1: m.ring1 ?? '',
       ring2: m.ring2 ?? '',
-      tattoos: m.tattoos ?? '',
+      tattoo1: m.tattoo1 ?? legacyTattoo,
+      tattoo2: m.tattoo2 ?? '',
+      tattoo3: m.tattoo3 ?? '',
       comment: m.comment ?? ''
     };
   }
@@ -915,12 +912,23 @@
       });
       tr.appendChild(tdJewelry);
 
-      // Татуировки
+      // Татуировки — три независимых поля
       const tdTattoo = document.createElement('td');
-      tdTattoo.appendChild(createInput('text', member.tattoos, val => {
-        member.tattoos = val;
-        persistDebounced();
-      }, { placeholder: '+4 STR -4 CON' }));
+      tdTattoo.className = 'set-cell';
+      [
+        { key: 'tattoo1', label: 'Тату 1', ph: '+4 STR -4 CON' },
+        { key: 'tattoo2', label: 'Тату 2', ph: '+4 DEX -4 STR' },
+        { key: 'tattoo3', label: 'Тату 3', ph: '+4 WIT -4 INT' }
+      ].forEach(field => {
+        const label = document.createElement('span');
+        label.className = 'set-label';
+        label.textContent = field.label;
+        tdTattoo.appendChild(label);
+        tdTattoo.appendChild(createInput('text', member[field.key] || '', val => {
+          member[field.key] = val;
+          persistDebounced();
+        }, { placeholder: field.ph }));
+      });
       tr.appendChild(tdTattoo);
 
       // Комментарий
@@ -959,7 +967,8 @@
       className: '', level: 1, weapon: '',
       helmet: '', armor: '', gloves: '', boots: '', shield: '',
       earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
-      tattoos: '', comment: ''
+      tattoo1: '', tattoo2: '', tattoo3: '',
+      comment: ''
     });
     persist();
     renderTable();
