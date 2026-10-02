@@ -120,13 +120,21 @@
   .prof-main { display: flex; align-items: center; gap: 6px; }
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
   .prof-select { flex: 1; min-width: 0; }
+
+  /* ===== Саб-классы: список + компактный уровень ===== */
   .sub-group { display: flex; flex-direction: column; gap: 1px; }
-  .sub-row { display: flex; align-items: center; gap: 4px; }
+  .sub-row { display: flex; align-items: center; gap: 3px; }
   .sub-row .sub-select { flex: 1; min-width: 0; }
-  .sub-row .sub-level { width: 48px; flex-shrink: 0; text-align: center; }
+  .sub-row .sub-level {
+    width: 42px;
+    flex-shrink: 0;
+    text-align: center;
+    padding: 3px 2px;
+  }
   .sub-label { font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 2px 0 0 0; }
-  .sub-select { font-size: 10px; padding: 3px 18px 3px 5px; background-size: 8px; }
-  .sub-level { font-size: 10px; padding: 3px 4px; }
+  .sub-select { font-size: 10px; padding: 3px 16px 3px 5px; background-size: 8px; }
+  .sub-level { font-size: 10px; }
+
   .set-cell { background: #fcfcff; }
   .set-label { display: block; font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 3px 0 1px 0; }
   .set-label:first-child { margin-top: 0; }
