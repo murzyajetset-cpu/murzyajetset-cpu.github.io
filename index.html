@@ -48,7 +48,11 @@
     margin: 0 0 2px 0;
   }
   .subtitle { color: var(--text-secondary); font-size: 11px; margin: 0 0 14px 0; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid var(--border-subtle); }
+
+  .tabs {
+    display: flex; gap: 4px; margin-bottom: 12px;
+    border-bottom: 2px solid var(--border-subtle);
+  }
   .tab-btn {
     font-family: var(--font-body); font-size: 12px; font-weight: 600;
     letter-spacing: 0.4px; text-transform: uppercase;
@@ -58,9 +62,13 @@
     transition: all 0.15s ease;
   }
   .tab-btn:hover { color: var(--accent-gold-dark); }
-  .tab-btn.active { color: var(--accent-gold-dark); border-bottom-color: var(--accent-gold); font-weight: 700; }
+  .tab-btn.active {
+    color: var(--accent-gold-dark);
+    border-bottom-color: var(--accent-gold); font-weight: 700;
+  }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
+
   .toolbar {
     display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
     margin-bottom: 12px; padding: 8px 10px;
@@ -84,20 +92,30 @@
   button.save-btn:hover { background: rgba(31,157,85,0.08); border-color: var(--success-green); color: var(--success-green); }
   button.pdf-btn { border-color: rgba(58,95,217,0.5); color: var(--accent-blue); }
   button.pdf-btn:hover { background: rgba(58,95,217,0.08); border-color: var(--accent-blue); color: var(--accent-blue); }
-  .sync-status { font-size: 10px; margin-left: auto; letter-spacing: 0.3px; display: flex; align-items: center; gap: 5px; }
+  .sync-status {
+    font-size: 10px; margin-left: auto; letter-spacing: 0.3px;
+    display: flex; align-items: center; gap: 5px;
+  }
   .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #bbb; }
   .sync-dot.online { background: var(--success-green); box-shadow: 0 0 6px rgba(31,157,85,0.6); }
   .sync-dot.offline { background: var(--danger-red); }
   .sync-dot.syncing { background: #f0a500; animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-  .auto-timer { font-size: 10px; color: var(--text-muted); margin-left: 8px; padding-left: 8px; border-left: 1px solid var(--border-subtle); }
+  .auto-timer {
+    font-size: 10px; color: var(--text-muted);
+    margin-left: 8px; padding-left: 8px;
+    border-left: 1px solid var(--border-subtle);
+  }
   .table-wrap {
     overflow-x: auto;
     overflow-y: visible;
     border-radius: 8px; border: 1px solid var(--border-subtle);
     background: var(--bg-panel); box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
-  table { border-collapse: collapse; width: 100%; min-width: 1250px; font-size: 11px; table-layout: fixed; }
+  table {
+    border-collapse: collapse; width: 100%; min-width: 1250px;
+    font-size: 11px; table-layout: fixed;
+  }
   th, td { padding: 4px 5px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-subtle); }
   th {
     background: linear-gradient(180deg, #fafbfe 0%, #eef0f8 100%);
@@ -127,41 +145,112 @@
   }
   select option { background: #fff; color: var(--text-primary); }
   select optgroup { background: #f0f2f8; color: var(--accent-gold-dark); font-weight: 700; font-style: normal; }
-  .weapon-select { position: relative; width: 100%; }
+
+  /* ===== Кастомный дропдаун оружия ===== */
+  .weapon-select {
+    position: relative;
+    width: 100%;
+  }
   .weapon-trigger {
-    display: flex; align-items: center; gap: 6px; width: 100%;
-    padding: 4px 6px; font-family: var(--font-body); font-size: 11px;
-    color: var(--text-primary); background: var(--bg-input);
-    border: 1px solid var(--border-subtle); border-radius: 4px;
-    cursor: pointer; text-align: left; text-transform: none; letter-spacing: 0;
-    transition: border-color 0.15s, box-shadow 0.15s; min-height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 4px 6px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-primary);
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    min-height: 24px;
   }
   .weapon-trigger:hover { border-color: var(--accent-gold); }
-  .weapon-trigger.open { border-color: var(--accent-gold); box-shadow: 0 0 0 2px rgba(184,134,11,0.15); }
-  .weapon-trigger .weapon-grade { font-weight: 800; font-size: 12px; letter-spacing: 0.3px; flex-shrink: 0; min-width: 14px; }
-  .weapon-trigger .weapon-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
-  .weapon-trigger .weapon-arrow { font-size: 8px; color: var(--accent-gold); flex-shrink: 0; transition: transform 0.15s; }
+  .weapon-trigger.open {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 2px rgba(184,134,11,0.15);
+  }
+  .weapon-trigger .weapon-grade {
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+    min-width: 14px;
+  }
+  .weapon-trigger .weapon-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+  .weapon-trigger .weapon-arrow {
+    font-size: 8px;
+    color: var(--accent-gold);
+    flex-shrink: 0;
+    transition: transform 0.15s;
+  }
   .weapon-trigger.open .weapon-arrow { transform: rotate(180deg); }
+
   .weapon-dropdown {
-    position: fixed; background: #fff; border: 1px solid var(--accent-gold); border-radius: 4px;
-    box-shadow: 0 8px 24px rgba(20,25,60,0.20); overflow-y: auto; overflow-x: hidden;
-    z-index: 10000; font-family: var(--font-body); font-size: 11px;
-    min-height: 80px; max-height: 320px; overscroll-behavior: contain;
+    position: fixed;
+    background: #fff;
+    border: 1px solid var(--accent-gold);
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(20,25,60,0.20);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 10000;
+    font-family: var(--font-body);
+    font-size: 11px;
+    min-height: 80px;
+    max-height: 320px;
+    overscroll-behavior: contain;
   }
   .weapon-dropdown[hidden] { display: none; }
   .weapon-group-title {
-    padding: 4px 10px; font-size: 9px; color: var(--accent-gold-dark);
-    text-transform: uppercase; letter-spacing: 0.4px; background: #fafbfe;
-    border-bottom: 1px solid var(--border-subtle); border-top: 1px solid var(--border-subtle);
-    position: sticky; top: 0; z-index: 1; font-weight: 700;
+    padding: 4px 10px;
+    font-size: 9px;
+    color: var(--accent-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: #fafbfe;
+    border-bottom: 1px solid var(--border-subtle);
+    border-top: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-weight: 700;
   }
   .weapon-group-title:first-child { border-top: none; }
-  .weapon-option { display: flex; align-items: center; gap: 7px; padding: 5px 10px; font-size: 11px; color: var(--text-primary); cursor: pointer; transition: background 0.1s; }
+  .weapon-option {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 10px;
+    font-size: 11px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
   .weapon-option:hover { background: #f0f2f8; }
   .weapon-option.selected { background: rgba(184,134,11,0.10); }
-  .weapon-option .weapon-grade { font-weight: 800; font-size: 12px; letter-spacing: 0.3px; flex-shrink: 0; min-width: 14px; }
+  .weapon-option .weapon-grade {
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+    min-width: 14px;
+  }
   .weapon-option .weapon-name { flex: 1; }
+
   .weapon-comment { margin-top: 3px; font-size: 10px; padding: 3px 5px; }
+
   .prof-cell { display: flex; flex-direction: column; gap: 3px; }
   .prof-main { display: flex; align-items: center; gap: 6px; }
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
@@ -184,20 +273,28 @@
   }
   .remove-btn:hover { background: rgba(217,45,32,0.1); border-color: var(--danger-red); }
   .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
+
   .craft-author-bar {
     display: flex; gap: 8px; align-items: center;
     margin-bottom: 12px; padding: 8px 10px;
     background: var(--bg-panel); border: 1px solid var(--border-subtle);
-    border-radius: 8px; box-shadow: 0 1px 3px rgba(20,25,60,0.06); font-size: 11px;
+    border-radius: 8px; box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+    font-size: 11px;
   }
-  .craft-author-bar label { color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; white-space: nowrap; }
+  .craft-author-bar label {
+    color: var(--text-secondary); text-transform: uppercase;
+    letter-spacing: 0.4px; font-weight: 600; white-space: nowrap;
+  }
   .craft-author-bar input { max-width: 260px; font-size: 12px; padding: 6px 10px; }
   .post-form {
     background: var(--bg-panel); border: 1px solid var(--border-subtle);
     border-radius: 8px; padding: 14px; margin-bottom: 16px;
     box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
-  .post-form-row { display: grid; grid-template-columns: 1fr 1fr 100px auto; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .post-form-row {
+    display: grid; grid-template-columns: 1fr 1fr 100px auto;
+    gap: 8px; margin-bottom: 8px; align-items: center;
+  }
   .post-form-row.post-form-main { grid-template-columns: 1fr; }
   .post-form textarea { min-height: 70px; resize: vertical; font-size: 12px; line-height: 1.5; padding: 8px 10px; }
   .post-form label { display: block; font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px; }
@@ -206,7 +303,8 @@
     background: var(--bg-panel); border: 1px solid var(--border-subtle);
     border-radius: 8px; padding: 12px 14px;
     box-shadow: 0 1px 3px rgba(20,25,60,0.06);
-    transition: box-shadow 0.15s ease; border-left: 4px solid var(--accent-gold);
+    transition: box-shadow 0.15s ease;
+    border-left: 4px solid var(--accent-gold);
   }
   .post-card:hover { box-shadow: 0 3px 10px rgba(20,25,60,0.10); }
   .post-card.type-craft { border-left-color: var(--accent-gold); }
@@ -217,7 +315,11 @@
   .post-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 7px; border-radius: 10px; }
   .post-badge.badge-craft { background: rgba(184,134,11,0.12); color: var(--accent-gold-dark); border: 1px solid rgba(184,134,11,0.3); }
   .post-badge.badge-buy { background: rgba(58,95,217,0.10); color: var(--accent-blue); border: 1px solid rgba(58,95,217,0.3); }
-  .post-status { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 8px; border-radius: 10px; cursor: pointer; margin-left: auto; transition: all 0.15s ease; }
+  .post-status {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.4px; padding: 2px 8px; border-radius: 10px;
+    cursor: pointer; margin-left: auto; transition: all 0.15s ease;
+  }
   .post-status.status-new { background: #f0f2f8; color: var(--text-secondary); border: 1px solid var(--border-strong); }
   .post-status.status-progress { background: rgba(240,165,0,0.12); color: #b06d00; border: 1px solid rgba(240,165,0,0.35); }
   .post-status.status-done { background: rgba(31,157,85,0.10); color: var(--success-green); border: 1px solid rgba(31,157,85,0.35); }
@@ -236,19 +338,26 @@
     font-style: italic; font-size: 12px;
     background: var(--bg-panel); border: 1px dashed var(--border-strong); border-radius: 8px;
   }
-  #pdfArea { position: fixed; top: 0; left: 0; width: 1400px; padding: 24px; background: #ffffff; z-index: 1; opacity: 1; }
+  #pdfArea {
+    position: fixed; top: 0; left: 0; width: 1400px;
+    padding: 24px; background: #ffffff; z-index: 1; opacity: 1;
+  }
   #pdfArea table { table-layout: auto !important; width: 100% !important; min-width: 0 !important; border-collapse: collapse !important; }
   #pdfOverlay {
-    position: fixed; inset: 0; background: rgba(15, 18, 35, 0.78); z-index: 9999;
+    position: fixed; inset: 0;
+    background: rgba(15, 18, 35, 0.78); z-index: 9999;
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-family: var(--font-body); font-size: 14px; letter-spacing: 0.4px;
   }
-  #pdfOverlay .box { background: rgba(30, 33, 55, 0.95); padding: 24px 40px; border-radius: 10px; border: 1px solid rgba(184, 134, 11, 0.4); text-align: center; }
+  #pdfOverlay .box {
+    background: rgba(30, 33, 55, 0.95); padding: 24px 40px;
+    border-radius: 10px; border: 1px solid rgba(184, 134, 11, 0.4); text-align: center;
+  }
   #pdfOverlay .spinner {
     display: inline-block; width: 20px; height: 20px;
-    border: 2px solid rgba(255,255,255,0.2); border-top-color: #d4a017;
-    border-radius: 50%; animation: spin 0.8s linear infinite;
-    margin-right: 12px; vertical-align: middle;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: #d4a017; border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin-right: 12px; vertical-align: middle;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -428,17 +537,141 @@
     { name: 'Short Spear', grade: 'NG' }, { name: 'Great Spear', grade: 'NG' },
     { name: "Apprentice's Spellbook", grade: 'NG' }, { name: 'Voodoo Doll', grade: 'NG' },
 
-    // ==================== D Grade ====================
-    { name: 'Gladius', grade: 'D' }, { name: 'Orcish Sword', grade: 'D' },
-    { name: 'Falchion', grade: 'D' }, { name: 'Bastard Sword', grade: 'D' },
-    { name: 'Claymore', grade: 'D' }, { name: 'Sword of Magic', grade: 'D' },
-    { name: 'Phantom Sword', grade: 'D' }, { name: 'Tomahawk', grade: 'D' },
-    { name: 'Iron Hammer', grade: 'D' }, { name: 'Morning Star', grade: 'D' },
-    { name: 'Goat Head Staff', grade: 'D' }, { name: 'Halberd', grade: 'D' },
+    // ==================== D Grade (по скриншоту) ====================
+    // Одноручные мечи
+    { name: 'Saber', grade: 'D' },
+    { name: "Artisan's Sword", grade: 'D' },
+    { name: 'Bastard Sword', grade: 'D' },
+    { name: "Knight's Sword", grade: 'D' },
+    { name: 'Spinebone Sword', grade: 'D' },
+    { name: 'Crimson Sword', grade: 'D' },
+    { name: 'Elven Sword', grade: 'D' },
+    { name: 'Elven Long Sword', grade: 'D' },
+    { name: 'Sword of Revolution', grade: 'D' },
+    { name: 'Sword of Magic Fog', grade: 'D' },
+    { name: 'Sword of Mystic', grade: 'D' },
+    { name: 'Sword of Occult', grade: 'D' },
+    { name: 'Priest Sword', grade: 'D' },
+    { name: 'Heavy Sword', grade: 'D' },
+    { name: 'Steel Sword', grade: 'D' },
+    { name: 'Titan Sword', grade: 'D' },
+    { name: 'Two-Handed Sword', grade: 'D' },
+    { name: 'Claymore', grade: 'D' },
+    // Кинжалы
+    { name: 'Assassin Knife', grade: 'D' },
+    { name: 'Crafted Dagger', grade: 'D' },
+    { name: 'Poniard Dagger', grade: 'D' },
+    { name: 'Kukuri', grade: 'D' },
+    { name: 'Cursed Maingauche', grade: 'D' },
+    { name: 'Maingauche', grade: 'D' },
+    { name: 'Mithril Dagger', grade: 'D' },
+    { name: "Conjuror's Knife", grade: 'D' },
+    { name: 'Dagger of Mana', grade: 'D' },
+    { name: 'Mystic Knife', grade: 'D' },
+    { name: 'Shilen Knife', grade: 'D' },
+    // Копья
+    { name: 'Trident', grade: 'D' },
+    { name: 'Dwarven Trident', grade: 'D' },
+    { name: 'Pike', grade: 'D' },
+    { name: 'Dwarven Pike', grade: 'D' },
+    { name: 'War Hammer', grade: 'D' },
+    { name: 'War Pick', grade: 'D' },
+    { name: 'Winged Spear', grade: 'D' },
+    { name: 'Glaive', grade: 'D' },
+    // Луки
+    { name: 'Reinforced Bow', grade: 'D' },
+    { name: 'Dark Elven Bow', grade: 'D' },
+    { name: 'Elven Bow', grade: 'D' },
+    { name: 'Long Bow', grade: 'D' },
+    { name: 'Gastraphetes', grade: 'D' },
+    { name: 'Reinforced Long Bow', grade: 'D' },
+    { name: 'Light Crossbow', grade: 'D' },
+    { name: 'Strengthened Long Bow', grade: 'D' },
+    // Одноручные бланты
+    { name: 'Hand Axe', grade: 'D' },
+    { name: 'Heavy Mace', grade: 'D' },
+    { name: 'Scalpel', grade: 'D' },
+    { name: 'Work Hammer', grade: 'D' },
+    { name: 'Doom Hammer', grade: 'D' },
+    { name: 'Mace of Judgment', grade: 'D' },
+    { name: 'Mace of Miracle', grade: 'D' },
+    { name: 'Mace of Prayer', grade: 'D' },
+    { name: 'Tomahawk', grade: 'D' },
+    { name: 'Spiked Club', grade: 'D' },
+    { name: 'Heavy Bone Club', grade: 'D' },
+    { name: 'Morning Star', grade: 'D' },
+    { name: 'Skull Breaker', grade: 'D' },
+    { name: 'Tarbar', grade: 'D' },
+    { name: 'Bonebreaker', grade: 'D' },
+    { name: 'Atuba Hammer', grade: 'D' },
+    { name: 'Atuba Mace', grade: 'D' },
+    { name: "Bich'hwa", grade: 'D' },
+    // Двуручное магическое
+    { name: 'Bone Staff', grade: 'D' },
+    { name: "Conjuror's Staff", grade: 'D' },
+    { name: 'Mystic Staff', grade: 'D' },
+    { name: 'Staff of Mana', grade: 'D' },
+    { name: 'Staff of Magic', grade: 'D' },
+    { name: 'Goat Head Staff', grade: 'D' },
+    { name: 'Ghost Staff', grade: 'D' },
     { name: 'Staff of Life', grade: 'D' },
+    { name: 'Tome of Blood', grade: 'D' },
+    { name: 'Crucifix of Blood', grade: 'D' },
+    { name: 'Demon Fangs', grade: 'D' },
+    { name: "Sage's Blood", grade: 'D' },
+    { name: 'Aluba Mace', grade: 'D' },
+    // Кастеты
+    { name: 'Bagh-Nakh', grade: 'D' },
+    { name: 'Single-Edged Jamadhr', grade: 'D' },
+    { name: 'Triple-Edged Jamadhr', grade: 'D' },
+    { name: "Bich'hwa", grade: 'D' },
+    { name: 'Scallop Jamadhr', grade: 'D' },
+    { name: 'Fisted Blade', grade: 'D' },
+    { name: 'Knuckle Duster', grade: 'D' },
+    // Одноручное магическое
+    { name: 'Branch of Life', grade: 'D' },
+    { name: 'Temptation of Abyss', grade: 'D' },
+    { name: 'Divine Tome', grade: 'D' },
+    { name: 'Priest Mace', grade: 'D' },
+    // Дуалы
+    { name: 'Saber*Saber', grade: 'D' },
+    { name: 'Saber*Bastard Sword', grade: 'D' },
+    { name: 'Saber*Spinebone Sword', grade: 'D' },
+    { name: "Saber*Artisan's Sword", grade: 'D' },
+    { name: "Saber*Knight's Sword", grade: 'D' },
+    { name: 'Saber*Crimson Sword', grade: 'D' },
+    { name: 'Saber*Elven Sword', grade: 'D' },
+    { name: 'Bastard Sword*Bastard Sword', grade: 'D' },
+    { name: 'Bastard Sword*Spinebone Sword', grade: 'D' },
+    { name: "Bastard Sword*Artisan's Sword", grade: 'D' },
+    { name: "Bastard Sword*Knight's Sword", grade: 'D' },
+    { name: 'Spinebone Sword*Spinebone Sword', grade: 'D' },
+    { name: "Spinebone Sword*Artisan's Sword", grade: 'D' },
+    { name: "Spinebone Sword*Knight's Sword", grade: 'D' },
+    { name: "Artisan's Sword*Artisan's Sword", grade: 'D' },
+    { name: "Artisan's Sword*Knight's Sword", grade: 'D' },
+    { name: "Knight's Sword*Knight's Sword", grade: 'D' },
+    { name: 'Bastard Sword*Crimson Sword', grade: 'D' },
+    { name: 'Bastard Sword*Elven Sword', grade: 'D' },
+    { name: 'Spinebone Sword*Crimson Sword', grade: 'D' },
+    { name: 'Spinebone Sword*Elven Sword', grade: 'D' },
+    { name: "Artisan's Sword*Crimson Sword", grade: 'D' },
+    { name: "Artisan's Sword*Elven Sword", grade: 'D' },
+    { name: "Knight's Sword*Crimson Sword", grade: 'D' },
+    { name: "Knight's Sword*Elven Sword", grade: 'D' },
+    // Отдельные предметы
+    { name: 'Soulfire Dirk', grade: 'D' },
+    { name: 'Cursed Maingauche', grade: 'D' },
+    { name: 'Maingauche', grade: 'D' },
+    { name: 'Mithril Dagger', grade: 'D' },
+    { name: 'Gastraphetes', grade: 'D' },
+    { name: 'Kukuri', grade: 'D' },
+    { name: 'Spiked Club', grade: 'D' },
+    { name: 'Triple-Edged Jamadhr', grade: 'D' },
+    { name: 'Two-Handed Sword', grade: 'D' },
+    { name: 'War Hammer', grade: 'D' },
 
-    // ==================== C Grade (по скриншоту) ====================
-    // Одноручное магическое дробящее
+    // ==================== C Grade ====================
     { name: 'Stick of Faith', grade: 'C' },
     { name: 'Club of Nature', grade: 'C' },
     { name: "Healhren's Book", grade: 'C' },
@@ -447,12 +680,10 @@
     { name: 'Nirvana Axe', grade: 'C' },
     { name: 'Stick of Eternity', grade: 'C' },
     { name: 'Eclipse Axe', grade: 'C' },
-    // Одноручные магические мечи
     { name: 'Mysterious Sword', grade: 'C' },
     { name: "Homunkulus's Sword", grade: 'C' },
     { name: 'Sword of Whispering Death', grade: 'C' },
     { name: 'Eclipse Sword', grade: 'C' },
-    // Двуручное магическое
     { name: 'Crystal Staff', grade: 'C' },
     { name: 'Heavy Doom Axe', grade: 'C' },
     { name: 'Heavy Doom Hammer', grade: 'C' },
@@ -464,7 +695,6 @@
     { name: "Deadman's Staff", grade: 'C' },
     { name: "Demon's Staff", grade: 'C' },
     { name: "Ghoul's Staff", grade: 'C' },
-    // Одноручные мечи
     { name: 'Stormbringer', grade: 'C' },
     { name: 'Caliburs', grade: 'C' },
     { name: 'Katana', grade: 'C' },
@@ -476,7 +706,7 @@
     { name: 'Sword of Nightmare', grade: 'C' },
     { name: 'Tsurugi', grade: 'C' },
     { name: 'Samurai Longsword', grade: 'C' },
-    // Дуал-мечи
+    // Дуал-мечи C
     { name: 'Saber*Sword of Revolution', grade: 'C' },
     { name: "Knight's Sword*Sword of Revolution", grade: 'C' },
     { name: 'Elven Sword*Sword of Revolution', grade: 'C' },
@@ -512,25 +742,25 @@
     { name: 'Elven Long Sword*Elven Long Sword', grade: 'C' },
     { name: 'Stormbringer*Stormbringer', grade: 'C' },
     { name: 'Shamshir*Shamshir', grade: 'C' },
-    // Дуал-бланты
+    // Дуал-бланты C
     { name: 'Tarbar*Tarbar', grade: 'C' },
     { name: 'Battle Axe*Battle Axe', grade: 'C' },
     { name: 'Dwarven War Hammer*Dwarven War Hammer', grade: 'C' },
-    // Копья
+    // Копья C
     { name: 'Body Slasher', grade: 'C' },
     { name: 'Orcish Glaive', grade: 'C' },
     { name: 'Scythe', grade: 'C' },
     { name: 'Bec de Corbin', grade: 'C' },
     { name: 'Poleaxe', grade: 'C' },
     { name: 'Orcish Poleaxe', grade: 'C' },
-    // Кинжалы
+    // Кинжалы C
     { name: 'Cursed Dagger', grade: 'C' },
     { name: 'Dark Elven Dagger', grade: 'C' },
     { name: 'Dark Screamer', grade: 'C' },
     { name: 'Grace Dagger', grade: 'C' },
     { name: 'Stiletto', grade: 'C' },
     { name: 'Crystal Dagger', grade: 'C' },
-    // Одноручные бланты
+    // Одноручные бланты C
     { name: 'Battle Axe', grade: 'C' },
     { name: 'Big Hammer', grade: 'C' },
     { name: 'Silver Axe', grade: 'C' },
@@ -538,25 +768,25 @@
     { name: 'Dwarven War Hammer', grade: 'C' },
     { name: 'War Axe', grade: 'C' },
     { name: 'Yaksa Mace', grade: 'C' },
-    // Двуручные бланты
+    // Двуручные бланты C
     { name: 'Karik Horn', grade: 'C' },
     { name: 'Dwarven Hammer', grade: 'C' },
-    // Луки
+    // Луки C
     { name: 'Crystallized Ice Bow', grade: 'C' },
     { name: 'Akat Long Bow', grade: 'C' },
     { name: 'Elemental Bow', grade: 'C' },
     { name: 'Noble Elven Bow', grade: 'C' },
     { name: 'Eminence Bow', grade: 'C' },
-    // Двуручные мечи
+    // Двуручные мечи C
     { name: 'Flamberge', grade: 'C' },
     { name: "Pa'agrian Sword", grade: 'C' },
     { name: 'Berserker Blade', grade: 'C' },
-    // Кастеты
+    // Кастеты C
     { name: 'Chakram', grade: 'C' },
     { name: 'Fisted Blade', grade: 'C' },
     { name: 'Knuckle Duster', grade: 'C' },
     { name: 'Great Pata', grade: 'C' },
-    // Отдельные предметы
+    // Отдельные предметы C
     { name: 'Crystal Dagger*Cursed Dagger', grade: 'C' },
     { name: 'Soulfire Dirk', grade: 'C' },
 
