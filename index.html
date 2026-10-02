@@ -651,10 +651,30 @@
     return w ? w.grade : '';
   }
 
-  // Возвращает букву грейда в рамке: 【D】
+  // Возвращает эмодзи-символ грейда для отображения в <select>
   function weaponGradeBadge(weaponName) {
     const g = getWeaponGrade(weaponName);
-    return g ? `【${g}】` : '【?】';
+    const badges = {
+      'NG': '🅽🅶',
+      'D':  '🅳',
+      'C':  '🅲',
+      'B':  '🅱',
+      'A':  '🅰',
+      'S':  '🅢'
+    };
+    return badges[g] || '❔';
+  }
+
+  // Возвращает цвет грейда как в игре Lineage 2
+  function weaponGradeColor(grade) {
+    return {
+      'NG': '#9e9e9e',  // серый
+      'D':  '#c8c8c8',  // светло-серый
+      'C':  '#4caf50',  // зелёный
+      'B':  '#3a7ce0',  // синий
+      'A':  '#9c27b0',  // пурпурный
+      'S':  '#e53935'   // красный
+    }[grade] || '#8a8da5';
   }
 
   // ==================== СОСТОЯНИЕ ====================
@@ -1485,15 +1505,16 @@
       tdLevel.textContent = m.level || '—';
       tr.appendChild(tdLevel);
 
-      // Оружие — с грейдом в рамке
+      // Оружие — с цветной буквой грейда, как в игре
       const tdWeapon = document.createElement('td');
       tdWeapon.style.cssText = cellStyle;
       const weaponLine = document.createElement('div');
       if (m.weapon) {
-        const badge = document.createElement('span');
-        badge.textContent = weaponGradeBadge(m.weapon) + ' ';
-        badge.style.cssText = 'color:#8a6508;font-weight:700;';
-        weaponLine.appendChild(badge);
+        const g = getWeaponGrade(m.weapon);
+        const gradeLetter = document.createElement('span');
+        gradeLetter.textContent = `[${g || '?'}]`;
+        gradeLetter.style.cssText = `color:${weaponGradeColor(g)};font-weight:700;font-size:13px;margin-right:6px;`;
+        weaponLine.appendChild(gradeLetter);
         weaponLine.appendChild(document.createTextNode(m.weapon));
       } else {
         weaponLine.textContent = '—';
