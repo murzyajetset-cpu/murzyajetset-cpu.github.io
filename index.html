@@ -342,15 +342,43 @@
     syncText.textContent = text;
   }
 
+  // ==================== СРАВНЕНИЕ СОСТОЯНИЙ ====================
+  // Возвращает true, если два набора данных идентичны.
+  // Используется, чтобы пропустить перерисовку, когда snapshot пришёл
+  // от собственного сохранения пользователя (иначе терялся бы фокус).
+  function membersEqual(a, b) {
+    if (a.length !== b.length) return false;
+    const mapA = new Map(a.map(m => [m.id, m]));
+    for (const m of b) {
+      const old = mapA.get(m.id);
+      if (!old) return false;
+      const keys = new Set([...Object.keys(old), ...Object.keys(m)]);
+      for (const k of keys) {
+        if (k === 'id') continue;
+        if (String(old[k] ?? '') !== String(m[k] ?? '')) return false;
+      }
+    }
+    return true;
+  }
+
   // ==================== ПОДПИСКА НА ИЗМЕНЕНИЯ ====================
   membersRef.on('value', (snapshot) => {
     const data = snapshot.val();
-    members = [];
+    const newMembers = [];
     if (data) {
       Object.keys(data).forEach(key => {
-        members.push({ id: key, ...data[key] });
+        newMembers.push({ id: key, ...data[key] });
       });
     }
+
+    // Если данные не изменились — не перерисовываем таблицу,
+    // чтобы не терять фокус и позицию курсора у активного поля.
+    if (membersEqual(members, newMembers)) {
+      setSyncStatus('online', 'Синхронизировано');
+      return;
+    }
+
+    members = newMembers;
     renderTable();
     setSyncStatus('online', 'Синхронизировано');
   }, (error) => {
@@ -455,7 +483,8 @@
   }
 
   // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
-  function createInput(type, value, onChange, attrs = {}) {
+  // meta = { memberId, field } — для сохранения фокуса при перерисовке
+  function createInput(type, value, onChange, attrs = {}, meta = null) {
     const input = document.createElement('input');
     input.type = type;
     input.value = value;
@@ -463,11 +492,15 @@
     if (cls) input.className = cls;
     if (className) input.className = className;
     Object.assign(input, rest);
+    if (meta) {
+      if (meta.memberId) input.dataset.memberId = meta.memberId;
+      if (meta.field) input.dataset.field = meta.field;
+    }
     input.addEventListener('input', e => onChange(e.target.value));
     return input;
   }
 
-  function buildProfessionSelect(value, onChange, extraClass = '') {
+  function buildProfessionSelect(value, onChange, extraClass = '', meta = null) {
     const select = document.createElement('select');
     select.className = 'prof-select ' + extraClass;
     professions.forEach(p => {
@@ -477,11 +510,15 @@
       if (p.name === value) option.selected = true;
       select.appendChild(option);
     });
+    if (meta) {
+      if (meta.memberId) select.dataset.memberId = meta.memberId;
+      if (meta.field) select.dataset.field = meta.field;
+    }
     select.addEventListener('change', e => onChange(e.target.value));
     return select;
   }
 
-  function buildWeaponSelect(value, onChange) {
+  function buildWeaponSelect(value, onChange, meta = null) {
     const select = document.createElement('select');
     const emptyOpt = document.createElement('option');
     emptyOpt.value = '';
@@ -502,12 +539,30 @@
       select.appendChild(group);
     });
 
+    if (meta) {
+      if (meta.memberId) select.dataset.memberId = meta.memberId;
+      if (meta.field) select.dataset.field = meta.field;
+    }
     select.addEventListener('change', e => onChange(e.target.value));
     return select;
   }
 
   // ==================== РЕНДЕР ====================
   function renderTable() {
+    // --- Сохраняем информацию о фокусе и позиции курсора ---
+    const active = document.activeElement;
+    let focusInfo = null;
+    if (active && active.dataset && active.dataset.field && active.dataset.memberId
+        && partyBody.contains(active)) {
+      focusInfo = {
+        memberId: active.dataset.memberId,
+        field: active.dataset.field,
+        selectionStart: active.selectionStart,
+        selectionEnd: active.selectionEnd,
+        isSelect: active.tagName === 'SELECT'
+      };
+    }
+
     partyBody.innerHTML = '';
 
     if (members.length === 0) {
@@ -518,18 +573,21 @@
       td.textContent = 'Нет персонажей. Нажмите «Добавить персонажа».';
       tr.appendChild(td);
       partyBody.appendChild(tr);
+      // Нечего восстанавливать — выходим
       return;
     }
 
     members.forEach((member) => {
       const tr = document.createElement('tr');
+      const mid = member.id;
+      const meta = (field) => ({ memberId: mid, field });
 
       // Имя
       const tdName = document.createElement('td');
       tdName.appendChild(createInput('text', member.name || '', val => {
         member.name = val;
         debouncedSave(member);
-      }));
+      }, {}, meta('name')));
       tr.appendChild(tdName);
 
       // Профессия + 3 саб-класса с уровнями
@@ -550,7 +608,7 @@
         const newProf = professions.find(p => p.name === val);
         iconSpan.textContent = newProf ? newProf.icon : '❓';
         debouncedSave(member);
-      });
+      }, '', meta('profession'));
 
       mainWrap.appendChild(iconSpan);
       mainWrap.appendChild(mainSelect);
@@ -574,7 +632,7 @@
         const subSelect = buildProfessionSelect(member[field.key] || '', val => {
           member[field.key] = val;
           debouncedSave(member);
-        }, 'sub-select');
+        }, 'sub-select', meta(field.key));
 
         const levelInput = createInput('number', member[field.levelKey] || '', val => {
           member[field.levelKey] = val;
@@ -584,7 +642,7 @@
           min: 1,
           max: 85,
           placeholder: 'ур.'
-        });
+        }, meta(field.levelKey));
 
         row.appendChild(subSelect);
         row.appendChild(levelInput);
@@ -601,7 +659,7 @@
       tdLevel.appendChild(createInput('number', member.level || 1, val => {
         member.level = val;
         debouncedSave(member);
-      }, { min: 1, max: 85 }));
+      }, { min: 1, max: 85 }, meta('level')));
       tr.appendChild(tdLevel);
 
       // Оружие + комментарий
@@ -614,13 +672,13 @@
       const weaponSelect = buildWeaponSelect(member.weapon || '', val => {
         member.weapon = val;
         debouncedSave(member);
-      });
+      }, meta('weapon'));
       weaponWrap.appendChild(weaponSelect);
 
       const weaponCommentInput = createInput('text', member.weaponComment || '', val => {
         member.weaponComment = val;
         debouncedSave(member);
-      }, { placeholder: '+16 [Focus] / SA / заметка…', class: 'weapon-comment' });
+      }, { placeholder: '+16 [Focus] / SA / заметка…', class: 'weapon-comment' }, meta('weaponComment'));
       weaponWrap.appendChild(weaponCommentInput);
 
       tdWeapon.appendChild(weaponWrap);
@@ -643,7 +701,7 @@
         tdArmor.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
           debouncedSave(member);
-        }, { placeholder: field.ph }));
+        }, { placeholder: field.ph }, meta(field.key)));
       });
       tr.appendChild(tdArmor);
 
@@ -664,7 +722,7 @@
         tdJewelry.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
           debouncedSave(member);
-        }, { placeholder: field.ph }));
+        }, { placeholder: field.ph }, meta(field.key)));
       });
       tr.appendChild(tdJewelry);
 
@@ -683,7 +741,7 @@
         tdTattoo.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
           debouncedSave(member);
-        }, { placeholder: field.ph }));
+        }, { placeholder: field.ph }, meta(field.key)));
       });
       tr.appendChild(tdTattoo);
 
@@ -692,7 +750,7 @@
       tdComment.appendChild(createInput('text', member.comment || '', val => {
         member.comment = val;
         debouncedSave(member);
-      }, { placeholder: 'заметка…' }));
+      }, { placeholder: 'заметка…' }, meta('comment')));
       tr.appendChild(tdComment);
 
       // Удаление
@@ -707,6 +765,21 @@
 
       partyBody.appendChild(tr);
     });
+
+    // --- Восстанавливаем фокус и позицию курсора ---
+    if (focusInfo) {
+      const el = partyBody.querySelector(
+        `[data-member-id="${focusInfo.memberId}"][data-field="${focusInfo.field}"]`
+      );
+      if (el) {
+        el.focus();
+        if (!focusInfo.isSelect && el.setSelectionRange && focusInfo.selectionStart != null) {
+          try {
+            el.setSelectionRange(focusInfo.selectionStart, focusInfo.selectionEnd);
+          } catch (e) { /* некоторые типы input не поддерживают selection */ }
+        }
+      }
+    }
   }
 
   // ==================== СТАРТ ====================
