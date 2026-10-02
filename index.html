@@ -127,17 +127,13 @@
   .prof-main { display: flex; align-items: center; gap: 6px; }
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
   .prof-select { flex: 1; min-width: 0; }
-
   .sub-group { display: flex; flex-direction: column; gap: 1px; }
   .sub-row { display: flex; align-items: center; gap: 3px; }
   .sub-row .sub-select { flex: 1; min-width: 0; }
-  .sub-row .sub-level {
-    width: 42px; flex-shrink: 0; text-align: center; padding: 3px 2px;
-  }
+  .sub-row .sub-level { width: 42px; flex-shrink: 0; text-align: center; padding: 3px 2px; }
   .sub-label { font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 2px 0 0 0; }
   .sub-select { font-size: 10px; padding: 3px 16px 3px 5px; background-size: 8px; }
   .sub-level { font-size: 10px; }
-
   .set-cell { background: #fcfcff; }
   .set-label { display: block; font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 3px 0 1px 0; }
   .set-label:first-child { margin-top: 0; }
@@ -153,8 +149,7 @@
   /* ===== Область для генерации PDF ===== */
   #pdfArea {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     width: 1400px;
     padding: 24px;
     background: #ffffff;
@@ -167,19 +162,12 @@
     min-width: 0 !important;
     border-collapse: collapse !important;
   }
-
   #pdfOverlay {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(15, 18, 35, 0.78);
     z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-family: var(--font-body);
-    font-size: 14px;
-    letter-spacing: 0.4px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-family: var(--font-body); font-size: 14px; letter-spacing: 0.4px;
   }
   #pdfOverlay .box {
     background: rgba(30, 33, 55, 0.95);
@@ -189,18 +177,14 @@
     text-align: center;
   }
   #pdfOverlay .spinner {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
+    display: inline-block; width: 20px; height: 20px;
     border: 2px solid rgba(255,255,255,0.2);
     border-top-color: #d4a017;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
-    margin-right: 12px;
-    vertical-align: middle;
+    margin-right: 12px; vertical-align: middle;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: #eef0f8; }
   ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
@@ -315,65 +299,181 @@
     { name: 'Judicator', icon: '✨' }
   ];
 
-  // ==================== ОРУЖИЕ ПО ГРЕЙДАМ ====================
-  const weaponsByGrade = {
-    'NG (No Grade)': [
-      'Деревянный Меч', 'Короткий Меч', 'Длинный Меч', 'Широкий Меч',
-      'Деревянная Дубина', 'Каменная Дубина', 'Лук Новичка',
-      'Кинжал Новичка', 'Кулак Новичка'
-    ],
-    'D Grade': [
-      'Falchion', 'Sword of Reflection', 'Elven Sword',
-      'Bastard Sword', 'Claymore', 'Two-Handed Sword',
-      'Dagger of Sacrifice', 'Misericorde', 'Stiletto',
-      'Bow of Forest', 'Composite Bow', 'Long Bow',
-      'Club of Nature', 'Mace of Judgment', 'Heavy War Axe',
-      'Spear of Wind', 'Halberd', 'Iron Spear'
-    ],
-    'C Grade': [
-      'Sword of Revolution', 'Stormbringer Sword', 'Elven Long Sword',
-      'Berserker Blade', 'Tsurugi', 'Dragon Slayer',
-      'Cursed Dagger', 'Dark Elven Dagger', 'Crystal Dagger',
-      'Light Crossbow', 'Crystallized Ice Bow', 'Akat Long Bow',
-      'Cursed Staff', 'Staff of Life', 'Wizard Staff',
-      'Battle Axe', 'Skull Graver', 'Bonebreaker',
-      'Poleaxe', 'Orcish Glaive', 'Winged Spear'
-    ],
-    'B Grade': [
-      'Sword of Valhalla', 'Great Sword', 'Guardian Sword',
-      'Art of Battle Axe', 'Berserker Blade', 'Heavy Sword',
-      'Grace Dagger', 'Dark Screamer', 'Kris',
-      'Eminence Bow', 'Bow of Peril', 'Dark Elven Long Bow',
-      'Staff of Evil Spirits', 'Homunkulus Sword', 'Sword of Limit',
-      'Deadman\'s Glory', 'Chakram', 'Cursed Staff'
-    ],
-    'A Grade': [
-      'Sword of Miracles', 'Dragon Slayer', 'Tallum Blade',
-      'Angel Slayer', 'Dark Legion\'s Edge', 'Soul Separator',
-      'Bloody Orchid', 'Soul Bow', 'Carnage Bow',
-      'Imperial Staff', 'Arcana Mace', 'Dragon Hunter Axe',
-      'Barakiel\'s Axe', 'Flaming Dragon Skull', 'Saint Spear',
-      'Demon Splinter', 'Basalt Battlehammer'
-    ],
-    'S Grade': [
-      'Dynasty Sword', 'Dynasty Blade', 'Dynasty Phantom',
-      'Heaven\'s Divider', 'Sirra\'s Blade', 'Barakiel\'s Axe',
-      'Soul Separator', 'Draconic Bow', 'Dragon Hunter Axe',
-      'Imperial Staff', 'Arcana Mace', 'Angel Slayer',
-      'Eternal Core Sword', 'Vesper Cutter', 'Icarus Hammer',
-      'Tallum Blade*Dark Legion\'s Edge', 'Dual Dragon Slayer'
-    ]
-  };
+  // ==================== ОРУЖИЕ С LA2HUB.COM ====================
+  // Список составлен на основе данных с https://la2hub.com/catalog/interlude/weapon
+  // Иконки загружаются с https://la2hub.com/icons/items/weapon/{icon_name}.png
+  // Для предметов без известной иконки используется эмодзи-заглушка.
+  const weaponsData = [
+    // NG Grade
+    { name: 'Short Sword', grade: 'NG', icon: 'weapon_small_sword_i00' },
+    { name: 'Long Sword', grade: 'NG', icon: 'weapon_long_sword_i00' },
+    { name: 'Broadsword', grade: 'NG', icon: 'weapon_broad_sword_i00' },
+    { name: 'Club', grade: 'NG', icon: 'weapon_club_i00' },
+    { name: 'Mace', grade: 'NG', icon: 'weapon_mace_i00' },
+    { name: "Apprentice's Wand", grade: 'NG', icon: 'weapon_apprentice_wand_i00' },
+    { name: "Apprentice's Rod", grade: 'NG', icon: 'weapon_apprentice_rod_i00' },
+    { name: 'Willow Staff', grade: 'NG', icon: 'weapon_willow_staff_i00' },
+    { name: 'Cedar Staff', grade: 'NG', icon: 'weapon_cedar_staff_i00' },
+    { name: 'Dagger', grade: 'NG', icon: 'weapon_dagger_i00' },
+    { name: 'Bone Dagger', grade: 'NG', icon: 'weapon_bone_dagger_i00' },
+    { name: 'Knife', grade: 'NG', icon: 'weapon_knife_i00' },
+    { name: 'Short Bow', grade: 'NG', icon: 'weapon_short_bow_i00' },
+    { name: 'Bow', grade: 'NG', icon: 'weapon_bow_i00' },
+    { name: 'Short Spear', grade: 'NG', icon: 'weapon_short_spear_i00' },
+    { name: 'Great Spear', grade: 'NG', icon: 'weapon_great_spear_i00' },
 
-  function weaponIcon(name) {
-    const n = name.toLowerCase();
-    if (n.includes('bow') || n.includes('лук') || n.includes('арбалет') || n.includes('crossbow')) return '🏹';
-    if (n.includes('staff') || n.includes('посох') || n.includes('mace') || n.includes('жезл') || n.includes('wand') || n.includes('book')) return '🔮';
-    if (n.includes('dagger') || n.includes('кинжал') || n.includes('нож') || n.includes('kris') || n.includes('stiletto')) return '🗡️';
-    if (n.includes('axe') || n.includes('топор') || n.includes('hammer') || n.includes('дубина') || n.includes('club') || n.includes('blunt')) return '🔨';
-    if (n.includes('spear') || n.includes('копьё') || n.includes('halberd') || n.includes('glaive') || n.includes('poleaxe') || n.includes('pike')) return '🔱';
-    if (n.includes('fist') || n.includes('кастет') || n.includes('knuckle')) return '🥊';
-    if (n.includes('dual') || n.includes('парн')) return '🌀';
+    // D Grade
+    { name: 'Gladius', grade: 'D', icon: 'weapon_gladius_i00' },
+    { name: 'Orcish Sword', grade: 'D', icon: 'weapon_orcish_sword_i00' },
+    { name: 'Falchion', grade: 'D', icon: 'weapon_falchion_i00' },
+    { name: 'Bastard Sword', grade: 'D', icon: 'weapon_bastard_sword_i00' },
+    { name: 'Claymore', grade: 'D', icon: 'weapon_claymore_i00' },
+    { name: 'Flamberge', grade: 'D', icon: 'weapon_flamberge_i00' },
+    { name: 'Stormbringer', grade: 'D', icon: 'weapon_stormbringer_i00' },
+    { name: 'Shamshir', grade: 'D', icon: 'weapon_shamshir_i00' },
+    { name: 'Katana', grade: 'D', icon: 'weapon_katana_i00' },
+    { name: 'Caliburs', grade: 'D', icon: 'weapon_caliburs_i00' },
+    { name: 'Sword of Delusion', grade: 'D', icon: 'weapon_sword_of_delusion_i00' },
+    { name: 'Tsurugi', grade: 'D', icon: 'weapon_tsurugi_i00' },
+    { name: 'Great Sword', grade: 'D', icon: 'weapon_great_sword_i00' },
+    { name: 'Sword of Damascus', grade: 'D', icon: 'weapon_sword_of_damascus_i00' },
+    { name: 'Tallum Blade', grade: 'D', icon: 'weapon_tallum_blade_i00' },
+    { name: 'Dragon Slayer', grade: 'D', icon: 'weapon_dragon_slayer_i00' },
+    { name: 'Sword of Magic', grade: 'D', icon: 'weapon_sword_of_magic_i00' },
+    { name: "Homunkulus's Sword", grade: 'D', icon: 'weapon_homunkulus_sword_i00' },
+    { name: 'Phantom Sword', grade: 'D', icon: 'weapon_phantom_sword_i00' },
+    { name: 'Tomahawk', grade: 'D', icon: 'weapon_tomahawk_i00' },
+    { name: 'Iron Hammer', grade: 'D', icon: 'weapon_iron_hammer_i00' },
+    { name: 'Morning Star', grade: 'D', icon: 'weapon_morning_star_i00' },
+    { name: 'Big Hammer', grade: 'D', icon: 'weapon_big_hammer_i00' },
+    { name: 'Goat Head Staff', grade: 'D', icon: 'weapon_goat_head_staff_i00' },
+    { name: 'Heavy War Axe', grade: 'D', icon: 'weapon_heavy_war_axe_i00' },
+    { name: "Sprite's Staff", grade: 'D', icon: 'weapon_sprites_staff_i00' },
+    { name: 'Winged Spear', grade: 'D', icon: 'weapon_winged_spear_i00' },
+    { name: 'Bec de Corbin', grade: 'D', icon: 'weapon_bec_de_corbin_i00' },
+    { name: 'Poleaxe', grade: 'D', icon: 'weapon_poleaxe_i00' },
+    { name: 'Scythe', grade: 'D', icon: 'weapon_scythe_i00' },
+    { name: 'Lance', grade: 'D', icon: 'weapon_lance_i00' },
+    { name: 'Halberd', grade: 'D', icon: 'weapon_halberd_i00' },
+    { name: "Apprentice's Spellbook", grade: 'D', icon: 'weapon_apprentice_spellbook_i00' },
+    { name: 'Voodoo Doll', grade: 'D', icon: 'weapon_voodoo_doll_i00' },
+
+    // C Grade
+    { name: 'Sword of Revolution', grade: 'C', icon: 'weapon_sword_of_revolution_i00' },
+    { name: 'Stormbringer Sword', grade: 'C', icon: 'weapon_stormbringer_sword_i00' },
+    { name: 'Elven Long Sword', grade: 'C', icon: 'weapon_elven_long_sword_i00' },
+    { name: 'Berserker Blade', grade: 'C', icon: 'weapon_berserker_blade_i00' },
+    { name: 'Tsurugi', grade: 'C', icon: 'weapon_tsurugi_i00' },
+    { name: 'Dragon Slayer', grade: 'C', icon: 'weapon_dragon_slayer_i00' },
+    { name: 'Cursed Dagger', grade: 'C', icon: 'weapon_cursed_dagger_i00' },
+    { name: 'Dark Elven Dagger', grade: 'C', icon: 'weapon_dark_elven_dagger_i00' },
+    { name: 'Crystal Dagger', grade: 'C', icon: 'weapon_crystal_dagger_i00' },
+    { name: 'Light Crossbow', grade: 'C', icon: 'weapon_light_crossbow_i00' },
+    { name: 'Crystallized Ice Bow', grade: 'C', icon: 'weapon_crystallized_ice_bow_i00' },
+    { name: 'Akat Long Bow', grade: 'C', icon: 'weapon_akat_long_bow_i00' },
+    { name: 'Cursed Staff', grade: 'C', icon: 'weapon_cursed_staff_i00' },
+    { name: 'Staff of Life', grade: 'C', icon: 'weapon_staff_of_life_i00' },
+    { name: 'Wizard Staff', grade: 'C', icon: 'weapon_wizard_staff_i00' },
+    { name: 'Battle Axe', grade: 'C', icon: 'weapon_battle_axe_i00' },
+    { name: 'Skull Graver', grade: 'C', icon: 'weapon_skull_graver_i00' },
+    { name: 'Bonebreaker', grade: 'C', icon: 'weapon_bonebreaker_i00' },
+    { name: 'Poleaxe', grade: 'C', icon: 'weapon_poleaxe_i00' },
+    { name: 'Orcish Glaive', grade: 'C', icon: 'weapon_orcish_glaive_i00' },
+    { name: 'Winged Spear', grade: 'C', icon: 'weapon_winged_spear_i00' },
+    { name: 'Dwarven Hammer', grade: 'C', icon: 'weapon_dwarven_hammer_i00' },
+    { name: 'Karik Horn', grade: 'C', icon: 'weapon_karik_horn_i00' },
+    { name: "Demon's Staff", grade: 'C', icon: 'weapon_demons_staff_i00' },
+    { name: "Ghoul's Staff", grade: 'C', icon: 'weapon_ghouls_staff_i00' },
+
+    // B Grade
+    { name: 'Sword of Valhalla', grade: 'B', icon: 'weapon_sword_of_valhalla_i00' },
+    { name: 'Great Sword', grade: 'B', icon: 'weapon_great_sword_i00' },
+    { name: 'Guardian Sword', grade: 'B', icon: 'weapon_guardian_sword_i00' },
+    { name: 'Art of Battle Axe', grade: 'B', icon: 'weapon_art_of_battle_axe_i00' },
+    { name: 'Berserker Blade', grade: 'B', icon: 'weapon_berserker_blade_i00' },
+    { name: 'Heavy Sword', grade: 'B', icon: 'weapon_heavy_sword_i00' },
+    { name: 'Grace Dagger', grade: 'B', icon: 'weapon_grace_dagger_i00' },
+    { name: 'Dark Screamer', grade: 'B', icon: 'weapon_dark_screamer_i00' },
+    { name: 'Kris', grade: 'B', icon: 'weapon_kris_i00' },
+    { name: 'Eminence Bow', grade: 'B', icon: 'weapon_eminence_bow_i00' },
+    { name: 'Bow of Peril', grade: 'B', icon: 'weapon_bow_of_peril_i00' },
+    { name: 'Dark Elven Long Bow', grade: 'B', icon: 'weapon_dark_elven_long_bow_i00' },
+    { name: 'Staff of Evil Spirits', grade: 'B', icon: 'weapon_staff_of_evil_spirits_i00' },
+    { name: 'Homunkulus Sword', grade: 'B', icon: 'weapon_homunkulus_sword_i00' },
+    { name: 'Sword of Limit', grade: 'B', icon: 'weapon_sword_of_limit_i00' },
+    { name: "Deadman's Glory", grade: 'B', icon: 'weapon_deadmans_glory_i00' },
+    { name: 'Chakram', grade: 'B', icon: 'weapon_chakram_i00' },
+    { name: 'Cursed Staff', grade: 'B', icon: 'weapon_cursed_staff_i00' },
+    { name: 'Star Buster', grade: 'B', icon: 'weapon_star_buster_i00' },
+    { name: 'Ice Storm Hammer', grade: 'B', icon: 'weapon_ice_storm_hammer_i00' },
+    { name: "Sprite's Staff", grade: 'B', icon: 'weapon_sprites_staff_i00' },
+    { name: "Kaim Vanul's Bones", grade: 'B', icon: 'weapon_kaim_vanuls_bones_i00' },
+    { name: 'Spell Breaker', grade: 'B', icon: 'weapon_spell_breaker_i00' },
+
+    // A Grade
+    { name: 'Sword of Miracles', grade: 'A', icon: 'weapon_sword_of_miracles_i00' },
+    { name: 'Dragon Slayer', grade: 'A', icon: 'weapon_dragon_slayer_i00' },
+    { name: 'Tallum Blade', grade: 'A', icon: 'weapon_tallum_blade_i00' },
+    { name: 'Angel Slayer', grade: 'A', icon: 'weapon_angel_slayer_i00' },
+    { name: "Dark Legion's Edge", grade: 'A', icon: 'weapon_dark_legions_edge_i00' },
+    { name: 'Soul Separator', grade: 'A', icon: 'weapon_soul_separator_i00' },
+    { name: 'Bloody Orchid', grade: 'A', icon: 'weapon_bloody_orchid_i00' },
+    { name: 'Soul Bow', grade: 'A', icon: 'weapon_soul_bow_i00' },
+    { name: 'Carnage Bow', grade: 'A', icon: 'weapon_carnage_bow_i00' },
+    { name: 'Imperial Staff', grade: 'A', icon: 'weapon_imperial_staff_i00' },
+    { name: 'Arcana Mace', grade: 'A', icon: 'weapon_arcana_mace_i00' },
+    { name: 'Dragon Hunter Axe', grade: 'A', icon: 'weapon_dragon_hunter_axe_i00' },
+    { name: "Barakiel's Axe", grade: 'A', icon: 'weapon_barakiels_axe_i00' },
+    { name: 'Flaming Dragon Skull', grade: 'A', icon: 'weapon_flaming_dragon_skull_i00' },
+    { name: 'Saint Spear', grade: 'A', icon: 'weapon_saint_spear_i00' },
+    { name: 'Demon Splinter', grade: 'A', icon: 'weapon_demon_splinter_i00' },
+    { name: 'Basalt Battlehammer', grade: 'A', icon: 'weapon_basalt_battlehammer_i00' },
+    { name: 'Meteor Shower', grade: 'A', icon: 'weapon_meteor_shower_i00' },
+    { name: 'Elysian', grade: 'A', icon: 'weapon_elysian_i00' },
+    { name: 'Dragon Grinder', grade: 'A', icon: 'weapon_dragon_grinder_i00' },
+
+    // S Grade
+    { name: 'Dynasty Sword', grade: 'S', icon: 'weapon_dynasty_sword_i00' },
+    { name: 'Dynasty Blade', grade: 'S', icon: 'weapon_dynasty_blade_i00' },
+    { name: 'Dynasty Phantom', grade: 'S', icon: 'weapon_dynasty_phantom_i00' },
+    { name: "Heaven's Divider", grade: 'S', icon: 'weapon_heavens_divider_i00' },
+    { name: "Sirra's Blade", grade: 'S', icon: 'weapon_sirras_blade_i00' },
+    { name: "Barakiel's Axe", grade: 'S', icon: 'weapon_barakiels_axe_i00' },
+    { name: 'Soul Separator', grade: 'S', icon: 'weapon_soul_separator_i00' },
+    { name: 'Draconic Bow', grade: 'S', icon: 'weapon_draconic_bow_i00' },
+    { name: 'Dragon Hunter Axe', grade: 'S', icon: 'weapon_dragon_hunter_axe_i00' },
+    { name: 'Imperial Staff', grade: 'S', icon: 'weapon_imperial_staff_i00' },
+    { name: 'Arcana Mace', grade: 'S', icon: 'weapon_arcana_mace_i00' },
+    { name: 'Angel Slayer', grade: 'S', icon: 'weapon_angel_slayer_i00' },
+    { name: 'Eternal Core Sword', grade: 'S', icon: 'weapon_eternal_core_sword_i00' },
+    { name: 'Vesper Cutter', grade: 'S', icon: 'weapon_vesper_cutter_i00' },
+    { name: 'Icarus Hammer', grade: 'S', icon: 'weapon_icarus_hammer_i00' },
+    { name: "Tallum Blade*Dark Legion's Edge", grade: 'S', icon: 'weapon_dual_tallum_dark_legion_i00' },
+    { name: 'Dual Dragon Slayer', grade: 'S', icon: 'weapon_dual_dragon_slayer_i00' }
+  ];
+
+  // Группируем по грейдам для селекта
+  const weaponsByGrade = {};
+  weaponsData.forEach(w => {
+    if (!weaponsByGrade[`${w.grade} Grade`]) weaponsByGrade[`${w.grade} Grade`] = [];
+    weaponsByGrade[`${w.grade} Grade`].push(w.name);
+  });
+
+  // Функция для получения иконки оружия
+  function getWeaponIcon(weaponName) {
+    const w = weaponsData.find(item => item.name === weaponName);
+    if (w && w.icon) {
+      return `https://la2hub.com/icons/items/weapon/${w.icon}.png`;
+    }
+    // Fallback: эмодзи по типу оружия
+    const n = weaponName.toLowerCase();
+    if (n.includes('bow') || n.includes('лук') || n.includes('crossbow')) return '🏹';
+    if (n.includes('staff') || n.includes('посох') || n.includes('mace') || n.includes('wand') || n.includes('rod')) return '🔮';
+    if (n.includes('dagger') || n.includes('кинжал') || n.includes('knife') || n.includes('kris')) return '🗡️';
+    if (n.includes('axe') || n.includes('hammer') || n.includes('club') || n.includes('blunt') || n.includes('star')) return '🔨';
+    if (n.includes('spear') || n.includes('halberd') || n.includes('glaive') || n.includes('poleaxe') || n.includes('lance')) return '🔱';
+    if (n.includes('fist') || n.includes('knuckle')) return '🥊';
+    if (n.includes('dual')) return '🌀';
     return '⚔️';
   }
 
@@ -559,7 +659,10 @@
       weaponsByGrade[grade].forEach(weaponName => {
         const opt = document.createElement('option');
         opt.value = weaponName;
-        opt.textContent = `${weaponIcon(weaponName)} ${weaponName}`;
+        // Используем эмодзи для селекта (браузеры не поддерживают img в option)
+        const icon = getWeaponIcon(weaponName);
+        const displayIcon = icon.startsWith('http') ? '⚔️' : icon;
+        opt.textContent = `${displayIcon} ${weaponName}`;
         if (weaponName === value) opt.selected = true;
         group.appendChild(opt);
       });
@@ -683,6 +786,7 @@
       }, { min: 1, max: 85 }, meta('level')));
       tr.appendChild(tdLevel);
 
+      // Оружие + комментарий
       const tdWeapon = document.createElement('td');
       const weaponWrap = document.createElement('div');
       weaponWrap.style.display = 'flex';
@@ -798,8 +902,6 @@
   }
 
   // ==================== ЭКСПОРТ В PDF ====================
-  // Таблица для PDF строится НАПРЯМУЮ из массива members,
-  // чтобы не зависеть от особенностей cloneNode и выделения в <select>.
   async function downloadPDF() {
     if (members.length === 0) {
       alert('Таблица пуста — нечего сохранять в PDF.');
@@ -816,7 +918,6 @@
     const pdfArea = document.createElement('div');
     pdfArea.id = 'pdfArea';
 
-    // --- Заголовок и дата ---
     const title = document.createElement('h2');
     title.textContent = 'КП DARAMs — Состав топовой гей-консты';
     title.style.cssText = "margin:0 0 4px 0;color:#b8860b;font-family:'Cinzel',serif;font-size:22px;letter-spacing:0.04em;";
@@ -827,11 +928,9 @@
     subtitle.style.cssText = 'margin:0 0 16px 0;color:#5a5d75;font-size:12px;';
     pdfArea.appendChild(subtitle);
 
-    // --- Строим таблицу вручную из members ---
     const table = document.createElement('table');
     table.style.cssText = 'width:100%;border-collapse:collapse;table-layout:auto;font-size:12px;background:#fff;';
 
-    // Шапка
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     ['Имя', 'Профессия и саб-классы', 'Ур.', 'Оружие', 'Сет брони', 'Сет бижутерии', 'Татуировки', 'Комментарий']
@@ -844,21 +943,17 @@
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
-    // Тело
     const tbody = document.createElement('tbody');
-
     const cellStyle = 'padding:8px;border-bottom:1px solid #e2e4ec;vertical-align:top;font-size:12px;';
 
     members.forEach(m => {
       const tr = document.createElement('tr');
 
-      // Имя
       const tdName = document.createElement('td');
       tdName.style.cssText = cellStyle;
       tdName.textContent = m.name || '—';
       tr.appendChild(tdName);
 
-      // Профессия + сабы
       const tdProf = document.createElement('td');
       tdProf.style.cssText = cellStyle;
       const prof = professions.find(p => p.name === m.profession);
@@ -887,17 +982,15 @@
       });
       tr.appendChild(tdProf);
 
-      // Уровень основной
       const tdLevel = document.createElement('td');
       tdLevel.style.cssText = cellStyle;
       tdLevel.textContent = m.level || '—';
       tr.appendChild(tdLevel);
 
-      // Оружие + комментарий
       const tdWeapon = document.createElement('td');
       tdWeapon.style.cssText = cellStyle;
       const weaponLine = document.createElement('div');
-      weaponLine.textContent = m.weapon ? `${weaponIcon(m.weapon)} ${m.weapon}` : '—';
+      weaponLine.textContent = m.weapon ? `${getWeaponIcon(m.weapon)} ${m.weapon}` : '—';
       if (!m.weapon) weaponLine.style.color = '#8a8da5';
       tdWeapon.appendChild(weaponLine);
       if (m.weaponComment) {
@@ -908,7 +1001,6 @@
       }
       tr.appendChild(tdWeapon);
 
-      // Сет брони
       const tdArmor = document.createElement('td');
       tdArmor.style.cssText = cellStyle + 'font-size:11px;';
       [
@@ -927,7 +1019,6 @@
       });
       tr.appendChild(tdArmor);
 
-      // Сет бижутерии
       const tdJewelry = document.createElement('td');
       tdJewelry.style.cssText = cellStyle + 'font-size:11px;';
       [
@@ -945,7 +1036,6 @@
       });
       tr.appendChild(tdJewelry);
 
-      // Татуировки
       const tdTattoo = document.createElement('td');
       tdTattoo.style.cssText = cellStyle + 'font-size:11px;';
       [m.tattoo1, m.tattoo2, m.tattoo3].forEach((t, i) => {
@@ -957,7 +1047,6 @@
       });
       tr.appendChild(tdTattoo);
 
-      // Комментарий
       const tdComment = document.createElement('td');
       tdComment.style.cssText = cellStyle;
       tdComment.textContent = m.comment || '—';
@@ -971,7 +1060,6 @@
     pdfArea.appendChild(table);
     document.body.appendChild(pdfArea);
 
-    // Пауза для отрисовки
     await new Promise(r => setTimeout(r, 400));
 
     const fileName = 'KP_DARAMs_' + new Date().toISOString().slice(0, 10) + '.pdf';
