@@ -49,7 +49,6 @@
   }
   .subtitle { color: var(--text-secondary); font-size: 11px; margin: 0 0 14px 0; }
 
-  /* ===== Вкладки ===== */
   .tabs {
     display: flex;
     gap: 4px;
@@ -178,7 +177,6 @@
   .remove-btn:hover { background: rgba(217,45,32,0.1); border-color: var(--danger-red); }
   .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
 
-  /* ===== Крафт и покупки ===== */
   .craft-author-bar {
     display: flex; gap: 8px; align-items: center;
     margin-bottom: 12px; padding: 8px 10px;
@@ -373,7 +371,6 @@
     border-radius: 8px;
   }
 
-  /* ===== PDF ===== */
   #pdfArea {
     position: fixed;
     top: 0; left: 0;
@@ -423,13 +420,11 @@
 <h1>КП DARAMs</h1>
 <p class="subtitle">Состав топовой гей-консты</p>
 
-<!-- ===== Вкладки ===== -->
 <div class="tabs">
   <button class="tab-btn active" data-tab="group">Группа</button>
   <button class="tab-btn" data-tab="craft">Крафт и покупки</button>
 </div>
 
-<!-- ===== Вкладка: Группа ===== -->
 <div id="tab-group" class="tab-content active">
   <div class="toolbar">
     <button id="addMember" class="primary">Добавить персонажа</button>
@@ -467,7 +462,6 @@
   </div>
 </div>
 
-<!-- ===== Вкладка: Крафт и покупки ===== -->
 <div id="tab-craft" class="tab-content">
 
   <div class="craft-author-bar">
@@ -651,16 +645,16 @@
     weaponsByGrade[key].push(w.name);
   });
 
-  function weaponIcon(name) {
-    const n = name.toLowerCase();
-    if (n.includes('bow') || n.includes('лук') || n.includes('crossbow')) return '🏹';
-    if (n.includes('staff') || n.includes('mace') || n.includes('wand') || n.includes('rod')) return '🔮';
-    if (n.includes('dagger') || n.includes('knife') || n.includes('kris')) return '🗡️';
-    if (n.includes('axe') || n.includes('hammer') || n.includes('club') || n.includes('blunt') || n.includes('star')) return '🔨';
-    if (n.includes('spear') || n.includes('halberd') || n.includes('glaive') || n.includes('poleaxe') || n.includes('lance')) return '🔱';
-    if (n.includes('fist') || n.includes('knuckle')) return '🥊';
-    if (n.includes('dual')) return '🌀';
-    return '⚔️';
+  // Возвращает грейд оружия по названию (NG, D, C, B, A, S)
+  function getWeaponGrade(weaponName) {
+    const w = weaponsData.find(item => item.name === weaponName);
+    return w ? w.grade : '';
+  }
+
+  // Возвращает букву грейда в рамке: 【D】
+  function weaponGradeBadge(weaponName) {
+    const g = getWeaponGrade(weaponName);
+    return g ? `【${g}】` : '【?】';
   }
 
   // ==================== СОСТОЯНИЕ ====================
@@ -684,7 +678,6 @@
     postsSyncText.textContent = text;
   }
 
-  // Запоминаем автора в localStorage
   const AUTHOR_KEY = 'l2party_author';
   if (localStorage.getItem(AUTHOR_KEY)) {
     authorInput.value = localStorage.getItem(AUTHOR_KEY);
@@ -875,7 +868,7 @@
       weaponsByGrade[grade].forEach(weaponName => {
         const opt = document.createElement('option');
         opt.value = weaponName;
-        opt.textContent = `${weaponIcon(weaponName)} ${weaponName}`;
+        opt.textContent = `${weaponGradeBadge(weaponName)} ${weaponName}`;
         if (weaponName === value) opt.selected = true;
         group.appendChild(opt);
       });
@@ -1138,7 +1131,6 @@
       Object.keys(data).forEach(key => {
         newPosts.push({ id: key, ...data[key] });
       });
-      // Сортируем по времени создания (сначала новые)
       newPosts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     }
     if (postsEqual(posts, newPosts)) {
@@ -1217,7 +1209,6 @@
   }
 
   function cycleStatus(post) {
-    // new -> progress -> done -> new
     const order = ['new', 'progress', 'done'];
     const currentIdx = order.indexOf(post.status || 'new');
     post.status = order[(currentIdx + 1) % order.length];
@@ -1259,7 +1250,6 @@
       const card = document.createElement('div');
       card.className = 'post-card ' + (post.type === 'buy' ? 'type-buy' : 'type-craft');
 
-      // Заголовок
       const header = document.createElement('div');
       header.className = 'post-header';
 
@@ -1287,7 +1277,6 @@
 
       card.appendChild(header);
 
-      // Строка предмета
       if (post.item) {
         const itemLine = document.createElement('div');
         itemLine.className = 'post-item-line';
@@ -1305,7 +1294,6 @@
         card.appendChild(itemLine);
       }
 
-      // Описание
       if (post.text) {
         const text = document.createElement('div');
         text.className = 'post-text';
@@ -1313,7 +1301,6 @@
         card.appendChild(text);
       }
 
-      // Футер: редактировать / удалить
       const footer = document.createElement('div');
       footer.className = 'post-footer';
 
@@ -1338,7 +1325,6 @@
   function toggleEditPost(card, post) {
     const existing = card.querySelector('.post-edit-area');
     if (existing) {
-      // Уже открыто — сохраняем
       const typeVal = existing.querySelector('.edit-type').value;
       const itemVal = existing.querySelector('.edit-item').value.trim();
       const qtyVal = existing.querySelector('.edit-qty').value.trim();
@@ -1350,12 +1336,10 @@
       post.text = textVal;
       debouncedSavePost(post);
 
-      // Перерисовываем карточку
       renderPosts();
       return;
     }
 
-    // Открываем форму редактирования
     const area = document.createElement('div');
     area.className = 'post-edit-area';
 
@@ -1408,7 +1392,6 @@
     hint.textContent = 'Нажмите «Редактировать» ещё раз, чтобы сохранить.';
     area.appendChild(hint);
 
-    // Скрываем прежний контент карточки и вставляем форму
     card.querySelectorAll('.post-item-line, .post-text').forEach(el => el.remove());
     const footer = card.querySelector('.post-footer');
     card.insertBefore(area, footer);
@@ -1502,11 +1485,20 @@
       tdLevel.textContent = m.level || '—';
       tr.appendChild(tdLevel);
 
+      // Оружие — с грейдом в рамке
       const tdWeapon = document.createElement('td');
       tdWeapon.style.cssText = cellStyle;
       const weaponLine = document.createElement('div');
-      weaponLine.textContent = m.weapon ? `${weaponIcon(m.weapon)} ${m.weapon}` : '—';
-      if (!m.weapon) weaponLine.style.color = '#8a8da5';
+      if (m.weapon) {
+        const badge = document.createElement('span');
+        badge.textContent = weaponGradeBadge(m.weapon) + ' ';
+        badge.style.cssText = 'color:#8a6508;font-weight:700;';
+        weaponLine.appendChild(badge);
+        weaponLine.appendChild(document.createTextNode(m.weapon));
+      } else {
+        weaponLine.textContent = '—';
+        weaponLine.style.color = '#8a8da5';
+      }
       tdWeapon.appendChild(weaponLine);
       if (m.weaponComment) {
         const c = document.createElement('div');
