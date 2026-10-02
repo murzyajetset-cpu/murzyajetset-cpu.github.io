@@ -67,24 +67,10 @@
     color: #fff; border-color: var(--accent-gold); font-weight: 700;
   }
   button.primary:hover { background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%); color: #fff; }
-  button.save-btn {
-    border-color: rgba(31,157,85,0.5);
-    color: var(--success-green);
-  }
-  button.save-btn:hover {
-    background: rgba(31,157,85,0.08);
-    border-color: var(--success-green);
-    color: var(--success-green);
-  }
-  button.pdf-btn {
-    border-color: rgba(58,95,217,0.5);
-    color: var(--accent-blue);
-  }
-  button.pdf-btn:hover {
-    background: rgba(58,95,217,0.08);
-    border-color: var(--accent-blue);
-    color: var(--accent-blue);
-  }
+  button.save-btn { border-color: rgba(31,157,85,0.5); color: var(--success-green); }
+  button.save-btn:hover { background: rgba(31,157,85,0.08); border-color: var(--success-green); color: var(--success-green); }
+  button.pdf-btn { border-color: rgba(58,95,217,0.5); color: var(--accent-blue); }
+  button.pdf-btn:hover { background: rgba(58,95,217,0.08); border-color: var(--accent-blue); color: var(--accent-blue); }
   .sync-status {
     font-size: 10px; margin-left: auto; letter-spacing: 0.3px;
     display: flex; align-items: center; gap: 5px;
@@ -96,8 +82,7 @@
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
   .auto-timer {
     font-size: 10px; color: var(--text-muted);
-    margin-left: 8px;
-    padding-left: 8px;
+    margin-left: 8px; padding-left: 8px;
     border-left: 1px solid var(--border-subtle);
   }
   .table-wrap {
@@ -147,10 +132,7 @@
   .sub-row { display: flex; align-items: center; gap: 3px; }
   .sub-row .sub-select { flex: 1; min-width: 0; }
   .sub-row .sub-level {
-    width: 42px;
-    flex-shrink: 0;
-    text-align: center;
-    padding: 3px 2px;
+    width: 42px; flex-shrink: 0; text-align: center; padding: 3px 2px;
   }
   .sub-label { font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 2px 0 0 0; }
   .sub-select { font-size: 10px; padding: 3px 16px 3px 5px; background-size: 8px; }
@@ -169,28 +151,71 @@
   .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
 
   /* ===== Область для генерации PDF =====
-     Скрыта визуально, но находится в DOM и имеет реальные размеры,
-     чтобы html2canvas мог её отрисовать. */
+     Полностью непрозрачная, лежит в DOM, но перекрыта оверлеем.
+     html2canvas снимает именно её — оверлей в кадр не попадает. */
   #pdfArea {
     position: fixed;
     top: 0;
     left: 0;
     width: 1400px;
-    padding: 20px;
-    background: #fff;
-    z-index: -1000;
-    opacity: 0.01;
-    pointer-events: none;
-    overflow: visible;
+    padding: 24px;
+    background: #ffffff;
+    z-index: 1;
+    opacity: 1;
   }
   #pdfArea table {
     table-layout: auto !important;
     width: 100% !important;
     min-width: 0 !important;
+    border-collapse: collapse !important;
   }
   #pdfArea th, #pdfArea td {
-    padding: 4px 5px !important;
+    padding: 6px 6px !important;
+    border-bottom: 1px solid #e2e4ec !important;
+    vertical-align: top !important;
+    background: #fff !important;
   }
+  #pdfArea th {
+    background: #fafbfe !important;
+    color: #8a6508 !important;
+    border-bottom: 2px solid #b8860b !important;
+    font-size: 10px !important;
+    text-align: left !important;
+  }
+
+  /* Оверлей, который перекрывает контейнер на время генерации */
+  #pdfOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 18, 35, 0.78);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    letter-spacing: 0.4px;
+  }
+  #pdfOverlay .box {
+    background: rgba(30, 33, 55, 0.95);
+    padding: 24px 40px;
+    border-radius: 10px;
+    border: 1px solid rgba(184, 134, 11, 0.4);
+    text-align: center;
+  }
+  #pdfOverlay .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: #d4a017;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: #eef0f8; }
@@ -240,7 +265,8 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
   const FIREBASE_DB_URL = 'https://l2-party-default-rtdb.europe-west1.firebasedatabase.app/';
@@ -806,7 +832,7 @@
     }
   }
 
-  // ==================== ЭКСПОРТ В PDF ====================
+  // ==================== ЭКСПОРТ В PDF (html2canvas + jsPDF) ====================
   async function downloadPDF() {
     if (members.length === 0) {
       alert('Таблица пуста — нечего сохранять в PDF.');
@@ -814,6 +840,12 @@
     }
 
     setSyncStatus('syncing', 'Готовим PDF…');
+
+    // Оверлей, который перекроет контейнер на время генерации
+    const overlay = document.createElement('div');
+    overlay.id = 'pdfOverlay';
+    overlay.innerHTML = '<div class="box"><span class="spinner"></span>Готовим PDF…</div>';
+    document.body.appendChild(overlay);
 
     const pdfArea = document.createElement('div');
     pdfArea.id = 'pdfArea';
@@ -824,21 +856,21 @@
     title.style.margin = '0 0 4px 0';
     title.style.color = '#b8860b';
     title.style.fontFamily = "'Cinzel', serif";
-    title.style.fontSize = '18px';
+    title.style.fontSize = '22px';
     title.style.letterSpacing = '0.04em';
     pdfArea.appendChild(title);
 
     const subtitle = document.createElement('p');
     subtitle.textContent = 'Сформировано: ' + new Date().toLocaleString('ru-RU');
-    subtitle.style.margin = '0 0 14px 0';
+    subtitle.style.margin = '0 0 16px 0';
     subtitle.style.color = '#5a5d75';
-    subtitle.style.fontSize = '11px';
+    subtitle.style.fontSize = '12px';
     pdfArea.appendChild(subtitle);
 
     // --- Клон таблицы ---
     const clone = document.getElementById('partyTable').cloneNode(true);
 
-    // Убираем кнопки удаления и колонку для них
+    // Удаляем кнопки удаления и их колонку
     clone.querySelectorAll('.remove-btn').forEach(b => {
       const td = b.closest('td');
       if (td) td.remove();
@@ -856,9 +888,9 @@
       } else {
         span.textContent = el.value || '—';
       }
-      span.style.fontSize = '11px';
-      span.style.padding = '1px 0';
-      span.style.lineHeight = '1.35';
+      span.style.fontSize = '12px';
+      span.style.padding = '2px 0';
+      span.style.lineHeight = '1.4';
       span.style.wordBreak = 'break-word';
       span.style.color = (span.textContent === '—') ? '#8a8da5' : '#1a1d2e';
       el.parentNode.replaceChild(span, el);
@@ -868,12 +900,13 @@
     clone.style.tableLayout = 'auto';
     clone.style.width = '100%';
     clone.style.minWidth = '0';
-    clone.style.fontSize = '11px';
+    clone.style.fontSize = '12px';
     clone.style.borderCollapse = 'collapse';
+    clone.style.background = '#fff';
 
     clone.querySelectorAll('th').forEach(th => {
-      th.style.fontSize = '10px';
-      th.style.padding = '6px 6px';
+      th.style.fontSize = '11px';
+      th.style.padding = '8px 8px';
       th.style.background = '#fafbfe';
       th.style.color = '#8a6508';
       th.style.borderBottom = '2px solid #b8860b';
@@ -881,7 +914,7 @@
       th.style.verticalAlign = 'top';
     });
     clone.querySelectorAll('td').forEach(td => {
-      td.style.padding = '6px 6px';
+      td.style.padding = '8px 8px';
       td.style.borderBottom = '1px solid #e2e4ec';
       td.style.verticalAlign = 'top';
       td.style.background = '#fff';
@@ -893,36 +926,67 @@
     pdfArea.appendChild(clone);
     document.body.appendChild(pdfArea);
 
-    // Пауза, чтобы браузер отрисовал и подгрузил шрифты
-    await new Promise(r => setTimeout(r, 300));
+    // Пауза, чтобы браузер отрисовал контейнер и подгрузил шрифты
+    await new Promise(r => setTimeout(r, 400));
 
     const fileName = 'KP_DARAMs_' + new Date().toISOString().slice(0, 10) + '.pdf';
 
     try {
-      await html2pdf().set({
-        margin: [8, 8, 8, 8],
-        filename: fileName,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          logging: false,
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: pdfArea.scrollWidth,
-          windowHeight: pdfArea.scrollHeight
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      }).from(pdfArea).save();
+      // Снимаем контейнер через html2canvas
+      const canvas = await html2canvas(pdfArea, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: pdfArea.scrollWidth,
+        height: pdfArea.scrollHeight,
+        windowWidth: pdfArea.scrollWidth,
+        windowHeight: pdfArea.scrollHeight,
+        scrollX: 0,
+        scrollY: 0
+      });
 
+      // Проверка, что canvas не пустой
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        throw new Error('canvas пустой — не удалось отрисовать контейнер');
+      }
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();   // 297 мм
+      const pageHeight = pdf.internal.pageSize.getHeight(); // 210 мм
+      const margin = 8;
+
+      const imgWidth = pageWidth - margin * 2;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = margin;
+
+      // Первая страница
+      pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+      heightLeft -= (pageHeight - margin * 2);
+
+      // Последующие страницы — если контент не влез на одну
+      while (heightLeft > 0) {
+        position = margin - (imgHeight - heightLeft);
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+        heightLeft -= (pageHeight - margin * 2);
+      }
+
+      pdf.save(fileName);
       setSyncStatus('online', 'PDF сохранён');
     } catch (err) {
       console.error('Ошибка генерации PDF:', err);
       setSyncStatus('offline', 'Ошибка PDF');
       alert('Не удалось создать PDF: ' + err.message);
     } finally {
-      document.body.removeChild(pdfArea);
+      // Убираем контейнер и оверлей
+      if (pdfArea.parentNode) pdfArea.parentNode.removeChild(pdfArea);
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }
   }
 
