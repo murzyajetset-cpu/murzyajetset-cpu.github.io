@@ -173,7 +173,6 @@
     border-bottom: none;
   }
 
-  /* ===== Ширины колонок ===== */
   .col-name    { width: 110px; }
   .col-class   { width: 110px; }
   .col-level   { width: 52px; }
@@ -184,7 +183,7 @@
   .col-comment { width: 180px; }
   .col-remove  { width: 34px; }
 
-  input {
+  input, select {
     font-family: var(--font-body);
     font-size: 11px;
     color: var(--text-primary);
@@ -197,26 +196,28 @@
     outline: none;
   }
 
-  input:focus {
+  input:focus, select:focus {
     border-color: var(--accent-gold);
     box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
+  }
+
+  input[type="number"] {
+    width: 100%;
   }
 
   select {
-    font-family: var(--font-body);
-    font-size: 11px;
-    color: var(--text-primary);
-    background: var(--bg-input);
-    border: 1px solid var(--border-subtle);
-    border-radius: 4px;
-    padding: 4px 6px;
-    width: 100%;
-    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b8860b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 10px;
+    padding-right: 20px;
   }
 
-  select:focus {
-    border-color: var(--accent-gold);
-    box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
+  select option {
+    background: #fff;
+    color: var(--text-primary);
   }
 
   .set-cell {
@@ -378,8 +379,8 @@
 </head>
 <body>
 
-<h1>Группа Lineage 2</h1>
-<p class="subtitle">Сеты брони и бижутерии — состав группы и экипировка</p>
+<h1>КП DARAMs</h1>
+<p class="subtitle">Состав</p>
 
 <div class="toolbar">
   <button id="addMember" class="primary">Добавить персонажа</button>
@@ -426,19 +427,6 @@
   </div>
   <div class="set-panel-body" id="setContent"></div>
 </div>
-
-<!-- Datalist-подсказки (невидимы, используются для автодополнения) -->
-<datalist id="dl-weapon"></datalist>
-<datalist id="dl-helmet"></datalist>
-<datalist id="dl-armor"></datalist>
-<datalist id="dl-gloves"></datalist>
-<datalist id="dl-boots"></datalist>
-<datalist id="dl-shield"></datalist>
-<datalist id="dl-earring1"></datalist>
-<datalist id="dl-earring2"></datalist>
-<datalist id="dl-necklace"></datalist>
-<datalist id="dl-ring1"></datalist>
-<datalist id="dl-ring2"></datalist>
 
 <script>
   const STORAGE_KEY = 'l2party';
@@ -599,61 +587,7 @@
     }
   ];
 
-  // ==================== СПИСКИ ДЛЯ DATALIST ====================
-  function buildArmorList(slot) {
-    const items = new Set();
-    armorSets.forEach(set => { const item = set.pieces[slot]; if (item) items.add(item); });
-    return Array.from(items).sort((a, b) => a.localeCompare(b));
-  }
-
-  function buildJewelryList(slot) {
-    const items = new Set();
-    jewelrySets.forEach(set => { const item = set.pieces[slot]; if (item) items.add(item); });
-    const singles = {
-      earring1: ["Blessed Zaken's Earring", "Blessed Antharas' Earring", 'Earring of Orfen'],
-      earring2: ["Blessed Zaken's Earring", "Blessed Antharas' Earring", 'Earring of Orfen'],
-      necklace: ["Blessed Valakas' Necklace", 'Necklace of Frintezza'],
-      ring1: ['Ring of Baium', 'Ring of Queen Ant'],
-      ring2: ['Ring of Baium', 'Ring of Queen Ant']
-    };
-    if (singles[slot]) singles[slot].forEach(i => items.add(i));
-    return Array.from(items).sort((a, b) => a.localeCompare(b));
-  }
-
-  const weaponSuggestions = [
-    "Sword of Miracles", "Draconic Bow", "Dragon Hunter Axe", "Heaven's Divider",
-    "Imperial Staff", "Arcana Mace", "Angel Slayer", "Tallum Blade", "Dark Legion's Edge",
-    "Sirra's Blade", "Barakiel's Axe", "Soul Separator", "Flaming Dragon Skull",
-    "Basalt Battlehammer", "Saint Spear", "Demon Splinter", "Dynasty Sword",
-    "Icarus Hammer", "Vesper Cutter", "Eternal Core Sword"
-  ];
-
   const classes = ["", "Tank", "Healer", "DD", "Mage", "Archer", "Dagger", "Summoner", "Bard", "Support"];
-
-  // Заполняем datalist'ы
-  function fillDatalist(id, items) {
-    const dl = document.getElementById(id);
-    if (!dl) return;
-    dl.innerHTML = '';
-    items.forEach(item => {
-      if (!item) return;
-      const opt = document.createElement('option');
-      opt.value = item;
-      dl.appendChild(opt);
-    });
-  }
-
-  fillDatalist('dl-weapon', weaponSuggestions);
-  fillDatalist('dl-helmet', buildArmorList('helmet'));
-  fillDatalist('dl-armor', buildArmorList('armor'));
-  fillDatalist('dl-gloves', buildArmorList('gloves'));
-  fillDatalist('dl-boots', buildArmorList('boots'));
-  fillDatalist('dl-shield', buildArmorList('shield'));
-  fillDatalist('dl-earring1', buildJewelryList('earring1'));
-  fillDatalist('dl-earring2', buildJewelryList('earring2'));
-  fillDatalist('dl-necklace', buildJewelryList('necklace'));
-  fillDatalist('dl-ring1', buildJewelryList('ring1'));
-  fillDatalist('dl-ring2', buildJewelryList('ring2'));
 
   // ==================== СОСТОЯНИЕ ====================
   let members = [];
@@ -730,15 +664,6 @@
   }
 
   // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
-  function createTextInput(value, onChange, attrs = {}) {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = value || '';
-    Object.assign(input, attrs);
-    input.addEventListener('input', e => onChange(e.target.value));
-    return input;
-  }
-
   function createSelect(options, value, onChange) {
     const select = document.createElement('select');
     options.forEach(opt => {
@@ -752,9 +677,13 @@
     return select;
   }
 
-  // Регистронезависимое сравнение предметов
-  function sameItem(a, b) {
-    return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
+  function createInput(type, value, onChange, attrs = {}) {
+    const input = document.createElement('input');
+    input.type = type;
+    input.value = value;
+    Object.assign(input, attrs);
+    input.addEventListener('input', e => onChange(e.target.value));
+    return input;
   }
 
   function detectSet(member, setsList, slots) {
@@ -773,11 +702,11 @@
         const chosen = selected[slot];
         if (setItem) {
           totalRequired++;
-          if (sameItem(chosen, setItem)) matchedCount++;
-          else if (!chosen.trim()) missing.push(slot);
+          if (chosen === setItem) matchedCount++;
+          else if (chosen === '') missing.push(slot);
           else hasForeignItem = true;
         } else {
-          if (chosen.trim()) hasForeignItem = true;
+          if (chosen) hasForeignItem = true;
         }
       }
 
@@ -861,14 +790,14 @@
 
       // Имя
       const tdName = document.createElement('td');
-      tdName.appendChild(createTextInput(member.name, val => {
+      tdName.appendChild(createInput('text', member.name, val => {
         member.name = val;
         persistDebounced();
         if (activeMemberIndex === index) updateSetPanel();
       }));
       tr.appendChild(tdName);
 
-      // Класс
+      // Класс — оставляем выпадающим списком
       const tdClass = document.createElement('td');
       tdClass.appendChild(createSelect(classes, member.className, val => {
         member.className = val;
@@ -878,46 +807,40 @@
 
       // Уровень
       const tdLevel = document.createElement('td');
-      const levelInput = document.createElement('input');
-      levelInput.type = 'number';
-      levelInput.min = 1;
-      levelInput.max = 85;
-      levelInput.value = member.level;
-      levelInput.addEventListener('input', e => {
-        member.level = e.target.value;
+      tdLevel.appendChild(createInput('number', member.level, val => {
+        member.level = val;
         persistDebounced();
-      });
-      tdLevel.appendChild(levelInput);
+      }, { min: 1, max: 85 }));
       tr.appendChild(tdLevel);
 
-      // Оружие — текстовое поле с datalist-подсказками
+      // Оружие — текстовое поле
       const tdWeapon = document.createElement('td');
-      tdWeapon.appendChild(createTextInput(member.weapon || '', val => {
+      tdWeapon.appendChild(createInput('text', member.weapon || '', val => {
         member.weapon = val;
         persistDebounced();
-      }, { placeholder: 'название оружия…', list: 'dl-weapon' }));
+      }, { placeholder: 'название оружия…' }));
       tr.appendChild(tdWeapon);
 
       // Сет брони — текстовые поля
       const tdArmor = document.createElement('td');
       tdArmor.className = 'set-cell';
       [
-        { key: 'helmet', label: 'Шлем' },
-        { key: 'armor', label: 'Броня' },
-        { key: 'gloves', label: 'Перчатки' },
-        { key: 'boots', label: 'Ботинки' },
-        { key: 'shield', label: 'Щит' }
+        { key: 'helmet', label: 'Шлем', ph: 'Dynasty Helmet' },
+        { key: 'armor', label: 'Броня', ph: 'Dynasty Breastplate' },
+        { key: 'gloves', label: 'Перчатки', ph: 'Dynasty Gauntlets' },
+        { key: 'boots', label: 'Ботинки', ph: 'Dynasty Boots' },
+        { key: 'shield', label: 'Щит', ph: 'Dynasty Shield' }
       ].forEach(field => {
         const label = document.createElement('span');
         label.className = 'set-label';
         label.textContent = field.label;
         tdArmor.appendChild(label);
-        tdArmor.appendChild(createTextInput(member[field.key] || '', val => {
+        tdArmor.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
           activeMemberIndex = index;
           updateSetPanel();
           persistDebounced();
-        }, { list: 'dl-' + field.key, placeholder: '—' }));
+        }, { placeholder: field.ph }));
       });
       tr.appendChild(tdArmor);
 
@@ -925,22 +848,22 @@
       const tdJewelry = document.createElement('td');
       tdJewelry.className = 'set-cell';
       [
-        { key: 'earring1', label: 'Серьга 1' },
-        { key: 'earring2', label: 'Серьга 2' },
-        { key: 'necklace', label: 'Ожерелье' },
-        { key: 'ring1', label: 'Кольцо 1' },
-        { key: 'ring2', label: 'Кольцо 2' }
+        { key: 'earring1', label: 'Серьга 1', ph: 'Dynasty Earring' },
+        { key: 'earring2', label: 'Серьга 2', ph: 'Dynasty Earring' },
+        { key: 'necklace', label: 'Ожерелье', ph: 'Dynasty Necklace' },
+        { key: 'ring1', label: 'Кольцо 1', ph: 'Dynasty Ring' },
+        { key: 'ring2', label: 'Кольцо 2', ph: 'Dynasty Ring' }
       ].forEach(field => {
         const label = document.createElement('span');
         label.className = 'set-label';
         label.textContent = field.label;
         tdJewelry.appendChild(label);
-        tdJewelry.appendChild(createTextInput(member[field.key] || '', val => {
+        tdJewelry.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
           activeMemberIndex = index;
           updateSetPanel();
           persistDebounced();
-        }, { list: 'dl-' + field.key, placeholder: '—' }));
+        }, { placeholder: field.ph }));
       });
       tr.appendChild(tdJewelry);
 
@@ -956,7 +879,7 @@
         label.className = 'set-label';
         label.textContent = field.label;
         tdTattoo.appendChild(label);
-        tdTattoo.appendChild(createTextInput(member[field.key] || '', val => {
+        tdTattoo.appendChild(createInput('text', member[field.key] || '', val => {
           member[field.key] = val;
           persistDebounced();
         }, { placeholder: field.ph }));
@@ -965,7 +888,7 @@
 
       // Комментарий
       const tdComment = document.createElement('td');
-      tdComment.appendChild(createTextInput(member.comment || '', val => {
+      tdComment.appendChild(createInput('text', member.comment || '', val => {
         member.comment = val;
         persistDebounced();
       }, { placeholder: 'заметка…' }));
