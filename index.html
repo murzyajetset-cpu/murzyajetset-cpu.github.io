@@ -177,14 +177,14 @@
   .col-name    { width: 110px; }
   .col-class   { width: 110px; }
   .col-level   { width: 52px; }
-  .col-weapon  { width: 130px; }
-  .col-armor   { width: 130px; }
-  .col-jewelry { width: 130px; }
+  .col-weapon  { width: 140px; }
+  .col-armor   { width: 140px; }
+  .col-jewelry { width: 140px; }
   .col-tattoo  { width: 180px; }
   .col-comment { width: 180px; }
   .col-remove  { width: 34px; }
 
-  input, select {
+  input {
     font-family: var(--font-body);
     font-size: 11px;
     color: var(--text-primary);
@@ -197,28 +197,26 @@
     outline: none;
   }
 
-  input:focus, select:focus {
+  input:focus {
     border-color: var(--accent-gold);
     box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
   }
 
-  input[type="number"] {
-    width: 100%;
-  }
-
   select {
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b8860b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 6px center;
-    background-size: 10px;
-    padding-right: 20px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-primary);
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 4px 6px;
+    width: 100%;
+    outline: none;
   }
 
-  select option {
-    background: #fff;
-    color: var(--text-primary);
+  select:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
   }
 
   .set-cell {
@@ -410,7 +408,7 @@
         <th>Имя</th>
         <th>Класс</th>
         <th>Ур.</th>
-        <th>Оружие</th>
+        <th>Оружие<br><span class="set-label">(свободный ввод)</span></th>
         <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
         <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
         <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
@@ -428,6 +426,19 @@
   </div>
   <div class="set-panel-body" id="setContent"></div>
 </div>
+
+<!-- Datalist-подсказки (невидимы, используются для автодополнения) -->
+<datalist id="dl-weapon"></datalist>
+<datalist id="dl-helmet"></datalist>
+<datalist id="dl-armor"></datalist>
+<datalist id="dl-gloves"></datalist>
+<datalist id="dl-boots"></datalist>
+<datalist id="dl-shield"></datalist>
+<datalist id="dl-earring1"></datalist>
+<datalist id="dl-earring2"></datalist>
+<datalist id="dl-necklace"></datalist>
+<datalist id="dl-ring1"></datalist>
+<datalist id="dl-ring2"></datalist>
 
 <script>
   const STORAGE_KEY = 'l2party';
@@ -588,15 +599,15 @@
     }
   ];
 
-  // ==================== СПИСКИ ПРЕДМЕТОВ ====================
+  // ==================== СПИСКИ ДЛЯ DATALIST ====================
   function buildArmorList(slot) {
-    const items = new Set(['']);
+    const items = new Set();
     armorSets.forEach(set => { const item = set.pieces[slot]; if (item) items.add(item); });
     return Array.from(items).sort((a, b) => a.localeCompare(b));
   }
 
   function buildJewelryList(slot) {
-    const items = new Set(['']);
+    const items = new Set();
     jewelrySets.forEach(set => { const item = set.pieces[slot]; if (item) items.add(item); });
     const singles = {
       earring1: ["Blessed Zaken's Earring", "Blessed Antharas' Earring", 'Earring of Orfen'],
@@ -609,27 +620,40 @@
     return Array.from(items).sort((a, b) => a.localeCompare(b));
   }
 
-  const itemOptions = {
-    weapon: [
-      "", "Sword of Miracles", "Draconic Bow", "Dragon Hunter Axe", "Heaven's Divider",
-      "Imperial Staff", "Arcana Mace", "Angel Slayer", "Tallum Blade", "Dark Legion's Edge",
-      "Sirra's Blade", "Barakiel's Axe", "Soul Separator", "Flaming Dragon Skull",
-      "Basalt Battlehammer", "Saint Spear", "Demon Splinter", "Dynasty Sword",
-      "Icarus Hammer", "Vesper Cutter", "Eternal Core Sword"
-    ],
-    helmet: buildArmorList('helmet'),
-    armor: buildArmorList('armor'),
-    gloves: buildArmorList('gloves'),
-    boots: buildArmorList('boots'),
-    shield: buildArmorList('shield'),
-    earring1: buildJewelryList('earring1'),
-    earring2: buildJewelryList('earring2'),
-    necklace: buildJewelryList('necklace'),
-    ring1: buildJewelryList('ring1'),
-    ring2: buildJewelryList('ring2')
-  };
+  const weaponSuggestions = [
+    "Sword of Miracles", "Draconic Bow", "Dragon Hunter Axe", "Heaven's Divider",
+    "Imperial Staff", "Arcana Mace", "Angel Slayer", "Tallum Blade", "Dark Legion's Edge",
+    "Sirra's Blade", "Barakiel's Axe", "Soul Separator", "Flaming Dragon Skull",
+    "Basalt Battlehammer", "Saint Spear", "Demon Splinter", "Dynasty Sword",
+    "Icarus Hammer", "Vesper Cutter", "Eternal Core Sword"
+  ];
 
   const classes = ["", "Tank", "Healer", "DD", "Mage", "Archer", "Dagger", "Summoner", "Bard", "Support"];
+
+  // Заполняем datalist'ы
+  function fillDatalist(id, items) {
+    const dl = document.getElementById(id);
+    if (!dl) return;
+    dl.innerHTML = '';
+    items.forEach(item => {
+      if (!item) return;
+      const opt = document.createElement('option');
+      opt.value = item;
+      dl.appendChild(opt);
+    });
+  }
+
+  fillDatalist('dl-weapon', weaponSuggestions);
+  fillDatalist('dl-helmet', buildArmorList('helmet'));
+  fillDatalist('dl-armor', buildArmorList('armor'));
+  fillDatalist('dl-gloves', buildArmorList('gloves'));
+  fillDatalist('dl-boots', buildArmorList('boots'));
+  fillDatalist('dl-shield', buildArmorList('shield'));
+  fillDatalist('dl-earring1', buildJewelryList('earring1'));
+  fillDatalist('dl-earring2', buildJewelryList('earring2'));
+  fillDatalist('dl-necklace', buildJewelryList('necklace'));
+  fillDatalist('dl-ring1', buildJewelryList('ring1'));
+  fillDatalist('dl-ring2', buildJewelryList('ring2'));
 
   // ==================== СОСТОЯНИЕ ====================
   let members = [];
@@ -666,7 +690,6 @@
     }, 1200);
   }
 
-  // Нормализация + миграция старых сохранений (tattoos -> tattoo1)
   function normalizeMember(m) {
     const legacyTattoo = m.tattoos ?? '';
     return {
@@ -707,6 +730,15 @@
   }
 
   // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+  function createTextInput(value, onChange, attrs = {}) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = value || '';
+    Object.assign(input, attrs);
+    input.addEventListener('input', e => onChange(e.target.value));
+    return input;
+  }
+
   function createSelect(options, value, onChange) {
     const select = document.createElement('select');
     options.forEach(opt => {
@@ -720,13 +752,9 @@
     return select;
   }
 
-  function createInput(type, value, onChange, attrs = {}) {
-    const input = document.createElement('input');
-    input.type = type;
-    input.value = value;
-    Object.assign(input, attrs);
-    input.addEventListener('input', e => onChange(e.target.value));
-    return input;
+  // Регистронезависимое сравнение предметов
+  function sameItem(a, b) {
+    return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
   }
 
   function detectSet(member, setsList, slots) {
@@ -745,11 +773,11 @@
         const chosen = selected[slot];
         if (setItem) {
           totalRequired++;
-          if (chosen === setItem) matchedCount++;
-          else if (chosen === '') missing.push(slot);
+          if (sameItem(chosen, setItem)) matchedCount++;
+          else if (!chosen.trim()) missing.push(slot);
           else hasForeignItem = true;
         } else {
-          if (chosen) hasForeignItem = true;
+          if (chosen.trim()) hasForeignItem = true;
         }
       }
 
@@ -774,7 +802,7 @@
 
   function renderSetSection(title, result) {
     if (!result) {
-      return `<h3>${title}</h3><p class="missing">Сет не определён — выберите предметы из одного набора.</p>`;
+      return `<h3>${title}</h3><p class="missing">Сет не определён — введите названия предметов из одного набора.</p>`;
     }
     const { set, missing, matchedCount, totalRequired } = result;
     if (missing && missing.length === 0) {
@@ -786,7 +814,7 @@
     }
     const missingNames = missing.map(s => slotNames[s] || s).join(', ');
     return `<h3>${title}: ${set.name} — <span class="missing">не хватает: ${missingNames}</span></h3>` +
-           `<p>Собрано ${matchedCount} из ${totalRequired} частей. Выберите недостающие предметы, чтобы активировать бонусы сета.</p>`;
+           `<p>Собрано ${matchedCount} из ${totalRequired} частей. Введите недостающие предметы, чтобы активировать бонусы сета.</p>`;
   }
 
   function updateSetPanel() {
@@ -800,7 +828,7 @@
 
     if (!armorResult && !jewelryResult) {
       setTitle.textContent = `Сеты не определены (${member.name || 'персонаж'})`;
-      setContent.innerHTML = '<p class="missing">Выберите предметы из одного набора брони или бижутерии, чтобы увидеть бонусы.</p>';
+      setContent.innerHTML = '<p class="missing">Введите названия предметов из одного набора брони или бижутерии, чтобы увидеть бонусы.</p>';
       setPanel.classList.add('active');
       return;
     }
@@ -833,7 +861,7 @@
 
       // Имя
       const tdName = document.createElement('td');
-      tdName.appendChild(createInput('text', member.name, val => {
+      tdName.appendChild(createTextInput(member.name, val => {
         member.name = val;
         persistDebounced();
         if (activeMemberIndex === index) updateSetPanel();
@@ -850,21 +878,27 @@
 
       // Уровень
       const tdLevel = document.createElement('td');
-      tdLevel.appendChild(createInput('number', member.level, val => {
-        member.level = val;
+      const levelInput = document.createElement('input');
+      levelInput.type = 'number';
+      levelInput.min = 1;
+      levelInput.max = 85;
+      levelInput.value = member.level;
+      levelInput.addEventListener('input', e => {
+        member.level = e.target.value;
         persistDebounced();
-      }, { min: 1, max: 85 }));
+      });
+      tdLevel.appendChild(levelInput);
       tr.appendChild(tdLevel);
 
-      // Оружие
+      // Оружие — текстовое поле с datalist-подсказками
       const tdWeapon = document.createElement('td');
-      tdWeapon.appendChild(createSelect(itemOptions.weapon, member.weapon || '', val => {
+      tdWeapon.appendChild(createTextInput(member.weapon || '', val => {
         member.weapon = val;
         persistDebounced();
-      }));
+      }, { placeholder: 'название оружия…', list: 'dl-weapon' }));
       tr.appendChild(tdWeapon);
 
-      // Сет брони
+      // Сет брони — текстовые поля
       const tdArmor = document.createElement('td');
       tdArmor.className = 'set-cell';
       [
@@ -878,17 +912,16 @@
         label.className = 'set-label';
         label.textContent = field.label;
         tdArmor.appendChild(label);
-        const select = createSelect(itemOptions[field.key], member[field.key] || '', val => {
+        tdArmor.appendChild(createTextInput(member[field.key] || '', val => {
           member[field.key] = val;
           activeMemberIndex = index;
           updateSetPanel();
           persistDebounced();
-        });
-        tdArmor.appendChild(select);
+        }, { list: 'dl-' + field.key, placeholder: '—' }));
       });
       tr.appendChild(tdArmor);
 
-      // Сет бижутерии
+      // Сет бижутерии — текстовые поля
       const tdJewelry = document.createElement('td');
       tdJewelry.className = 'set-cell';
       [
@@ -902,17 +935,16 @@
         label.className = 'set-label';
         label.textContent = field.label;
         tdJewelry.appendChild(label);
-        const select = createSelect(itemOptions[field.key], member[field.key] || '', val => {
+        tdJewelry.appendChild(createTextInput(member[field.key] || '', val => {
           member[field.key] = val;
           activeMemberIndex = index;
           updateSetPanel();
           persistDebounced();
-        });
-        tdJewelry.appendChild(select);
+        }, { list: 'dl-' + field.key, placeholder: '—' }));
       });
       tr.appendChild(tdJewelry);
 
-      // Татуировки — три независимых поля
+      // Татуировки
       const tdTattoo = document.createElement('td');
       tdTattoo.className = 'set-cell';
       [
@@ -924,7 +956,7 @@
         label.className = 'set-label';
         label.textContent = field.label;
         tdTattoo.appendChild(label);
-        tdTattoo.appendChild(createInput('text', member[field.key] || '', val => {
+        tdTattoo.appendChild(createTextInput(member[field.key] || '', val => {
           member[field.key] = val;
           persistDebounced();
         }, { placeholder: field.ph }));
@@ -933,7 +965,7 @@
 
       // Комментарий
       const tdComment = document.createElement('td');
-      tdComment.appendChild(createInput('text', member.comment, val => {
+      tdComment.appendChild(createTextInput(member.comment || '', val => {
         member.comment = val;
         persistDebounced();
       }, { placeholder: 'заметка…' }));
