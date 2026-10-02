@@ -168,14 +168,28 @@
   .remove-btn:hover { background: rgba(217,45,32,0.1); border-color: var(--danger-red); }
   .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
 
-  /* Область для генерации PDF (скрыта от пользователя) */
+  /* ===== Область для генерации PDF =====
+     Скрыта визуально, но находится в DOM и имеет реальные размеры,
+     чтобы html2canvas мог её отрисовать. */
   #pdfArea {
     position: fixed;
-    left: -99999px;
     top: 0;
-    background: #fff;
+    left: 0;
+    width: 1400px;
     padding: 20px;
-    font-family: 'Proxima Nova', 'Segoe UI', sans-serif;
+    background: #fff;
+    z-index: -1000;
+    opacity: 0.01;
+    pointer-events: none;
+    overflow: visible;
+  }
+  #pdfArea table {
+    table-layout: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  #pdfArea th, #pdfArea td {
+    padding: 4px 5px !important;
   }
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -801,17 +815,16 @@
 
     setSyncStatus('syncing', 'Готовим PDF…');
 
-    // Создаём контейнер для печати
     const pdfArea = document.createElement('div');
     pdfArea.id = 'pdfArea';
 
-    // Заголовок
+    // --- Заголовок и дата ---
     const title = document.createElement('h2');
     title.textContent = 'КП DARAMs — Состав топовой гей-консты';
     title.style.margin = '0 0 4px 0';
     title.style.color = '#b8860b';
     title.style.fontFamily = "'Cinzel', serif";
-    title.style.fontSize = '16px';
+    title.style.fontSize = '18px';
     title.style.letterSpacing = '0.04em';
     pdfArea.appendChild(title);
 
@@ -819,77 +832,88 @@
     subtitle.textContent = 'Сформировано: ' + new Date().toLocaleString('ru-RU');
     subtitle.style.margin = '0 0 14px 0';
     subtitle.style.color = '#5a5d75';
-    subtitle.style.fontSize = '10px';
+    subtitle.style.fontSize = '11px';
     pdfArea.appendChild(subtitle);
 
-    // Клонируем таблицу
+    // --- Клон таблицы ---
     const clone = document.getElementById('partyTable').cloneNode(true);
 
-    // Удаляем кнопки удаления
-    clone.querySelectorAll('.remove-btn').forEach(b => b.remove());
+    // Убираем кнопки удаления и колонку для них
+    clone.querySelectorAll('.remove-btn').forEach(b => {
+      const td = b.closest('td');
+      if (td) td.remove();
+    });
+    const headers = clone.querySelectorAll('thead th');
+    if (headers.length) headers[headers.length - 1].remove();
 
     // Заменяем inputs и selects на текст
     clone.querySelectorAll('input, select').forEach(el => {
       const span = document.createElement('div');
       if (el.tagName === 'SELECT') {
         const opt = el.options[el.selectedIndex];
-        span.textContent = (opt && opt.textContent) ? opt.textContent : '—';
+        const txt = (opt && opt.textContent) ? opt.textContent : '';
+        span.textContent = (txt && !txt.startsWith('—')) ? txt : '—';
       } else {
         span.textContent = el.value || '—';
       }
-      span.style.fontSize = '10px';
-      span.style.padding = '2px 0';
-      span.style.lineHeight = '1.3';
+      span.style.fontSize = '11px';
+      span.style.padding = '1px 0';
+      span.style.lineHeight = '1.35';
       span.style.wordBreak = 'break-word';
-      span.style.color = '#1a1d2e';
-      if ((span.textContent === '—' || span.textContent === '') && el.tagName !== 'SELECT') {
-        span.style.color = '#8a8da5';
-      }
+      span.style.color = (span.textContent === '—') ? '#8a8da5' : '#1a1d2e';
       el.parentNode.replaceChild(span, el);
     });
 
-    // Заменяем иконку-эмодзи на текстовую
-    clone.querySelectorAll('.prof-icon').forEach(el => {
-      el.style.fontSize = '12px';
-      el.style.width = '16px';
-    });
-
-    // Убираем горизонтальный скролл
-    clone.style.minWidth = 'auto';
-    clone.style.width = '100%';
+    // Приводим таблицу в читаемый вид
     clone.style.tableLayout = 'auto';
-    clone.style.fontSize = '10px';
+    clone.style.width = '100%';
+    clone.style.minWidth = '0';
+    clone.style.fontSize = '11px';
+    clone.style.borderCollapse = 'collapse';
 
     clone.querySelectorAll('th').forEach(th => {
-      th.style.fontSize = '9px';
-      th.style.padding = '4px 5px';
+      th.style.fontSize = '10px';
+      th.style.padding = '6px 6px';
+      th.style.background = '#fafbfe';
+      th.style.color = '#8a6508';
+      th.style.borderBottom = '2px solid #b8860b';
+      th.style.textAlign = 'left';
+      th.style.verticalAlign = 'top';
     });
     clone.querySelectorAll('td').forEach(td => {
-      td.style.padding = '4px 5px';
+      td.style.padding = '6px 6px';
+      td.style.borderBottom = '1px solid #e2e4ec';
       td.style.verticalAlign = 'top';
+      td.style.background = '#fff';
     });
+
+    // Обнуляем фиксированные ширины колонок
+    clone.querySelectorAll('colgroup').forEach(cg => cg.remove());
 
     pdfArea.appendChild(clone);
     document.body.appendChild(pdfArea);
 
-    // Ждём отрисовку
-    await new Promise(r => setTimeout(r, 100));
+    // Пауза, чтобы браузер отрисовал и подгрузил шрифты
+    await new Promise(r => setTimeout(r, 300));
 
     const fileName = 'KP_DARAMs_' + new Date().toISOString().slice(0, 10) + '.pdf';
 
     try {
       await html2pdf().set({
-        margin: [6, 6, 6, 6],
+        margin: [8, 8, 8, 8],
         filename: fileName,
-        image: { type: 'jpeg', quality: 0.98 },
+        image: { type: 'jpeg', quality: 0.95 },
         html2canvas: {
           scale: 2,
           useCORS: true,
           backgroundColor: '#ffffff',
-          logging: false
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: pdfArea.scrollWidth,
+          windowHeight: pdfArea.scrollHeight
         },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-        pagebreak: { mode: ['css', 'legacy'] }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
       }).from(pdfArea).save();
 
       setSyncStatus('online', 'PDF сохранён');
