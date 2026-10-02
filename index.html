@@ -67,8 +67,15 @@
     color: #fff; border-color: var(--accent-gold); font-weight: 700;
   }
   button.primary:hover { background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%); color: #fff; }
-  button.danger { border-color: rgba(217,45,32,0.4); color: var(--danger-red); }
-  button.danger:hover { background: rgba(217,45,32,0.08); border-color: var(--danger-red); }
+  button.save-btn {
+    border-color: rgba(31,157,85,0.5);
+    color: var(--success-green);
+  }
+  button.save-btn:hover {
+    background: rgba(31,157,85,0.08);
+    border-color: var(--success-green);
+    color: var(--success-green);
+  }
   .sync-status {
     font-size: 10px; margin-left: auto; letter-spacing: 0.3px;
     display: flex; align-items: center; gap: 5px;
@@ -78,6 +85,12 @@
   .sync-dot.offline { background: var(--danger-red); }
   .sync-dot.syncing { background: #f0a500; animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .auto-timer {
+    font-size: 10px; color: var(--text-muted);
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid var(--border-subtle);
+  }
   .table-wrap {
     overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-subtle);
     background: var(--bg-panel); box-shadow: 0 1px 3px rgba(20,25,60,0.06);
@@ -121,7 +134,6 @@
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
   .prof-select { flex: 1; min-width: 0; }
 
-  /* ===== Саб-классы: список + компактный уровень ===== */
   .sub-group { display: flex; flex-direction: column; gap: 1px; }
   .sub-row { display: flex; align-items: center; gap: 3px; }
   .sub-row .sub-select { flex: 1; min-width: 0; }
@@ -159,10 +171,11 @@
 
 <div class="toolbar">
   <button id="addMember" class="primary">Добавить персонажа</button>
-  <button id="clear" class="danger">Очистить всё</button>
+  <button id="saveToFirebase" class="save-btn">Сохранить в Firebase</button>
   <div class="sync-status">
     <span id="syncDot" class="sync-dot"></span>
     <span id="syncText">Подключение…</span>
+    <span id="autoTimer" class="auto-timer">Автосейв: 30 с</span>
   </div>
 </div>
 
@@ -322,13 +335,14 @@
   const partyBody = document.getElementById('partyBody');
   const syncDot = document.getElementById('syncDot');
   const syncText = document.getElementById('syncText');
+  const autoTimerEl = document.getElementById('autoTimer');
 
   function setSyncStatus(status, text) {
     syncDot.className = 'sync-dot ' + status;
     syncText.textContent = text;
   }
 
-  // ==================== ПОДПИСКА ====================
+  // ==================== ПОДПИСКА НА ИЗМЕНЕНИЯ ====================
   membersRef.on('value', (snapshot) => {
     const data = snapshot.val();
     members = [];
@@ -344,7 +358,7 @@
     setSyncStatus('offline', 'Ошибка: ' + error.code);
   });
 
-  // ==================== СОХРАНЕНИЕ ====================
+  // ==================== СОХРАНЕНИЕ (debounced, при вводе) ====================
   let saveTimeouts = new Map();
 
   function debouncedSave(member) {
@@ -366,6 +380,44 @@
       saveTimeouts.delete(member.id);
     }, 500));
   }
+
+  // ==================== ПРИНУДИТЕЛЬНОЕ СОХРАНЕНИЕ ВСЕХ ДАННЫХ ====================
+  async function forceSaveAll() {
+    if (members.length === 0) {
+      setSyncStatus('online', 'Нечего сохранять');
+      return;
+    }
+
+    setSyncStatus('syncing', 'Принудительное сохранение…');
+    try {
+      const updates = {};
+      members.forEach(m => {
+        const id = m.id;
+        const data = { ...m };
+        delete data.id;
+        updates[id] = data;
+      });
+      await membersRef.update(updates);
+      setSyncStatus('online', '✓ Все данные сохранены');
+    } catch (err) {
+      console.error('Ошибка принудительного сохранения:', err);
+      setSyncStatus('offline', 'Ошибка сохранения');
+    }
+  }
+
+  // ==================== АВТОСИНХРОНИЗАЦИЯ КАЖДЫЕ 30 СЕКУНД ====================
+  let secondsLeft = 30;
+
+  function tickTimer() {
+    secondsLeft--;
+    if (secondsLeft <= 0) {
+      secondsLeft = 30;
+      forceSaveAll();
+    }
+    autoTimerEl.textContent = 'Автосейв: ' + secondsLeft + ' с';
+  }
+
+  setInterval(tickTimer, 1000);
 
   // ==================== ДОБАВЛЕНИЕ ====================
   function addMember() {
@@ -402,20 +454,7 @@
       });
   }
 
-  // ==================== ОЧИСТКА ====================
-  function clearAll() {
-    if (!confirm('Удалить ВСЕХ персонажей из общей таблицы? Это действие увидят все пользователи.')) return;
-    setSyncStatus('syncing', 'Очистка…');
-    membersRef.remove()
-      .then(() => setSyncStatus('online', 'Синхронизировано'))
-      .catch(err => {
-        console.error('Ошибка очистки:', err);
-        setSyncStatus('offline', 'Ошибка очистки');
-      });
-  }
-
   // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
-  // ✅ ИСПРАВЛЕНИЕ: поддержка class и className для DOM-элементов
   function createInput(type, value, onChange, attrs = {}) {
     const input = document.createElement('input');
     input.type = type;
@@ -498,7 +537,6 @@
       const profCell = document.createElement('div');
       profCell.className = 'prof-cell';
 
-      // Основная профессия
       const mainWrap = document.createElement('div');
       mainWrap.className = 'prof-main';
 
@@ -518,7 +556,6 @@
       mainWrap.appendChild(mainSelect);
       profCell.appendChild(mainWrap);
 
-      // Саб-классы: список + уровень
       [
         { key: 'sub1', levelKey: 'sub1Level', label: 'Саб-класс 1' },
         { key: 'sub2', levelKey: 'sub2Level', label: 'Саб-класс 2' },
@@ -674,7 +711,7 @@
 
   // ==================== СТАРТ ====================
   document.getElementById('addMember').addEventListener('click', addMember);
-  document.getElementById('clear').addEventListener('click', clearAll);
+  document.getElementById('saveToFirebase').addEventListener('click', forceSaveAll);
 </script>
 
 </body>
