@@ -128,8 +128,9 @@
   table {
     border-collapse: collapse;
     width: 100%;
-    min-width: 900px;
+    min-width: 1000px;
     font-size: 11px;
+    table-layout: fixed;
   }
 
   th, td {
@@ -174,6 +175,17 @@
     border-bottom: none;
   }
 
+  /* ===== Ширины колонок ===== */
+  .col-name    { width: 110px; }
+  .col-class   { width: 110px; }
+  .col-level   { width: 52px; }
+  .col-weapon  { width: 130px; }
+  .col-armor   { width: 130px; }
+  .col-jewelry { width: 130px; }
+  .col-tattoo  { width: 150px; }
+  .col-comment { width: 180px; }
+  .col-remove  { width: 34px; }
+
   /* ===== Поля ввода ===== */
   input, select {
     font-family: var(--font-body);
@@ -194,7 +206,7 @@
   }
 
   input[type="number"] {
-    width: 48px;
+    width: 100%;
   }
 
   select {
@@ -214,7 +226,6 @@
 
   /* ===== Ячейка сета ===== */
   .set-cell {
-    min-width: 110px;
     background: #fcfcff;
   }
 
@@ -389,6 +400,17 @@
 
 <div class="table-wrap">
   <table id="partyTable">
+    <colgroup>
+      <col class="col-name">
+      <col class="col-class">
+      <col class="col-level">
+      <col class="col-weapon">
+      <col class="col-armor">
+      <col class="col-jewelry">
+      <col class="col-tattoo">
+      <col class="col-comment">
+      <col class="col-remove">
+    </colgroup>
     <thead>
       <tr>
         <th>Имя</th>
@@ -397,6 +419,8 @@
         <th>Оружие</th>
         <th>Сет брони<br><span class="set-label">(шлем / броня / перчатки / ботинки / щит)</span></th>
         <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
+        <th>Татуировки<br><span class="set-label">(напр. +4 STR -4 CON)</span></th>
+        <th>Комментарий<br><span class="set-label">(заметка о персонаже)</span></th>
         <th></th>
       </tr>
     </thead>
@@ -648,13 +672,35 @@
     }, 1200);
   }
 
+  // Нормализуем данные: добавляем отсутствующие поля (для совместимости со старыми сохранениями)
+  function normalizeMember(m) {
+    return {
+      name: m.name ?? '',
+      className: m.className ?? '',
+      level: m.level ?? 1,
+      weapon: m.weapon ?? '',
+      helmet: m.helmet ?? '',
+      armor: m.armor ?? '',
+      gloves: m.gloves ?? '',
+      boots: m.boots ?? '',
+      shield: m.shield ?? '',
+      earring1: m.earring1 ?? '',
+      earring2: m.earring2 ?? '',
+      necklace: m.necklace ?? '',
+      ring1: m.ring1 ?? '',
+      ring2: m.ring2 ?? '',
+      tattoos: m.tattoos ?? '',
+      comment: m.comment ?? ''
+    };
+  }
+
   function restore() {
     const data = localStorage.getItem(STORAGE_KEY);
     if (!data) return false;
     try {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed)) {
-        members = parsed;
+        members = parsed.map(normalizeMember);
         return true;
       }
     } catch (e) {
@@ -776,7 +822,7 @@
     if (members.length === 0) {
       const tr = document.createElement('tr');
       const td = document.createElement('td');
-      td.colSpan = 7;
+      td.colSpan = 9;
       td.className = 'empty';
       td.textContent = 'Нет персонажей. Нажмите «Добавить персонажа».';
       tr.appendChild(td);
@@ -788,6 +834,7 @@
     members.forEach((member, index) => {
       const tr = document.createElement('tr');
 
+      // Имя
       const tdName = document.createElement('td');
       tdName.appendChild(createInput('text', member.name, val => {
         member.name = val;
@@ -796,6 +843,7 @@
       }));
       tr.appendChild(tdName);
 
+      // Класс
       const tdClass = document.createElement('td');
       tdClass.appendChild(createSelect(classes, member.className, val => {
         member.className = val;
@@ -803,6 +851,7 @@
       }));
       tr.appendChild(tdClass);
 
+      // Уровень
       const tdLevel = document.createElement('td');
       tdLevel.appendChild(createInput('number', member.level, val => {
         member.level = val;
@@ -810,6 +859,7 @@
       }, { min: 1, max: 85 }));
       tr.appendChild(tdLevel);
 
+      // Оружие
       const tdWeapon = document.createElement('td');
       tdWeapon.appendChild(createSelect(itemOptions.weapon, member.weapon || '', val => {
         member.weapon = val;
@@ -817,6 +867,7 @@
       }));
       tr.appendChild(tdWeapon);
 
+      // Сет брони
       const tdArmor = document.createElement('td');
       tdArmor.className = 'set-cell';
       [
@@ -840,6 +891,7 @@
       });
       tr.appendChild(tdArmor);
 
+      // Сет бижутерии
       const tdJewelry = document.createElement('td');
       tdJewelry.className = 'set-cell';
       [
@@ -863,6 +915,23 @@
       });
       tr.appendChild(tdJewelry);
 
+      // Татуировки
+      const tdTattoo = document.createElement('td');
+      tdTattoo.appendChild(createInput('text', member.tattoos, val => {
+        member.tattoos = val;
+        persistDebounced();
+      }, { placeholder: '+4 STR -4 CON' }));
+      tr.appendChild(tdTattoo);
+
+      // Комментарий
+      const tdComment = document.createElement('td');
+      tdComment.appendChild(createInput('text', member.comment, val => {
+        member.comment = val;
+        persistDebounced();
+      }, { placeholder: 'заметка…' }));
+      tr.appendChild(tdComment);
+
+      // Удаление
       const tdRemove = document.createElement('td');
       const btnRemove = document.createElement('button');
       btnRemove.textContent = '×';
@@ -889,7 +958,8 @@
       name: 'Персонаж ' + (members.length + 1),
       className: '', level: 1, weapon: '',
       helmet: '', armor: '', gloves: '', boots: '', shield: '',
-      earring1: '', earring2: '', necklace: '', ring1: '', ring2: ''
+      earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
+      tattoos: '', comment: ''
     });
     persist();
     renderTable();
@@ -934,18 +1004,16 @@
   });
 
   // ==================== ИНИЦИАЛИЗАЦИЯ ====================
-  // Пытаемся восстановить данные; если их нет — создаём трёх персонажей.
   if (!restore()) {
     members = [
-      { name: 'Персонаж 1', className: '', level: 1, weapon: '', helmet: '', armor: '', gloves: '', boots: '', shield: '', earring1: '', earring2: '', necklace: '', ring1: '', ring2: '' },
-      { name: 'Персонаж 2', className: '', level: 1, weapon: '', helmet: '', armor: '', gloves: '', boots: '', shield: '', earring1: '', earring2: '', necklace: '', ring1: '', ring2: '' },
-      { name: 'Персонаж 3', className: '', level: 1, weapon: '', helmet: '', armor: '', gloves: '', boots: '', shield: '', earring1: '', earring2: '', necklace: '', ring1: '', ring2: '' }
+      normalizeMember({ name: 'Персонаж 1' }),
+      normalizeMember({ name: 'Персонаж 2' }),
+      normalizeMember({ name: 'Персонаж 3' })
     ];
     persist();
   }
   renderTable();
 
-  // Подстраховка: сохраняем перед закрытием/перезагрузкой страницы
   window.addEventListener('beforeunload', persist);
 </script>
 
