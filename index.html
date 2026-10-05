@@ -48,11 +48,7 @@
     margin: 0 0 2px 0;
   }
   .subtitle { color: var(--text-secondary); font-size: 11px; margin: 0 0 14px 0; }
-
-  .tabs {
-    display: flex; gap: 4px; margin-bottom: 12px;
-    border-bottom: 2px solid var(--border-subtle);
-  }
+  .tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid var(--border-subtle); }
   .tab-btn {
     font-family: var(--font-body); font-size: 12px; font-weight: 600;
     letter-spacing: 0.4px; text-transform: uppercase;
@@ -62,13 +58,9 @@
     transition: all 0.15s ease;
   }
   .tab-btn:hover { color: var(--accent-gold-dark); }
-  .tab-btn.active {
-    color: var(--accent-gold-dark);
-    border-bottom-color: var(--accent-gold); font-weight: 700;
-  }
+  .tab-btn.active { color: var(--accent-gold-dark); border-bottom-color: var(--accent-gold); font-weight: 700; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-
   .toolbar {
     display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
     margin-bottom: 12px; padding: 8px 10px;
@@ -92,30 +84,19 @@
   button.save-btn:hover { background: rgba(31,157,85,0.08); border-color: var(--success-green); color: var(--success-green); }
   button.pdf-btn { border-color: rgba(58,95,217,0.5); color: var(--accent-blue); }
   button.pdf-btn:hover { background: rgba(58,95,217,0.08); border-color: var(--accent-blue); color: var(--accent-blue); }
-  .sync-status {
-    font-size: 10px; margin-left: auto; letter-spacing: 0.3px;
-    display: flex; align-items: center; gap: 5px;
-  }
+  .sync-status { font-size: 10px; margin-left: auto; letter-spacing: 0.3px; display: flex; align-items: center; gap: 5px; }
   .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #bbb; }
   .sync-dot.online { background: var(--success-green); box-shadow: 0 0 6px rgba(31,157,85,0.6); }
   .sync-dot.offline { background: var(--danger-red); }
   .sync-dot.syncing { background: #f0a500; animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-  .auto-timer {
-    font-size: 10px; color: var(--text-muted);
-    margin-left: 8px; padding-left: 8px;
-    border-left: 1px solid var(--border-subtle);
-  }
+  .auto-timer { font-size: 10px; color: var(--text-muted); margin-left: 8px; padding-left: 8px; border-left: 1px solid var(--border-subtle); }
   .table-wrap {
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow-x: auto; overflow-y: visible;
     border-radius: 8px; border: 1px solid var(--border-subtle);
     background: var(--bg-panel); box-shadow: 0 1px 3px rgba(20,25,60,0.06);
   }
-  table {
-    border-collapse: collapse; width: 100%; min-width: 1250px;
-    font-size: 11px; table-layout: fixed;
-  }
+  table { border-collapse: collapse; width: 100%; min-width: 1250px; font-size: 11px; table-layout: fixed; }
   th, td { padding: 4px 5px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-subtle); }
   th {
     background: linear-gradient(180deg, #fafbfe 0%, #eef0f8 100%);
@@ -145,7 +126,6 @@
   }
   select option { background: #fff; color: var(--text-primary); }
   select optgroup { background: #f0f2f8; color: var(--accent-gold-dark); font-weight: 700; font-style: normal; }
-
   .weapon-select { position: relative; width: 100%; }
   .weapon-trigger {
     display: flex; align-items: center; gap: 6px; width: 100%;
@@ -181,7 +161,6 @@
   .weapon-option .weapon-grade { font-weight: 800; font-size: 12px; letter-spacing: 0.3px; flex-shrink: 0; min-width: 14px; }
   .weapon-option .weapon-name { flex: 1; }
   .weapon-comment { margin-top: 3px; font-size: 10px; padding: 3px 5px; }
-
   .prof-cell { display: flex; flex-direction: column; gap: 3px; }
   .prof-main { display: flex; align-items: center; gap: 6px; }
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
@@ -204,7 +183,6 @@
   }
   .remove-btn:hover { background: rgba(217,45,32,0.1); border-color: var(--danger-red); }
   .empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 20px !important; }
-
   .craft-author-bar {
     display: flex; gap: 8px; align-items: center;
     margin-bottom: 12px; padding: 8px 10px;
@@ -212,11 +190,39 @@
     border-radius: 8px; box-shadow: 0 1px 3px rgba(20,25,60,0.06);
     font-size: 11px;
   }
-  .craft-author-bar label {
-    color: var(--text-secondary); text-transform: uppercase;
-    letter-spacing: 0.4px; font-weight: 600; white-space: nowrap;
-  }
+  .craft-author-bar label { color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; white-space: nowrap; }
   .craft-author-bar input { max-width: 260px; font-size: 12px; padding: 6px 10px; }
+
+  /* ===== Панель баланса казны ===== */
+  .treasury-panel {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 12px; padding: 14px 18px;
+    background: linear-gradient(135deg, #fffbef 0%, #fff8e1 100%);
+    border: 1px solid #f0d98a;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+  }
+  .treasury-icon { font-size: 32px; line-height: 1; }
+  .treasury-main { flex: 1; min-width: 0; }
+  .treasury-label {
+    font-size: 10px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 2px; font-weight: 700;
+  }
+  .treasury-value {
+    font-size: 22px; font-weight: 800;
+    line-height: 1.1; letter-spacing: 0.3px;
+  }
+  .treasury-value.positive { color: #16a34a; }
+  .treasury-value.negative { color: #dc2626; }
+  .treasury-value.neutral  { color: var(--text-secondary); }
+  .treasury-breakdown {
+    font-size: 11px; color: var(--text-secondary);
+    margin-top: 5px; letter-spacing: 0.2px;
+  }
+  .treasury-breakdown .income { color: #16a34a; font-weight: 700; }
+  .treasury-breakdown .expense { color: #dc2626; font-weight: 700; }
+
   .post-form {
     background: var(--bg-panel); border: 1px solid var(--border-subtle);
     border-radius: 8px; padding: 14px; margin-bottom: 16px;
@@ -360,6 +366,17 @@
     </div>
   </div>
 
+  <div class="treasury-panel" id="treasuryPanel">
+    <div class="treasury-icon">💰</div>
+    <div class="treasury-main">
+      <div class="treasury-label">Баланс казны</div>
+      <div class="treasury-value neutral" id="treasuryValue">0</div>
+      <div class="treasury-breakdown" id="treasuryBreakdown">
+        Доход: <span class="income">+0</span> · Расход: <span class="expense">−0</span>
+      </div>
+    </div>
+  </div>
+
   <div class="post-form">
     <div class="post-form-row">
       <div>
@@ -468,7 +485,6 @@
 
   // ==================== ОРУЖИЕ ====================
   const weaponsData = [
-    // NG
     { name: 'Short Sword', grade: 'NG' }, { name: 'Long Sword', grade: 'NG' },
     { name: 'Broadsword', grade: 'NG' }, { name: 'Club', grade: 'NG' },
     { name: 'Mace', grade: 'NG' }, { name: "Apprentice's Wand", grade: 'NG' },
@@ -478,7 +494,6 @@
     { name: 'Short Bow', grade: 'NG' }, { name: 'Bow', grade: 'NG' },
     { name: 'Short Spear', grade: 'NG' }, { name: 'Great Spear', grade: 'NG' },
     { name: "Apprentice's Spellbook", grade: 'NG' }, { name: 'Voodoo Doll', grade: 'NG' },
-    // D
     { name: 'Saber', grade: 'D' }, { name: "Artisan's Sword", grade: 'D' },
     { name: 'Bastard Sword', grade: 'D' }, { name: "Knight's Sword", grade: 'D' },
     { name: 'Spinebone Sword', grade: 'D' }, { name: 'Crimson Sword', grade: 'D' },
@@ -546,7 +561,6 @@
     { name: "Knight's Sword*Crimson Sword", grade: 'D' },
     { name: "Knight's Sword*Elven Sword", grade: 'D' },
     { name: 'Soulfire Dirk', grade: 'D' },
-    // C
     { name: 'Stick of Faith', grade: 'C' }, { name: 'Club of Nature', grade: 'C' },
     { name: "Healhren's Book", grade: 'C' }, { name: 'Horn of Glory', grade: 'C' },
     { name: 'Mace of Underworld', grade: 'C' }, { name: 'Nirvana Axe', grade: 'C' },
@@ -621,7 +635,6 @@
     { name: 'Berserker Blade', grade: 'C' },
     { name: 'Chakram', grade: 'C' }, { name: 'Great Pata', grade: 'C' },
     { name: 'Crystal Dagger*Cursed Dagger', grade: 'C' },
-    // B
     { name: 'Spell Breaker', grade: 'B' }, { name: 'Kaim Vanul Bones', grade: 'B' },
     { name: 'Sword of Valhalla', grade: 'B' }, { name: 'Wizards Tear', grade: 'B' },
     { name: "Sprite's Staff", grade: 'B' }, { name: 'Staff of Evil Spirits', grade: 'B' },
@@ -639,7 +652,6 @@
     { name: 'Arthro Nail', grade: 'B' }, { name: 'Bellion Cestus', grade: 'B' },
     { name: "Demon's Dagger*Dark Screamer", grade: 'B' },
     { name: 'Hell Knife', grade: 'B' }, { name: 'Yaksa Mace*Yaksa Mace', grade: 'B' },
-    // A
     { name: 'Sword of Miracles', grade: 'A' }, { name: 'Angel Slayer', grade: 'A' },
     { name: "Dark Legion's Edge", grade: 'A' }, { name: 'Soul Separator', grade: 'A' },
     { name: 'Bloody Orchid', grade: 'A' }, { name: 'Soul Bow', grade: 'A' },
@@ -649,7 +661,6 @@
     { name: 'Saint Spear', grade: 'A' }, { name: 'Demon Splinter', grade: 'A' },
     { name: 'Basalt Battlehammer', grade: 'A' }, { name: 'Meteor Shower', grade: 'A' },
     { name: 'Elysian', grade: 'A' }, { name: 'Dragon Grinder', grade: 'A' },
-    // S
     { name: 'Dynasty Sword', grade: 'S' }, { name: 'Dynasty Blade', grade: 'S' },
     { name: 'Dynasty Phantom', grade: 'S' }, { name: "Heaven's Divider", grade: 'S' },
     { name: "Sirra's Blade", grade: 'S' }, { name: 'Draconic Bow', grade: 'S' },
@@ -1321,6 +1332,88 @@
     return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
 
+  // ==================== РАСЧЁТ БАЛАНСА КАЗНЫ ====================
+  // Парсит строку цены в число. Поддерживает форматы:
+  //   "500"    → 500
+  //   "500к"   → 500 000
+  //   "500кк"  → 500 000 000
+  //   "1.5кк"  → 1 500 000
+  //   "2ккк"   → 2 000 000 000
+  //   "1млн"   → 1 000 000
+  //   "1млрд"  → 1 000 000 000
+  //   "1 500 000", "1,500,000" → 1 500 000
+  function parsePrice(str) {
+    if (!str) return 0;
+    const s = String(str)
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/,/g, '.');
+
+    const m = s.match(/^(-?[\d.]+)(ккк|кк|к|млрд|млн|kkk|kk|k|b|m)?$/);
+    if (!m) {
+      const numOnly = parseFloat(s.replace(/[^\d.-]/g, ''));
+      return isNaN(numOnly) ? 0 : numOnly;
+    }
+
+    const num = parseFloat(m[1]);
+    if (isNaN(num)) return 0;
+
+    const suffix = m[2] || '';
+    const multipliers = {
+      'к': 1e3,    'k': 1e3,
+      'кк': 1e6,   'kk': 1e6,   'm': 1e6,
+      'ккк': 1e9,  'kkk': 1e9,  'b': 1e9,
+      'млн': 1e6,
+      'млрд': 1e9
+    };
+    return num * (multipliers[suffix] || 1);
+  }
+
+  // Форматирует число в читаемый вид: 2500000000 → "2.5ккк"
+  function formatBalance(n) {
+    if (!n || n === 0) return '0';
+    const abs = Math.abs(n);
+    const sign = n < 0 ? '−' : '';
+    if (abs >= 1e9) return sign + (abs / 1e9).toFixed(2).replace(/\.?0+$/, '') + 'ккк';
+    if (abs >= 1e6) return sign + (abs / 1e6).toFixed(2).replace(/\.?0+$/, '') + 'кк';
+    if (abs >= 1e3) return sign + (abs / 1e3).toFixed(2).replace(/\.?0+$/, '') + 'к';
+    return sign + abs.toLocaleString('ru-RU');
+  }
+
+  // Пересчитывает и обновляет панель баланса
+  function updateTreasuryBalance() {
+    let income = 0;
+    let expense = 0;
+
+    posts.forEach(post => {
+      const amount = parsePrice(post.price);
+      if (amount <= 0) return;
+
+      if (post.type === 'treasury') {
+        income += amount;
+      } else if (post.type === 'craft' || post.type === 'buy') {
+        expense += amount;
+      }
+    });
+
+    const balance = income - expense;
+
+    const valueEl = document.getElementById('treasuryValue');
+    const breakdownEl = document.getElementById('treasuryBreakdown');
+    if (!valueEl || !breakdownEl) return;
+
+    valueEl.textContent = (balance > 0 ? '+' : balance < 0 ? '−' : '') + formatBalance(Math.abs(balance));
+    valueEl.classList.remove('positive', 'negative', 'neutral');
+    if (balance > 0) valueEl.classList.add('positive');
+    else if (balance < 0) valueEl.classList.add('negative');
+    else valueEl.classList.add('neutral');
+
+    breakdownEl.innerHTML =
+      `Доход: <span class="income">+${formatBalance(income)}</span>` +
+      ` · Расход: <span class="expense">−${formatBalance(expense)}</span>`;
+  }
+
   function renderPosts() {
     postsFeed.innerHTML = '';
     if (posts.length === 0) {
@@ -1328,6 +1421,7 @@
       empty.className = 'empty-posts';
       empty.textContent = 'Пока нет постов. Опубликуйте первый — что нужно скрафтить или купить.';
       postsFeed.appendChild(empty);
+      updateTreasuryBalance();
       return;
     }
     posts.forEach(post => {
@@ -1429,6 +1523,9 @@
       card.appendChild(footer);
       postsFeed.appendChild(card);
     });
+
+    // Пересчитать баланс после отрисовки всех постов
+    updateTreasuryBalance();
   }
 
   function toggleEditPost(card, post) {
