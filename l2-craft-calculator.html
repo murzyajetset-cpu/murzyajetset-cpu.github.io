@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L2 Калькулятор крафта</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #f4f5fa;
+    --bg-panel: #ffffff;
+    --bg-panel-alt: #fafbfe;
+    --bg-input: #ffffff;
+    --border-subtle: #e2e4ec;
+    --border-strong: #cfd2de;
+    --text-primary: #1a1d2e;
+    --text-secondary: #5a5d75;
+    --text-muted: #8a8da5;
+    --accent-gold: #b8860b;
+    --accent-gold-dark: #8a6508;
+    --accent-gold-light: #d4a017;
+    --accent-blue: #3a5fd9;
+    --success-green: #1f9d55;
+    --danger-red: #d92d20;
+    --font-body: 'Proxima Nova', 'Segoe UI', sans-serif;
+    --font-display: 'Cinzel', 'Times New Roman', serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 20px 16px 60px;
+    min-height: 100vh;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    margin: 0 0 4px 0;
+  }
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin: 0 0 20px 0;
+  }
+
+  /* Панель инструментов */
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+  }
+  .toolbar label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 700;
+  }
+  .toolbar select {
+    min-width: 240px;
+  }
+
+  button {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: var(--bg-panel-alt);
+    color: var(--text-primary);
+  }
+  button:hover {
+    background: #eef0f8;
+    border-color: var(--accent-gold);
+    color: var(--accent-gold-dark);
+  }
+  button.primary {
+    background: linear-gradient(180deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%);
+    color: #fff;
+    border-color: var(--accent-gold);
+    font-weight: 700;
+  }
+  button.primary:hover {
+    background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
+    color: #fff;
+  }
+  button.danger {
+    border-color: rgba(217,45,32,0.4);
+    color: var(--danger-red);
+  }
+  button.danger:hover {
+    background: rgba(217,45,32,0.08);
+    border-color: var(--danger-red);
+  }
+  button.mini {
+    padding: 4px 8px;
+    font-size: 10px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* Карточка калькулятора */
+  .calc-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+    margin-bottom: 16px;
+  }
+  .calc-header {
+    display: grid;
+    grid-template-columns: 1fr 160px;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border-subtle);
+  }
+  .calc-header-full {
+    grid-column: 1 / -1;
+  }
+  label.field-label {
+    display: block;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  input, select {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 5px;
+    padding: 8px 10px;
+    width: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 2px rgba(184,134,11,0.15);
+  }
+  input[type="number"] {
+    text-align: right;
+  }
+  .recipe-name-input {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-gold-dark);
+  }
+
+  /* Таблица ингредиентов */
+  .ingredients-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .ingredients-title h3 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+  }
+  th, td {
+    padding: 8px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+  }
+  th {
+    background: linear-gradient(180deg, #fafbfe 0%, #eef0f8 100%);
+    color: var(--accent-gold-dark);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--accent-gold);
+    white-space: nowrap;
+  }
+  th.num, td.num { text-align: right; }
+  th.center, td.center { text-align: center; }
+  tbody tr:hover { background: #fafbfe; }
+  tbody tr:last-child td { border-bottom: none; }
+  td input {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+  .ingredient-name {
+    min-width: 180px;
+  }
+  .total-price {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 13px;
+  }
+  .remove-row {
+    background: transparent;
+    border: none;
+    color: var(--danger-red);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 6px;
+    line-height: 1;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+    width: 26px;
+    height: 26px;
+    text-transform: none;
+  }
+  .remove-row:hover {
+    opacity: 1;
+    background: rgba(217,45,32,0.1);
+    border-radius: 4px;
+    border-color: transparent;
+    color: var(--danger-red);
+  }
+
+  /* Итоговый блок */
+  .totals {
+    margin-top: 20px;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #fffbef 0%, #fff8e1 100%);
+    border: 1px solid #f0d98a;
+    border-radius: 8px;
+  }
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  .totals-row .label {
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+  .totals-row .value {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text-primary);
+  }
+  .totals-row.big {
+    padding-top: 12px;
+    margin-top: 6px;
+    border-top: 1px dashed #d4c47a;
+  }
+  .totals-row.big .label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-gold-dark);
+  }
+  .totals-row.big .value {
+    font-size: 20px;
+    color: var(--accent-gold-dark);
+  }
+  .totals-row.profit .value { color: #16a34a; }
+  .totals-row.loss .value { color: #dc2626; }
+
+  /* Строка «Себестоимость единицы» */
+  .unit-row {
+    background: #fdf6e0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+  }
+  .unit-row .unit-label {
+    color: var(--accent-gold-dark);
+    font-weight: 700;
+  }
+  .unit-row .unit-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent-gold-dark);
+  }
+
+  /* Секция продажи */
+  .sale-section {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--bg-panel-alt);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+  }
+
+  /* Инфо-плашка */
+  .info-hint {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(58,95,217,0.06);
+    border-left: 3px solid var(--accent-blue);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .info-hint strong {
+    color: var(--accent-blue);
+  }
+
+  /* Уведомление о сохранении */
+  .save-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 12px 20px;
+    background: #16a34a;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(22,163,74,0.35);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  .save-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .save-toast.error {
+    background: #dc2626;
+    box-shadow: 0 4px 16px rgba(220,38,38,0.35);
+  }
+
+  /* Мобильная адаптация */
+  @media (max-width: 720px) {
+    .calc-header {
+      grid-template-columns: 1fr;
+    }
+    .sale-section {
+      grid-template-columns: 1fr;
+    }
+    .toolbar select {
+      min-width: 0;
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Калькулятор крафта L2</h1>
+<p class="subtitle">Считает себестоимость и маржу крафта — независимо от основной таблицы</p>
+
+<!-- Тулбар -->
+<div class="toolbar">
+  <label>Рецепт:</label>
+  <select id="recipeSelect"></select>
+  <button id="newRecipeBtn">➕ Новый рецепт</button>
+  <button id="saveRecipeBtn" class="primary">💾 Сохранить</button>
+  <button id="deleteRecipeBtn" class="danger">🗑 Удалить</button>
+  <button id="exportBtn">📤 Экспорт JSON</button>
+  <button id="importBtn">📥 Импорт JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none;">
+</div>
+
+<!-- Основная карточка калькулятора -->
+<div class="calc-card">
+  <div class="calc-header">
+    <div class="calc-header-full">
+      <label class="field-label">Название предмета для крафта</label>
+      <input type="text" id="recipeName" class="recipe-name-input" placeholder="напр. Dynasty Breastplate">
+    </div>
+    <div>
+      <label class="field-label">Количество крафтов</label>
+      <input type="number" id="craftCount" value="1" min="1" step="1">
+    </div>
+    <div>
+      <label class="field-label">Цена продажи за 1 шт</label>
+      <input type="number" id="salePrice" value="0" min="0" step="any">
+    </div>
+  </div>
+
+  <!-- Ингредиенты -->
+  <div class="ingredients-title">
+    <h3>Ингредиенты</h3>
+    <button id="addIngredientBtn" class="mini">➕ Добавить строку</button>
+  </div>
+  <table id="ingredientsTable">
+    <thead>
+      <tr>
+        <th style="width: 40%;">Название ингредиента</th>
+        <th class="num" style="width: 12%;">На 1 крафт</th>
+        <th class="num" style="width: 12%;">Всего нужно</th>
+        <th class="num" style="width: 15%;">Цена за ед.</th>
+        <th class="num" style="width: 15%;">Сумма</th>
+        <th class="center" style="width: 6%;"></th>
+      </tr>
+    </thead>
+    <tbody id="ingredientsBody"></tbody>
+  </table>
+
+  <!-- Итоги -->
+  <div class="totals">
+    <div class="totals-row">
+      <span class="label">Всего ингредиентов:</span>
+      <span class="value" id="totalCount">0</span>
+    </div>
+    <div class="totals-row">
+      <span class="label">Общая стоимость материалов:</span>
+      <span class="value" id="totalCost">0</span>
+    </div>
+
+    <div class="unit-row">
+      <span class="unit-label">Себестоимость 1 крафта:</span>
+      <span class="unit-value" id="unitCost">0</span>
+    </div>
+
+    <div class="sale-section">
+      <div>
+        <label class="field-label">Выручка</label>
+        <input type="text" id="revenue" value="0" readonly>
+      </div>
+      <div>
+        <label class="field-label">Прибыль</label>
+        <input type="text" id="profit" value="0" readonly>
+      </div>
+      <div>
+        <label class="field-label">Маржа</label>
+        <input type="text" id="margin" value="0%" readonly>
+      </div>
+    </div>
+
+    <div class="totals-row big" id="profitRow">
+      <span class="label">Чистая прибыль (выручка − материалы):</span>
+      <span class="value" id="netProfit">0</span>
+    </div>
+  </div>
+
+  <div class="info-hint">
+    <strong>Совет:</strong> цены за единицу можно вводить с суффиксами <code>к</code> (тысяча),
+    <code>кк</code> (миллион), <code>ккк</code> (миллиард). Например <code>500к</code> или <code>2кк</code>.
+    Рецепт сохраняется автоматически в браузере — можно закрыть страницу и открыть заново.
+  </div>
+</div>
+
+<div class="save-toast" id="saveToast">Рецепт сохранён</div>
+
+<script>
+  const STORAGE_KEY = 'l2craft_recipes_v1';
+  const SELECTED_KEY = 'l2craft_selected_v1';
+
+  // ==================== ПРЕДУСТАНОВЛЕННЫЕ РЕЦЕПТЫ ====================
+  // Количества примерные — можно редактировать в любой момент
+  const DEFAULT_RECIPES = {
+    'dynasty_breastplate': {
+      name: 'Dynasty Breastplate',
+      craftCount: 1,
+      salePrice: 0,
+      ingredients: [
+        { name: 'Dynasty Breastplate Piece', perCraft: 12, price: 0 },
+        { name: 'Dynasty Breastplate Recipe', perCraft: 1, price: 0 },
+        { name: 'Synthetic Cokes', perCraft: 38, price: 0 },
+        { name: "Artisan's Frame", perCraft: 38, price: 0 },
+        { name: 'Crafted Leather', perCraft: 38, price: 0 },
+        { name: 'Maestro Anvil Lock', perCraft: 19, price: 0 },
+        { name: 'Metallic Fiber', perCraft: 12, price: 0 },
+        { name: 'Varnish', perCraft: 6, price: 0 }
+      ]
+    },
+    'dynasty_gaiters': {
+      name: 'Dynasty Gaiters',
+      craftCount: 1,
+      salePrice: 0,
+      ingredients: [
+        { name: 'Dynasty Gaiters Piece', perCraft: 10, price: 0 },
+        { name: 'Dynasty Gaiters Recipe', perCraft: 1, price: 0 },
+        { name: 'Synthetic Cokes', perCraft: 32, price: 0 },
+        { name: "Artisan's Frame", perCraft: 32, price: 0 },
+        { name: 'Crafted Leather', perCraft: 32, price: 0 },
+        { name: 'Maestro Anvil Lock', perCraft: 16, price: 0 },
+        { name: 'Metallic Fiber', perCraft: 10, price: 0 }
+      ]
+    },
+    'dynasty_helmet': {
+      name: 'Dynasty Helmet',
+      craftCount: 1,
+      salePrice: 0,
+      ingredients: [
+        { name: 'Dynasty Helmet Piece', perCraft: 8, price: 0 },
+        { name: 'Dynasty Helmet Recipe', perCraft: 1, price: 0 },
+        { name: 'Synthetic Cokes', perCraft: 26, price: 0 },
+        { name: "Artisan's Frame", perCraft: 26, price: 0 },
+        { name: 'Crafted Leather', perCraft: 26, price: 0 },
+        { name: 'Maestro Anvil Lock', perCraft: 13, price: 0 }
+      ]
+    },
+    'vesper_cutter': {
+      name: 'Vesper Cutter',
+      craftCount: 1,
+      salePrice: 0,
+      ingredients: [
+        { name: 'Vesper Cutter Piece', perCraft: 14, price: 0 },
+        { name: 'Vesper Cutter Recipe', perCraft: 1, price: 0 },
+        { name: 'Synthetic Cokes', perCraft: 56, price: 0 },
+        { name: "Artisan's Frame", perCraft: 56, price: 0 },
+        { name: 'Crafted Leather', perCraft: 56, price: 0 },
+        { name: 'Maestro Anvil Lock', perCraft: 28, price: 0 },
+        { name: 'Vesper Cutter Fragment', perCraft: 14, price: 0 },
+        { name: 'Metallic Fiber', perCraft: 14, price: 0 }
+      ]
+    },
+    'draconic_bow': {
+      name: 'Draconic Bow',
+      craftCount: 1,
+      salePrice: 0,
+      ingredients: [
+        { name: 'Draconic Bow Shaft', perCraft: 13, price: 0 },
+        { name: 'Draconic Bow Recipe', perCraft: 1, price: 0 },
+        { name: 'Synthetic Cokes', perCraft: 48, price: 0 },
+        { name: "Artisan's Frame", perCraft: 48, price: 0 },
+        { name: 'Crafted Leather', perCraft: 48, price: 0 },
+        { name: 'Maestro Anvil Lock', perCraft: 24, price: 0 },
+        { name: 'Metallic Fiber', perCraft: 13, price: 0 }
+      ]
+    }
+  };
+
+  // ==================== СОСТОЯНИЕ ====================
+  let recipes = {};   // { id: { name, craftCount, salePrice, ingredients: [] } }
+  let currentId = null;
+
+  // ==================== УТИЛИТЫ ====================
+  function parsePrice(str) {
+    if (str === 0 || str === '' || str === null || str === undefined) return 0;
+    const s = String(str).trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.');
+    const m = s.match(/^(-?[\d.]+)(ккк|кк|к|kkk|kk|k)?$/);
+    if (!m) {
+      const numOnly = parseFloat(s.replace(/[^\d.\-]/g, ''));
+      return isNaN(numOnly) ? 0 : numOnly;
+    }
+    const num = parseFloat(m[1]);
+    if (isNaN(num)) return 0;
+    const suffix = m[2] || '';
+    const multipliers = { 'к': 1e3, 'k': 1e3, 'кк': 1e6, 'kk': 1e6, 'ккк': 1e9, 'kkk': 1e9 };
+    return num * (multipliers[suffix] || 1);
+  }
+
+  function formatNum(n) {
+    if (!n || n === 0) return '0';
+    if (!isFinite(n)) return '∞';
+    const abs = Math.abs(n);
+    if (abs >= 1e9) return (n / 1e9).toFixed(2).replace(/\.?0+$/, '') + 'ккк';
+    if (abs >= 1e6) return (n / 1e6).toFixed(2).replace(/\.?0+$/, '') + 'кк';
+    if (abs >= 1e3) return (n / 1e3).toFixed(2).replace(/\.?0+$/, '') + 'к';
+    return n.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+  }
+
+  function genId() {
+    return 'r_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+  }
+
+  // ==================== LOCALSTORAGE ====================
+  function loadRecipes() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        recipes = JSON.parse(raw);
+        if (typeof recipes !== 'object' || Array.isArray(recipes)) recipes = {};
+        return;
+      }
+    } catch (e) {
+      console.warn('Ошибка чтения рецептов:', e);
+    }
+    // Первая загрузка — заполняем предустановленными
+    recipes = JSON.parse(JSON.stringify(DEFAULT_RECIPES));
+    saveRecipes();
+  }
+
+  function saveRecipes() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
+      return true;
+    } catch (e) {
+      console.error('Ошибка сохранения:', e);
+      return false;
+    }
+  }
+
+  function loadSelectedId() {
+    try {
+      const id = localStorage.getItem(SELECTED_KEY);
+      if (id && recipes[id]) return id;
+    } catch (e) {}
+    return Object.keys(recipes)[0] || null;
+  }
+
+  function saveSelectedId(id) {
+    try { localStorage.setItem(SELECTED_KEY, id); } catch (e) {}
+  }
+
+  // ==================== РЕНДЕР ====================
+  function renderRecipeSelect() {
+    const select = document.getElementById('recipeSelect');
+    select.innerHTML = '';
+    const ids = Object.keys(recipes);
+    if (ids.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = '— нет рецептов —';
+      select.appendChild(opt);
+      return;
+    }
+    ids.forEach(id => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = recipes[id].name || 'Без названия';
+      if (id === currentId) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+
+  function renderCalculator() {
+    const recipe = recipes[currentId];
+    if (!recipe) {
+      document.getElementById('recipeName').value = '';
+      document.getElementById('craftCount').value = 1;
+      document.getElementById('salePrice').value = 0;
+      document.getElementById('ingredientsBody').innerHTML = '';
+      recalcAll();
+      return;
+    }
+
+    document.getElementById('recipeName').value = recipe.name || '';
+    document.getElementById('craftCount').value = recipe.craftCount || 1;
+    document.getElementById('salePrice').value = recipe.salePrice || 0;
+
+    renderIngredients(recipe);
+    recalcAll();
+  }
+
+  function renderIngredients(recipe) {
+    const tbody = document.getElementById('ingredientsBody');
+    tbody.innerHTML = '';
+    const ingredients = recipe.ingredients || [];
+
+    if (ingredients.length === 0) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="6" style="text-align:center; color:var(--text-muted); font-style:italic; padding:20px;">
+        Нет ингредиентов. Нажмите «Добавить строку», чтобы начать.
+      </td>`;
+      tbody.appendChild(tr);
+      return;
+    }
+
+    const craftCount = parseInt(recipe.craftCount, 10) || 1;
+
+    ingredients.forEach((ing, idx) => {
+      const tr = document.createElement('tr');
+
+      // Название
+      const tdName = document.createElement('td');
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.value = ing.name || '';
+      nameInput.placeholder = 'название ресурса';
+      nameInput.className = 'ingredient-name';
+      nameInput.addEventListener('input', () => {
+        recipe.ingredients[idx].name = nameInput.value;
+        scheduleSave();
+      });
+      tdName.appendChild(nameInput);
+      tr.appendChild(tdName);
+
+      // Кол-во на 1 крафт
+      const tdPer = document.createElement('td');
+      tdPer.className = 'num';
+      const perInput = document.createElement('input');
+      perInput.type = 'number';
+      perInput.min = 0;
+      perInput.step = 'any';
+      perInput.value = ing.perCraft || 0;
+      perInput.addEventListener('input', () => {
+        recipe.ingredients[idx].perCraft = parseFloat(perInput.value) || 0;
+        recalcAll();
+        scheduleSave();
+      });
+      tdPer.appendChild(perInput);
+      tr.appendChild(tdPer);
+
+      // Всего нужно (perCraft × craftCount) — не редактируется
+      const tdTotal = document.createElement('td');
+      tdTotal.className = 'num';
+      const totalCount = (parseFloat(ing.perCraft) || 0) * craftCount;
+      tdTotal.textContent = formatNum(totalCount);
+      tdTotal.style.fontWeight = '600';
+      tr.appendChild(tdTotal);
+
+      // Цена за ед.
+      const tdPrice = document.createElement('td');
+      tdPrice.className = 'num';
+      const priceInput = document.createElement('input');
+      priceInput.type = 'text';
+      priceInput.value = ing.price || '';
+      priceInput.placeholder = '0';
+      priceInput.addEventListener('input', () => {
+        recipe.ingredients[idx].price = priceInput.value;
+        recalcAll();
+        scheduleSave();
+      });
+      tdPrice.appendChild(priceInput);
+      tr.appendChild(tdPrice);
+
+      // Сумма
+      const tdSum = document.createElement('td');
+      tdSum.className = 'num';
+      const unitPrice = parsePrice(ing.price);
+      const sum = unitPrice * totalCount;
+      tdSum.textContent = formatNum(sum);
+      tdSum.className = 'num total-price';
+      tr.appendChild(tdSum);
+
+      // Кнопка удаления
+      const tdRemove = document.createElement('td');
+      tdRemove.className = 'center';
+      const btnRemove = document.createElement('button');
+      btnRemove.className = 'remove-row';
+      btnRemove.textContent = '×';
+      btnRemove.title = 'Удалить ингредиент';
+      btnRemove.addEventListener('click', () => {
+        recipe.ingredients.splice(idx, 1);
+        renderIngredients(recipe);
+        recalcAll();
+        scheduleSave();
+      });
+      tdRemove.appendChild(btnRemove);
+      tr.appendChild(tdRemove);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ==================== ПЕРЕСЧЁТ ====================
+  function recalcAll() {
+    const recipe = recipes[currentId];
+    if (!recipe) {
+      document.getElementById('totalCount').textContent = '0';
+      document.getElementById('totalCost').textContent = '0';
+      document.getElementById('unitCost').textContent = '0';
+      document.getElementById('revenue').value = '0';
+      document.getElementById('profit').value = '0';
+      document.getElementById('margin').value = '0%';
+      document.getElementById('netProfit').textContent = '0';
+      return;
+    }
+
+    const craftCount = Math.max(1, parseInt(recipe.craftCount, 10) || 1);
+    const salePrice = parsePrice(recipe.salePrice);
+
+    let totalCount = 0;
+    let totalCost = 0;
+
+    (recipe.ingredients || []).forEach(ing => {
+      const per = parseFloat(ing.perCraft) || 0;
+      const count = per * craftCount;
+      const unitPrice = parsePrice(ing.price);
+      totalCount += count;
+      totalCost += unitPrice * count;
+    });
+
+    const unitCost = totalCost / craftCount;
+    const revenue = salePrice * craftCount;
+    const profit = revenue - totalCost;
+    const margin = revenue > 0 ? (profit / revenue * 100) : 0;
+
+    document.getElementById('totalCount').textContent = formatNum(totalCount);
+    document.getElementById('totalCost').textContent = formatNum(totalCost);
+    document.getElementById('unitCost').textContent = formatNum(unitCost);
+    document.getElementById('revenue').value = formatNum(revenue);
+    document.getElementById('profit').value = formatNum(profit);
+    document.getElementById('margin').value = revenue > 0 ? margin.toFixed(1) + '%' : '0%';
+    document.getElementById('netProfit').textContent = formatNum(profit);
+
+    // Подсветка прибыли / убытка
+    const profitRow = document.getElementById('profitRow');
+    profitRow.classList.remove('profit', 'loss');
+    if (revenue > 0 && profit > 0) profitRow.classList.add('profit');
+    else if (revenue > 0 && profit < 0) profitRow.classList.add('loss');
+
+    // Обновляем "Всего нужно" в таблице
+    const rows = document.querySelectorAll('#ingredientsBody tr');
+    rows.forEach((row, idx) => {
+      const ing = recipe.ingredients[idx];
+      if (!ing) return;
+      const totalCell = row.children[2];
+      if (totalCell) {
+        totalCell.textContent = formatNum((parseFloat(ing.perCraft) || 0) * craftCount);
+      }
+      const sumCell = row.children[4];
+      if (sumCell) {
+        const total = (parseFloat(ing.perCraft) || 0) * craftCount;
+        sumCell.textContent = formatNum(parsePrice(ing.price) * total);
+      }
+    });
+  }
+
+  // ==================== АВТОСОХРАНЕНИЕ ====================
+  let saveTimeout = null;
+  function scheduleSave() {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+      saveRecipes();
+      showToast('Рецепт сохранён');
+    }, 600);
+  }
+
+  function showToast(text, isError = false) {
+    const toast = document.getElementById('saveToast');
+    toast.textContent = text;
+    toast.classList.toggle('error', isError);
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  // ==================== ДЕЙСТВИЯ ====================
+  function selectRecipe(id) {
+    currentId = id;
+    saveSelectedId(id);
+    renderRecipeSelect();
+    renderCalculator();
+  }
+
+  function newRecipe() {
+    const id = genId();
+    recipes[id] = {
+      name: 'Новый рецепт',
+      craftCount: 1,
+      salePrice: 0,
+      ingredients: [
+        { name: '', perCraft: 1, price: '' }
+      ]
+    };
+    saveRecipes();
+    selectRecipe(id);
+    setTimeout(() => document.getElementById('recipeName').focus(), 50);
+  }
+
+  function saveCurrentRecipe() {
+    if (!currentId || !recipes[currentId]) return;
+    recipes[currentId].name = document.getElementById('recipeName').value.trim() || 'Без названия';
+    recipes[currentId].craftCount = parseInt(document.getElementById('craftCount').value, 10) || 1;
+    recipes[currentId].salePrice = document.getElementById('salePrice').value;
+    saveRecipes();
+    renderRecipeSelect();
+    showToast('Рецепт сохранён');
+  }
+
+  function deleteCurrentRecipe() {
+    if (!currentId) return;
+    if (!confirm('Удалить этот рецепт? Действие необратимо.')) return;
+    delete recipes[currentId];
+    saveRecipes();
+    const ids = Object.keys(recipes);
+    if (ids.length > 0) {
+      selectRecipe(ids[0]);
+    } else {
+      currentId = null;
+      renderRecipeSelect();
+      renderCalculator();
+    }
+    showToast('Рецепт удалён');
+  }
+
+  function exportRecipes() {
+    const blob = new Blob([JSON.stringify(recipes, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'l2craft_recipes_' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importRecipes(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (typeof data !== 'object' || Array.isArray(data)) throw new Error('Неверный формат');
+        // Мержим импортированные рецепты с текущими
+        const importedCount = Object.keys(data).length;
+        Object.assign(recipes, data);
+        saveRecipes();
+        renderRecipeSelect();
+        if (Object.keys(data).length > 0) {
+          selectRecipe(Object.keys(data)[0]);
+        }
+        showToast('Импортировано рецептов: ' + importedCount);
+      } catch (err) {
+        console.error(err);
+        showToast('Ошибка импорта: ' + err.message, true);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ==================== СОБЫТИЯ ====================
+  document.getElementById('recipeSelect').addEventListener('change', (e) => {
+    selectRecipe(e.target.value);
+  });
+
+  document.getElementById('recipeName').addEventListener('input', (e) => {
+    if (!currentId || !recipes[currentId]) return;
+    recipes[currentId].name = e.target.value;
+    // Обновляем подпись в select
+    const opt = document.querySelector(`#recipeSelect option[value="${currentId}"]`);
+    if (opt) opt.textContent = e.target.value || 'Без названия';
+    scheduleSave();
+  });
+
+  document.getElementById('craftCount').addEventListener('input', (e) => {
+    if (!currentId || !recipes[currentId]) return;
+    recipes[currentId].craftCount = parseInt(e.target.value, 10) || 1;
+    renderIngredients(recipes[currentId]);
+    recalcAll();
+    scheduleSave();
+  });
+
+  document.getElementById('salePrice').addEventListener('input', (e) => {
+    if (!currentId || !recipes[currentId]) return;
+    recipes[currentId].salePrice = e.target.value;
+    recalcAll();
+    scheduleSave();
+  });
+
+  document.getElementById('addIngredientBtn').addEventListener('click', () => {
+    if (!currentId || !recipes[currentId]) {
+      // Если нет активного рецепта — создаём новый
+      newRecipe();
+      return;
+    }
+    if (!recipes[currentId].ingredients) recipes[currentId].ingredients = [];
+    recipes[currentId].ingredients.push({ name: '', perCraft: 1, price: '' });
+    renderIngredients(recipes[currentId]);
+    recalcAll();
+    scheduleSave();
+  });
+
+  document.getElementById('newRecipeBtn').addEventListener('click', newRecipe);
+  document.getElementById('saveRecipeBtn').addEventListener('click', saveCurrentRecipe);
+  document.getElementById('deleteRecipeBtn').addEventListener('click', deleteCurrentRecipe);
+  document.getElementById('exportBtn').addEventListener('click', exportRecipes);
+  document.getElementById('importBtn').addEventListener('click', () => {
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) importRecipes(file);
+    e.target.value = '';
+  });
+
+  // Ctrl+S — сохранить
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      saveCurrentRecipe();
+    }
+  });
+
+  // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+  loadRecipes();
+  currentId = loadSelectedId();
+  if (!currentId && Object.keys(recipes).length > 0) {
+    currentId = Object.keys(recipes)[0];
+  }
+  if (!currentId) {
+    // Если вообще ничего нет — создаём первый пустой
+    newRecipe();
+  } else {
+    renderRecipeSelect();
+    renderCalculator();
+  }
+</script>
+
+</body>
+</html>
