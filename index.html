@@ -175,6 +175,7 @@
   .set-cell { background: #fcfcff; }
   .set-label { display: block; font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 3px 0 1px 0; }
   .set-label:first-child { margin-top: 0; }
+  .tattoo-select { font-size: 10px; padding: 3px 18px 3px 5px; background-size: 8px; }
   .remove-btn {
     background: transparent; color: var(--danger-red);
     border: 1px solid rgba(217,45,32,0.35); border-radius: 4px;
@@ -193,7 +194,6 @@
   .craft-author-bar label { color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; white-space: nowrap; }
   .craft-author-bar input { max-width: 260px; font-size: 12px; padding: 6px 10px; }
 
-  /* ===== Панель баланса казны ===== */
   .treasury-panel {
     display: flex; align-items: center; gap: 16px;
     margin-bottom: 12px; padding: 14px 18px;
@@ -482,6 +482,21 @@
     { name: 'Trickster', icon: '🗡️' }, { name: 'Inspector', icon: '🔨' },
     { name: 'Judicator', icon: '✨' }
   ];
+
+  // ==================== ТАТУИРОВКИ ====================
+  // Полный список татуировок: для каждой из 6 характеристик (STR, DEX, CON, INT, WIT, MEN)
+  // и для каждой из 5 оставшихся характеристик-минусов, на уровнях 1–4.
+  // Итого 6 * 5 * 4 = 120 татуировок + пустой вариант.
+  const tattooStats = ['STR', 'DEX', 'CON', 'INT', 'WIT', 'MEN'];
+  const tattooOptions = [''];
+  tattooStats.forEach(plus => {
+    tattooStats.forEach(minus => {
+      if (plus === minus) return;
+      for (let lvl = 1; lvl <= 4; lvl++) {
+        tattooOptions.push(`+${lvl} ${plus} -${lvl} ${minus}`);
+      }
+    });
+  });
 
   // ==================== ОРУЖИЕ ====================
   const weaponsData = [
@@ -892,6 +907,7 @@
     return select;
   }
 
+  // ===== Кастомный дропдаун оружия =====
   function buildWeaponSelect(value, onChange, meta = null) {
     const wrap = document.createElement('div');
     wrap.className = 'weapon-select';
@@ -1017,6 +1033,54 @@
     updateTrigger(value);
 
     return wrap;
+  }
+
+  // ===== Селект татуировок =====
+  function buildTattooSelect(value, onChange, meta = null) {
+    const select = document.createElement('select');
+    select.className = 'tattoo-select';
+
+    // Пустая опция
+    const emptyOpt = document.createElement('option');
+    emptyOpt.value = '';
+    emptyOpt.textContent = '— нет —';
+    if (!value) emptyOpt.selected = true;
+    select.appendChild(emptyOpt);
+
+    // Если текущее значение не из стандартного списка (например, из старых сохранений) —
+    // добавим его сверху, чтобы пользователь его увидел.
+    if (value && !tattooOptions.includes(value)) {
+      const customOpt = document.createElement('option');
+      customOpt.value = value;
+      customOpt.textContent = value;
+      customOpt.selected = true;
+      select.appendChild(customOpt);
+    }
+
+    // Сгруппированные по основной характеристике татуировки
+    tattooStats.forEach(plus => {
+      const group = document.createElement('optgroup');
+      group.label = `+ ${plus}`;
+      tattooStats.forEach(minus => {
+        if (plus === minus) return;
+        for (let lvl = 1; lvl <= 4; lvl++) {
+          const val = `+${lvl} ${plus} -${lvl} ${minus}`;
+          const opt = document.createElement('option');
+          opt.value = val;
+          opt.textContent = val;
+          if (val === value) opt.selected = true;
+          group.appendChild(opt);
+        }
+      });
+      select.appendChild(group);
+    });
+
+    if (meta) {
+      if (meta.memberId) select.dataset.memberId = meta.memberId;
+      if (meta.field) select.dataset.field = meta.field;
+    }
+    select.addEventListener('change', e => onChange(e.target.value));
+    return select;
   }
 
   function renderTable() {
@@ -1179,20 +1243,25 @@
       });
       tr.appendChild(tdJewelry);
 
+      // ===== Татуировки — теперь выпадающие списки =====
       const tdTattoo = document.createElement('td');
       tdTattoo.className = 'set-cell';
       [
-        { key: 'tattoo1', label: 'Тату 1', ph: '+4 STR -4 CON' },
-        { key: 'tattoo2', label: 'Тату 2', ph: '+4 DEX -4 STR' },
-        { key: 'tattoo3', label: 'Тату 3', ph: '+4 WIT -4 INT' }
+        { key: 'tattoo1', label: 'Тату 1' },
+        { key: 'tattoo2', label: 'Тату 2' },
+        { key: 'tattoo3', label: 'Тату 3' }
       ].forEach(field => {
         const label = document.createElement('span');
         label.className = 'set-label';
         label.textContent = field.label;
         tdTattoo.appendChild(label);
-        tdTattoo.appendChild(createInput('text', member[field.key] || '', val => {
-          member[field.key] = val; debouncedSave(member);
-        }, { placeholder: field.ph }, meta(field.key)));
+
+        const tattooSelect = buildTattooSelect(member[field.key] || '', val => {
+          member[field.key] = val;
+          debouncedSave(member);
+        }, meta(field.key));
+
+        tdTattoo.appendChild(tattooSelect);
       });
       tr.appendChild(tdTattoo);
 
@@ -1333,15 +1402,6 @@
   }
 
   // ==================== РАСЧЁТ БАЛАНСА КАЗНЫ ====================
-  // Парсит строку цены в число. Поддерживает форматы:
-  //   "500"    → 500
-  //   "500к"   → 500 000
-  //   "500кк"  → 500 000 000
-  //   "1.5кк"  → 1 500 000
-  //   "2ккк"   → 2 000 000 000
-  //   "1млн"   → 1 000 000
-  //   "1млрд"  → 1 000 000 000
-  //   "1 500 000", "1,500,000" → 1 500 000
   function parsePrice(str) {
     if (!str) return 0;
     const s = String(str)
@@ -1370,7 +1430,6 @@
     return num * (multipliers[suffix] || 1);
   }
 
-  // Форматирует число в читаемый вид: 2500000000 → "2.5ккк"
   function formatBalance(n) {
     if (!n || n === 0) return '0';
     const abs = Math.abs(n);
@@ -1381,7 +1440,6 @@
     return sign + abs.toLocaleString('ru-RU');
   }
 
-  // Пересчитывает и обновляет панель баланса
   function updateTreasuryBalance() {
     let income = 0;
     let expense = 0;
@@ -1524,7 +1582,6 @@
       postsFeed.appendChild(card);
     });
 
-    // Пересчитать баланс после отрисовки всех постов
     updateTreasuryBalance();
   }
 
