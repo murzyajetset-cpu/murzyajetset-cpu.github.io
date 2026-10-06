@@ -751,7 +751,7 @@
       руда нужно = <code>крафтов × руда за тык</code>;
       стоимость тыка = <code>руда/тык × цена руды + крист./тык × цена кристалла</code>.
       Значения <b>руда / кристаллы / сосок за тык</b> редактируются прямо в таблице — подгони под свою хронику.
-      По умолчанию для C-Grade стоит 15 руды + 1 кристалл → 600 сосок, как в твоём примере.
+      По умолчанию: C-Grade = 15 руды + 1 кристалл → 600 сосок; B-Grade = 60 руды + 1 кристалл → 600 сосок.
     </div>
   </div>
 </div>
@@ -761,7 +761,7 @@
 <script>
   const STORAGE_KEY = 'l2craft_recipes_v1';
   const SELECTED_KEY = 'l2craft_selected_v1';
-  const SHOTS_KEY = 'l2craft_shots_v3';
+  const SHOTS_KEY = 'l2craft_shots_v4';
 
   const DEFAULT_RECIPES = {
     'dynasty_breastplate': {
@@ -828,12 +828,13 @@
   };
 
   // ==================== ДЕФОЛТНЫЕ СОСКИ ====================
+  // B-Grade: 60 Soul Ore + 1 B crystal → 600 сосок (исправлено)
   function buildDefaultShotGrades() {
     return [
       { id: 'NG',  label: 'NG',  oreSS: 3,   oreSpS: 3,   crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
       { id: 'D',   label: 'D',   oreSS: 6,   oreSpS: 6,   crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
       { id: 'C',   label: 'C',   oreSS: 15,  oreSpS: 15,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
-      { id: 'B',   label: 'B',   oreSS: 30,  oreSpS: 30,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'B',   label: 'B',   oreSS: 60,  oreSpS: 60,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
       { id: 'A',   label: 'A',   oreSS: 50,  oreSpS: 50,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
       { id: 'S',   label: 'S',   oreSS: 80,  oreSpS: 80,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
       { id: 'R',   label: 'R',   oreSS: 120, oreSpS: 120, crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
@@ -924,7 +925,6 @@
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === 'object' && Array.isArray(parsed.grades) && parsed.grades.length > 0) {
-          // Мержим с дефолтом, на случай добавления новых полей
           shotsData = {
             soulOrePrice: typeof parsed.soulOrePrice === 'string' ? parsed.soulOrePrice : '',
             spiritOrePrice: typeof parsed.spiritOrePrice === 'string' ? parsed.spiritOrePrice : '',
