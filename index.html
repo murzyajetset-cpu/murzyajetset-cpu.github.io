@@ -161,6 +161,16 @@
   .weapon-option .weapon-grade { font-weight: 800; font-size: 12px; letter-spacing: 0.3px; flex-shrink: 0; min-width: 14px; }
   .weapon-option .weapon-name { flex: 1; }
   .weapon-comment { margin-top: 3px; font-size: 10px; padding: 3px 5px; }
+  .weapon-slot-label {
+    display: block;
+    font-size: 8px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin: 5px 0 2px 0;
+    font-weight: 700;
+  }
+  .weapon-slot-label:first-child { margin-top: 0; }
   .prof-cell { display: flex; flex-direction: column; gap: 3px; }
   .prof-main { display: flex; align-items: center; gap: 6px; }
   .prof-icon { font-size: 16px; line-height: 1; flex-shrink: 0; width: 20px; text-align: center; }
@@ -343,7 +353,7 @@
           <th>Имя</th>
           <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба с уровнями)</span></th>
           <th>Ур.</th>
-          <th>Оружие<br><span class="set-label">(грейд + тип + комментарий)</span></th>
+          <th>Оружие<br><span class="set-label">(3 слота: оружие + комментарий)</span></th>
           <th>Сет брони<br><span class="set-label">(шлем / тело / низ / перчатки / ботинки / щит)</span></th>
           <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
           <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
@@ -484,9 +494,6 @@
   ];
 
   // ==================== ТАТУИРОВКИ ====================
-  // Полный список татуировок: для каждой из 6 характеристик (STR, DEX, CON, INT, WIT, MEN)
-  // и для каждой из 5 оставшихся характеристик-минусов, на уровнях 1–4.
-  // Итого 6 * 5 * 4 = 120 татуировок + пустой вариант.
   const tattooStats = ['STR', 'DEX', 'CON', 'INT', 'WIT', 'MEN'];
   const tattooOptions = [''];
   tattooStats.forEach(plus => {
@@ -848,7 +855,10 @@
       name: 'Персонаж ' + (members.length + 1),
       profession: '', sub1: '', sub2: '', sub3: '',
       sub1Level: '', sub2Level: '', sub3Level: '',
-      level: 1, weapon: '', weaponComment: '',
+      level: 1,
+      weapon: '', weaponComment: '',
+      weapon2: '', weapon2Comment: '',
+      weapon3: '', weapon3Comment: '',
       helmet: '', armor: '', legs: '', gloves: '', boots: '', shield: '',
       earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
       tattoo1: '', tattoo2: '', tattoo3: '', comment: ''
@@ -907,7 +917,6 @@
     return select;
   }
 
-  // ===== Кастомный дропдаун оружия =====
   function buildWeaponSelect(value, onChange, meta = null) {
     const wrap = document.createElement('div');
     wrap.className = 'weapon-select';
@@ -1035,20 +1044,16 @@
     return wrap;
   }
 
-  // ===== Селект татуировок =====
   function buildTattooSelect(value, onChange, meta = null) {
     const select = document.createElement('select');
     select.className = 'tattoo-select';
 
-    // Пустая опция
     const emptyOpt = document.createElement('option');
     emptyOpt.value = '';
     emptyOpt.textContent = '— нет —';
     if (!value) emptyOpt.selected = true;
     select.appendChild(emptyOpt);
 
-    // Если текущее значение не из стандартного списка (например, из старых сохранений) —
-    // добавим его сверху, чтобы пользователь его увидел.
     if (value && !tattooOptions.includes(value)) {
       const customOpt = document.createElement('option');
       customOpt.value = value;
@@ -1057,7 +1062,6 @@
       select.appendChild(customOpt);
     }
 
-    // Сгруппированные по основной характеристике татуировки
     tattooStats.forEach(plus => {
       const group = document.createElement('optgroup');
       group.label = `+ ${plus}`;
@@ -1183,23 +1187,37 @@
       }, { min: 1, max: 85 }, meta('level')));
       tr.appendChild(tdLevel);
 
+      // ===== Оружие — 3 слота, каждый со своим комментарием =====
       const tdWeapon = document.createElement('td');
       const weaponWrap = document.createElement('div');
       weaponWrap.style.display = 'flex';
       weaponWrap.style.flexDirection = 'column';
       weaponWrap.style.gap = '2px';
 
-      const weaponSelect = buildWeaponSelect(member.weapon || '', val => {
-        member.weapon = val;
-        debouncedSave(member);
-      }, meta('weapon'));
-      weaponWrap.appendChild(weaponSelect);
+      const weaponSlots = [
+        { key: 'weapon',        commentKey: 'weaponComment',  label: 'Оружие 1' },
+        { key: 'weapon2',       commentKey: 'weapon2Comment', label: 'Оружие 2' },
+        { key: 'weapon3',       commentKey: 'weapon3Comment', label: 'Оружие 3' }
+      ];
 
-      const weaponCommentInput = createInput('text', member.weaponComment || '', val => {
-        member.weaponComment = val;
-        debouncedSave(member);
-      }, { placeholder: '+16 [Focus] / SA / заметка…', class: 'weapon-comment' }, meta('weaponComment'));
-      weaponWrap.appendChild(weaponCommentInput);
+      weaponSlots.forEach((slot, idx) => {
+        const label = document.createElement('span');
+        label.className = 'weapon-slot-label';
+        label.textContent = slot.label;
+        weaponWrap.appendChild(label);
+
+        const weaponSelect = buildWeaponSelect(member[slot.key] || '', val => {
+          member[slot.key] = val;
+          debouncedSave(member);
+        }, meta(slot.key));
+        weaponWrap.appendChild(weaponSelect);
+
+        const weaponCommentInput = createInput('text', member[slot.commentKey] || '', val => {
+          member[slot.commentKey] = val;
+          debouncedSave(member);
+        }, { placeholder: '+16 [Focus] / SA / заметка…', class: 'weapon-comment' }, meta(slot.commentKey));
+        weaponWrap.appendChild(weaponCommentInput);
+      });
 
       tdWeapon.appendChild(weaponWrap);
       tr.appendChild(tdWeapon);
@@ -1243,7 +1261,7 @@
       });
       tr.appendChild(tdJewelry);
 
-      // ===== Татуировки — теперь выпадающие списки =====
+      // ===== Татуировки =====
       const tdTattoo = document.createElement('td');
       tdTattoo.className = 'set-cell';
       [
@@ -1401,7 +1419,6 @@
     return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
 
-  // ==================== РАСЧЁТ БАЛАНСА КАЗНЫ ====================
   function parsePrice(str) {
     if (!str) return 0;
     const s = String(str)
@@ -1750,28 +1767,51 @@
       tdLevel.textContent = m.level || '—';
       tr.appendChild(tdLevel);
 
+      // ===== Оружие — 3 слота в PDF =====
       const tdWeapon = document.createElement('td');
       tdWeapon.style.cssText = cellStyle;
-      const weaponLine = document.createElement('div');
-      if (m.weapon) {
-        const g = getWeaponGrade(m.weapon);
-        const gradeLetter = document.createElement('span');
-        gradeLetter.textContent = g || '?';
-        gradeLetter.style.cssText =
-          `color:${weaponGradeColor(g)};font-weight:800;font-size:14px;margin-right:7px;letter-spacing:0.5px;`;
-        weaponLine.appendChild(gradeLetter);
-        weaponLine.appendChild(document.createTextNode(m.weapon));
-      } else {
-        weaponLine.textContent = '—';
-        weaponLine.style.color = '#8a8da5';
-      }
-      tdWeapon.appendChild(weaponLine);
-      if (m.weaponComment) {
-        const c = document.createElement('div');
-        c.style.cssText = 'font-size:11px;color:#8a8da5;margin-top:3px;';
-        c.textContent = m.weaponComment;
-        tdWeapon.appendChild(c);
-      }
+      const weaponSlotsPdf = [
+        { key: 'weapon',  commentKey: 'weaponComment',  label: 'Оружие 1' },
+        { key: 'weapon2', commentKey: 'weapon2Comment', label: 'Оружие 2' },
+        { key: 'weapon3', commentKey: 'weapon3Comment', label: 'Оружие 3' }
+      ];
+
+      weaponSlotsPdf.forEach((slot, idx) => {
+        const weaponLine = document.createElement('div');
+        weaponLine.style.cssText = idx > 0 ? 'margin-top:6px;' : '';
+
+        // Заголовок слота
+        const slotLabel = document.createElement('div');
+        slotLabel.style.cssText = 'font-size:9px;color:#8a8da5;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;font-weight:700;';
+        slotLabel.textContent = slot.label;
+        weaponLine.appendChild(slotLabel);
+
+        const row = document.createElement('div');
+        const weaponName = m[slot.key];
+        if (weaponName) {
+          const g = getWeaponGrade(weaponName);
+          const gradeLetter = document.createElement('span');
+          gradeLetter.textContent = g || '?';
+          gradeLetter.style.cssText =
+            `color:${weaponGradeColor(g)};font-weight:800;font-size:14px;margin-right:7px;letter-spacing:0.5px;`;
+          row.appendChild(gradeLetter);
+          row.appendChild(document.createTextNode(weaponName));
+        } else {
+          row.textContent = '—';
+          row.style.color = '#8a8da5';
+        }
+        weaponLine.appendChild(row);
+
+        if (m[slot.commentKey]) {
+          const c = document.createElement('div');
+          c.style.cssText = 'font-size:11px;color:#8a8da5;margin-top:2px;';
+          c.textContent = m[slot.commentKey];
+          weaponLine.appendChild(c);
+        }
+
+        tdWeapon.appendChild(weaponLine);
+      });
+
       tr.appendChild(tdWeapon);
 
       const tdArmor = document.createElement('td');
