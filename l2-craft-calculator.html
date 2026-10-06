@@ -53,7 +53,6 @@
     margin: 0 0 20px 0;
   }
 
-  /* ===== Табы ===== */
   .tabs {
     display: flex;
     gap: 4px;
@@ -83,12 +82,10 @@
   .tab-btn.active {
     color: var(--accent-gold-dark);
     border-bottom-color: var(--accent-gold);
-    background: transparent;
   }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
-  /* Панель инструментов */
   .toolbar {
     display: flex;
     gap: 8px;
@@ -108,9 +105,7 @@
     letter-spacing: 0.4px;
     font-weight: 700;
   }
-  .toolbar select {
-    min-width: 240px;
-  }
+  .toolbar select { min-width: 240px; }
 
   button {
     font-family: var(--font-body);
@@ -156,7 +151,6 @@
     letter-spacing: 0;
   }
 
-  /* Карточка калькулятора */
   .calc-card {
     background: var(--bg-panel);
     border: 1px solid var(--border-subtle);
@@ -173,9 +167,7 @@
     padding-bottom: 16px;
     border-bottom: 2px solid var(--border-subtle);
   }
-  .calc-header-full {
-    grid-column: 1 / -1;
-  }
+  .calc-header-full { grid-column: 1 / -1; }
   label.field-label {
     display: block;
     font-size: 9px;
@@ -201,16 +193,13 @@
     border-color: var(--accent-gold);
     box-shadow: 0 0 0 2px rgba(184,134,11,0.15);
   }
-  input[type="number"] {
-    text-align: right;
-  }
+  input[type="number"] { text-align: right; }
   .recipe-name-input {
     font-size: 16px;
     font-weight: 700;
     color: var(--accent-gold-dark);
   }
 
-  /* Таблица ингредиентов */
   .ingredients-title {
     display: flex;
     justify-content: space-between;
@@ -250,13 +239,8 @@
   th.center, td.center { text-align: center; }
   tbody tr:hover { background: #fafbfe; }
   tbody tr:last-child td { border-bottom: none; }
-  td input {
-    padding: 5px 8px;
-    font-size: 12px;
-  }
-  .ingredient-name {
-    min-width: 180px;
-  }
+  td input { padding: 5px 8px; font-size: 12px; }
+  .ingredient-name { min-width: 180px; }
   .total-price {
     font-weight: 700;
     color: var(--text-primary);
@@ -284,7 +268,6 @@
     color: var(--danger-red);
   }
 
-  /* Итоговый блок */
   .totals {
     margin-top: 20px;
     padding: 16px 18px;
@@ -325,7 +308,6 @@
   .totals-row.profit .value { color: #16a34a; }
   .totals-row.loss .value { color: #dc2626; }
 
-  /* Строка «Себестоимость единицы» */
   .unit-row {
     background: #fdf6e0;
     padding: 10px 14px;
@@ -346,7 +328,6 @@
     color: var(--accent-gold-dark);
   }
 
-  /* Секция продажи */
   .sale-section {
     margin-top: 16px;
     display: grid;
@@ -358,7 +339,6 @@
     border-radius: 8px;
   }
 
-  /* Инфо-плашка */
   .info-hint {
     margin-top: 12px;
     padding: 10px 14px;
@@ -369,9 +349,7 @@
     color: var(--text-secondary);
     line-height: 1.5;
   }
-  .info-hint strong {
-    color: var(--accent-blue);
-  }
+  .info-hint strong { color: var(--accent-blue); }
   .info-hint code {
     background: rgba(58,95,217,0.1);
     padding: 1px 4px;
@@ -382,7 +360,7 @@
   /* ===== Секция сосок ===== */
   .shots-prices {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-bottom: 14px;
     padding: 14px 16px;
@@ -390,8 +368,41 @@
     border: 1px solid var(--border-subtle);
     border-radius: 8px;
   }
-  .shots-prices .field-label {
+  .shots-prices .field-label { color: var(--accent-gold-dark); }
+
+  .shot-type-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+  }
+  .shot-type-btn {
+    background: var(--bg-panel-alt);
+    border: none;
+    border-radius: 0;
+    padding: 10px 22px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .shot-type-btn:hover {
+    background: #eef0f8;
     color: var(--accent-gold-dark);
+    border-color: transparent;
+  }
+  .shot-type-btn.active {
+    background: linear-gradient(180deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%);
+    color: #fff;
+  }
+  .shot-type-btn + .shot-type-btn {
+    border-left: 1px solid var(--border-strong);
   }
 
   .shots-bulk {
@@ -418,16 +429,14 @@
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
-  .shots-bulk input {
-    width: 110px;
-  }
+  .shots-bulk input { width: 130px; }
 
   .table-scroll {
     overflow-x: auto;
     margin: 0 -6px;
     padding: 0 6px 6px;
   }
-  .shots-table { min-width: 1280px; }
+  .shots-table { min-width: 1320px; }
   .shots-table th { font-size: 9px; padding: 8px 6px; }
   .shots-table td { padding: 6px 6px; }
   .shots-table td.calc-cell {
@@ -443,9 +452,15 @@
   }
   .shots-table .ore-cell { color: #b8860b; }
   .shots-table .crystal-cell { color: #3a5fd9; }
+  .shots-table .shots-cell { color: #1f9d55; }
   .shots-table .total-cell {
     color: var(--accent-gold-dark);
     font-size: 13px;
+  }
+  .shots-table .input-cell input {
+    background: #fffef7;
+    border-color: #e8d9a0;
+    font-weight: 700;
   }
   .shots-table input {
     padding: 4px 6px;
@@ -462,7 +477,6 @@
     border: 1px solid #f0d98a;
   }
 
-  /* Группа ресурсов в итогах */
   .res-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -498,7 +512,6 @@
     font-weight: 600;
   }
 
-  /* Уведомление о сохранении */
   .save-toast {
     position: fixed;
     bottom: 24px;
@@ -525,25 +538,11 @@
     box-shadow: 0 4px 16px rgba(220,38,38,0.35);
   }
 
-  /* Мобильная адаптация */
   @media (max-width: 720px) {
-    .calc-header {
-      grid-template-columns: 1fr;
-    }
-    .sale-section,
-    .shots-prices,
-    .res-grid {
-      grid-template-columns: 1fr;
-    }
-    .toolbar select {
-      min-width: 0;
-      width: 100%;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 10px 8px;
-      font-size: 11px;
-    }
+    .calc-header { grid-template-columns: 1fr; }
+    .sale-section, .shots-prices, .res-grid { grid-template-columns: 1fr; }
+    .toolbar select { min-width: 0; width: 100%; }
+    .tab-btn { flex: 1; padding: 10px 8px; font-size: 11px; }
   }
 </style>
 </head>
@@ -552,7 +551,6 @@
 <h1>Калькулятор крафта L2</h1>
 <p class="subtitle">Себестоимость, маржа и расход ресурсов — предметы и соски</p>
 
-<!-- Табы -->
 <div class="tabs">
   <button class="tab-btn active" data-tab="items">⚒ Крафт предметов</button>
   <button class="tab-btn" data-tab="shots">✦ Соски / Спиртшоты</button>
@@ -654,7 +652,6 @@
 <div class="tab-panel" id="tab-shots">
   <div class="calc-card">
 
-    <!-- Цены ресурсов -->
     <div class="shots-prices">
       <div>
         <label class="field-label">Soul Ore — цена за 1 шт</label>
@@ -662,60 +659,60 @@
       </div>
       <div>
         <label class="field-label">Spirit Ore — цена за 1 шт</label>
-        <input type="text" id="spiritOrePrice" placeholder="напр. 300к">
-      </div>
-      <div>
-        <label class="field-label">Crystal — цена за 1 шт</label>
-        <input type="text" id="crystalPrice" placeholder="напр. 2к">
+        <input type="text" id="spiritOrePrice" placeholder="напр. 400к">
       </div>
     </div>
 
-    <!-- Массовое заполнение -->
+    <div class="shot-type-toggle">
+      <button class="shot-type-btn active" data-type="soulshot">Soulshot (Soul Ore)</button>
+      <button class="shot-type-btn" data-type="spiritshot">Spiritshot (Spirit Ore)</button>
+    </div>
+
     <div class="shots-bulk">
       <div>
-        <label class="field-label">Массовое заполнение количества сосок</label>
+        <label class="field-label">Массовое заполнение кристаллов</label>
         <div class="bulk-row">
-          <span>SS:</span>
-          <input type="number" id="bulkSS" value="10000" min="0" step="1">
-          <span>SpS:</span>
-          <input type="number" id="bulkSpS" value="10000" min="0" step="1">
+          <span>Кристаллов есть:</span>
+          <input type="number" id="bulkCrystals" value="100" min="0" step="1">
           <button id="applyBulkBtn" class="mini">Применить ко всем грейдам</button>
-          <button id="clearShotsBtn" class="mini danger">Сбросить количества</button>
+          <button id="clearShotsBtn" class="mini danger">Сбросить</button>
         </div>
       </div>
     </div>
 
     <div class="ingredients-title">
       <h3>Расчёт по грейдам</h3>
+      <span style="font-size:11px; color:var(--text-muted);">
+        Вводи <b>Кристаллов есть</b> — остальное посчитается
+      </span>
     </div>
 
     <div class="table-scroll">
-      <table class="shots-table" id="shotsTable">
+      <table class="shots-table">
         <thead>
           <tr>
             <th>Грейд</th>
-            <th class="num">Руда / крафт</th>
-            <th class="num">Крист. / крафт</th>
-            <th class="num">Сосок / крафт</th>
-            <th class="num">Нужно SS</th>
-            <th class="num">Нужно SpS</th>
+            <th class="num">Руда / тык</th>
+            <th class="num">Крист. / тык</th>
+            <th class="num">Сосок / тык</th>
+            <th class="num">Цена крист.</th>
+            <th class="num">Стоимость тыка</th>
+            <th class="num">Кристаллов есть</th>
             <th class="num">Крафтов</th>
-            <th class="num">Soul Ore</th>
-            <th class="num">Spirit Ore</th>
-            <th class="num">Crystals</th>
-            <th class="num">Руда, ₽</th>
-            <th class="num">Крист., ₽</th>
-            <th class="num">Итого, ₽</th>
+            <th class="num">Сосок получу</th>
+            <th class="num">Руда нужно</th>
+            <th class="num">Стоим. руды</th>
+            <th class="num">Стоим. крист.</th>
+            <th class="num">Итого</th>
           </tr>
         </thead>
         <tbody id="shotsBody"></tbody>
       </table>
     </div>
 
-    <!-- Итоги по соскам -->
     <div class="totals">
       <div class="totals-row">
-        <span class="label">Всего сосок (SS + SpS):</span>
+        <span class="label">Всего сосок получу:</span>
         <span class="value" id="totShots">0</span>
       </div>
       <div class="totals-row">
@@ -725,50 +722,36 @@
 
       <div class="res-grid">
         <div class="res-item">
-          <span class="res-label">Soul Ore</span>
-          <span class="res-value" id="totSoulOre">0</span>
-          <span class="res-cost" id="totSoulOreCost">0 ₽</span>
+          <span class="res-label" id="totOreLabel">Soul Ore нужно</span>
+          <span class="res-value" id="totOre">0</span>
+          <span class="res-cost" id="totOreCost">0 ₽</span>
         </div>
         <div class="res-item">
-          <span class="res-label">Spirit Ore</span>
-          <span class="res-value" id="totSpiritOre">0</span>
-          <span class="res-cost" id="totSpiritOreCost">0 ₽</span>
-        </div>
-        <div class="res-item">
-          <span class="res-label">Crystal</span>
+          <span class="res-label">Кристаллов использовано</span>
           <span class="res-value" id="totCrystals">0</span>
           <span class="res-cost" id="totCrystalCost">0 ₽</span>
         </div>
-      </div>
-
-      <div class="totals-row">
-        <span class="label">Стоимость руды (Soul + Spirit):</span>
-        <span class="value" id="totOreCost">0</span>
-      </div>
-      <div class="totals-row">
-        <span class="label">Стоимость кристаллов:</span>
-        <span class="value" id="totCrystalCostRow">0</span>
+        <div class="res-item">
+          <span class="res-label">Средняя себестоимость 1 соски</span>
+          <span class="res-value" id="totPerShot">0</span>
+          <span class="res-cost">из общей стоимости</span>
+        </div>
       </div>
 
       <div class="totals-row big">
-        <span class="label">Общая стоимость набора:</span>
+        <span class="label">Общая стоимость партии:</span>
         <span class="value" id="totTotalCost">0</span>
-      </div>
-      <div class="totals-row big">
-        <span class="label">Стоимость 1 крафта:</span>
-        <span class="value" id="totPerCraft">0</span>
       </div>
     </div>
 
     <div class="info-hint">
       <strong>Как считается:</strong>
-      крафтов SS = ⌈нужно SS ÷ сосок за крафт⌉, крафтов SpS — аналогично;
-      Soul Ore = крафтов SS × руда за крафт;
-      Spirit Ore = крафтов SpS × руда за крафт;
-      Crystals = (крафтов SS + крафтов SpS) × кристаллов за крафт.
-      Стоимость набора = Soul Ore × цена Soul Ore + Spirit Ore × цена Spirit Ore + Crystals × цена Crystal.
-      Стоимость 1 крафта = стоимость набора ÷ общее количество крафтов.
-      Значения «руда / кристаллы / сосок за крафт» редактируемые — поправьте их под свою хронику.
+      крафтов = <code>⌊кристаллов есть ÷ кристаллов на тык⌋</code>;
+      сосок получу = <code>крафтов × сосок за тык</code>;
+      руда нужно = <code>крафтов × руда за тык</code>;
+      стоимость тыка = <code>руда/тык × цена руды + крист./тык × цена кристалла</code>.
+      Значения <b>руда / кристаллы / сосок за тык</b> редактируются прямо в таблице — подгони под свою хронику.
+      По умолчанию для C-Grade стоит 15 руды + 1 кристалл → 600 сосок, как в твоём примере.
     </div>
   </div>
 </div>
@@ -778,14 +761,11 @@
 <script>
   const STORAGE_KEY = 'l2craft_recipes_v1';
   const SELECTED_KEY = 'l2craft_selected_v1';
-  const SHOTS_KEY = 'l2craft_shots_v2';
+  const SHOTS_KEY = 'l2craft_shots_v3';
 
-  // ==================== ПРЕДУСТАНОВЛЕННЫЕ РЕЦЕПТЫ ====================
   const DEFAULT_RECIPES = {
     'dynasty_breastplate': {
-      name: 'Dynasty Breastplate',
-      craftCount: 1,
-      salePrice: 0,
+      name: 'Dynasty Breastplate', craftCount: 1, salePrice: 0,
       ingredients: [
         { name: 'Dynasty Breastplate Piece', perCraft: 12, price: 0 },
         { name: 'Dynasty Breastplate Recipe', perCraft: 1, price: 0 },
@@ -798,9 +778,7 @@
       ]
     },
     'dynasty_gaiters': {
-      name: 'Dynasty Gaiters',
-      craftCount: 1,
-      salePrice: 0,
+      name: 'Dynasty Gaiters', craftCount: 1, salePrice: 0,
       ingredients: [
         { name: 'Dynasty Gaiters Piece', perCraft: 10, price: 0 },
         { name: 'Dynasty Gaiters Recipe', perCraft: 1, price: 0 },
@@ -812,9 +790,7 @@
       ]
     },
     'dynasty_helmet': {
-      name: 'Dynasty Helmet',
-      craftCount: 1,
-      salePrice: 0,
+      name: 'Dynasty Helmet', craftCount: 1, salePrice: 0,
       ingredients: [
         { name: 'Dynasty Helmet Piece', perCraft: 8, price: 0 },
         { name: 'Dynasty Helmet Recipe', perCraft: 1, price: 0 },
@@ -825,9 +801,7 @@
       ]
     },
     'vesper_cutter': {
-      name: 'Vesper Cutter',
-      craftCount: 1,
-      salePrice: 0,
+      name: 'Vesper Cutter', craftCount: 1, salePrice: 0,
       ingredients: [
         { name: 'Vesper Cutter Piece', perCraft: 14, price: 0 },
         { name: 'Vesper Cutter Recipe', perCraft: 1, price: 0 },
@@ -840,9 +814,7 @@
       ]
     },
     'draconic_bow': {
-      name: 'Draconic Bow',
-      craftCount: 1,
-      salePrice: 0,
+      name: 'Draconic Bow', craftCount: 1, salePrice: 0,
       ingredients: [
         { name: 'Draconic Bow Shaft', perCraft: 13, price: 0 },
         { name: 'Draconic Bow Recipe', perCraft: 1, price: 0 },
@@ -855,33 +827,26 @@
     }
   };
 
-  // ==================== ПРЕДУСТАНОВЛЕННЫЕ СОСКИ ====================
-  const SHOT_GRADES = [
-    { id: 'NG',  label: 'NG'  },
-    { id: 'D',   label: 'D'   },
-    { id: 'C',   label: 'C'   },
-    { id: 'B',   label: 'B'   },
-    { id: 'A',   label: 'A'   },
-    { id: 'S',   label: 'S'   },
-    { id: 'R',   label: 'R'   },
-    { id: 'R95', label: 'R95' },
-    { id: 'R99', label: 'R99' }
-  ];
+  // ==================== ДЕФОЛТНЫЕ СОСКИ ====================
+  function buildDefaultShotGrades() {
+    return [
+      { id: 'NG',  label: 'NG',  oreSS: 3,   oreSpS: 3,   crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'D',   label: 'D',   oreSS: 6,   oreSpS: 6,   crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'C',   label: 'C',   oreSS: 15,  oreSpS: 15,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'B',   label: 'B',   oreSS: 30,  oreSpS: 30,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'A',   label: 'A',   oreSS: 50,  oreSpS: 50,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'S',   label: 'S',   oreSS: 80,  oreSpS: 80,  crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'R',   label: 'R',   oreSS: 120, oreSpS: 120, crystal: 1, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'R95', label: 'R95', oreSS: 150, oreSpS: 150, crystal: 2, shots: 600, crystalPrice: '', crystalsHave: 0 },
+      { id: 'R99', label: 'R99', oreSS: 200, oreSpS: 200, crystal: 3, shots: 600, crystalPrice: '', crystalsHave: 0 }
+    ];
+  }
 
   function buildDefaultShots() {
     return {
       soulOrePrice: '',
       spiritOrePrice: '',
-      crystalPrice: '',
-      grades: SHOT_GRADES.map((g, i) => ({
-        id: g.id,
-        label: g.label,
-        ore: i + 1,       // руды за 1 крафт (soul или spirit — по типу соски)
-        crystal: 0,       // кристаллов за 1 крафт
-        out: 100,         // сосок за 1 крафт
-        needSS: 0,
-        needSpS: 0
-      }))
+      grades: buildDefaultShotGrades()
     };
   }
 
@@ -889,6 +854,7 @@
   let recipes = {};
   let currentId = null;
   let shotsData = buildDefaultShots();
+  let shotType = 'soulshot';
 
   // ==================== УТИЛИТЫ ====================
   function parsePrice(str) {
@@ -929,9 +895,7 @@
         if (typeof recipes !== 'object' || Array.isArray(recipes)) recipes = {};
         return;
       }
-    } catch (e) {
-      console.warn('Ошибка чтения рецептов:', e);
-    }
+    } catch (e) { console.warn('Ошибка чтения рецептов:', e); }
     recipes = JSON.parse(JSON.stringify(DEFAULT_RECIPES));
     saveRecipes();
   }
@@ -960,13 +924,16 @@
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === 'object' && Array.isArray(parsed.grades) && parsed.grades.length > 0) {
-          shotsData = parsed;
+          // Мержим с дефолтом, на случай добавления новых полей
+          shotsData = {
+            soulOrePrice: typeof parsed.soulOrePrice === 'string' ? parsed.soulOrePrice : '',
+            spiritOrePrice: typeof parsed.spiritOrePrice === 'string' ? parsed.spiritOrePrice : '',
+            grades: parsed.grades
+          };
           return;
         }
       }
-    } catch (e) {
-      console.warn('Ошибка чтения сосок:', e);
-    }
+    } catch (e) { console.warn('Ошибка чтения сосок:', e); }
     shotsData = buildDefaultShots();
     saveShots();
   }
@@ -983,8 +950,7 @@
     const ids = Object.keys(recipes);
     if (ids.length === 0) {
       const opt = document.createElement('option');
-      opt.value = '';
-      opt.textContent = '— нет рецептов —';
+      opt.value = ''; opt.textContent = '— нет рецептов —';
       select.appendChild(opt);
       return;
     }
@@ -1050,13 +1016,11 @@
       tdPer.className = 'num';
       const perInput = document.createElement('input');
       perInput.type = 'number';
-      perInput.min = 0;
-      perInput.step = 'any';
+      perInput.min = 0; perInput.step = 'any';
       perInput.value = ing.perCraft || 0;
       perInput.addEventListener('input', () => {
         recipe.ingredients[idx].perCraft = parseFloat(perInput.value) || 0;
-        recalcAll();
-        scheduleSave();
+        recalcAll(); scheduleSave();
       });
       tdPer.appendChild(perInput);
       tr.appendChild(tdPer);
@@ -1076,8 +1040,7 @@
       priceInput.placeholder = '0';
       priceInput.addEventListener('input', () => {
         recipe.ingredients[idx].price = priceInput.value;
-        recalcAll();
-        scheduleSave();
+        recalcAll(); scheduleSave();
       });
       tdPrice.appendChild(priceInput);
       tr.appendChild(tdPrice);
@@ -1106,7 +1069,6 @@
     });
   }
 
-  // ==================== ПЕРЕСЧЁТ: РЕЦЕПТЫ ====================
   function recalcAll() {
     const recipe = recipes[currentId];
     if (!recipe) {
@@ -1123,9 +1085,7 @@
     const craftCount = Math.max(1, parseInt(recipe.craftCount, 10) || 1);
     const salePrice = parsePrice(recipe.salePrice);
 
-    let totalCount = 0;
-    let totalCost = 0;
-
+    let totalCount = 0, totalCost = 0;
     (recipe.ingredients || []).forEach(ing => {
       const per = parseFloat(ing.perCraft) || 0;
       const count = per * craftCount;
@@ -1167,9 +1127,9 @@
   }
 
   // ==================== РЕНДЕР: СОСКИ ====================
-  function makeNumCell(value, onChange, min = 0, step = 'any') {
+  function makeNumCell(value, onChange, min = 0, step = 'any', extraClass = '') {
     const td = document.createElement('td');
-    td.className = 'num';
+    td.className = 'num' + (extraClass ? ' ' + extraClass : '');
     const inp = document.createElement('input');
     inp.type = 'number';
     inp.min = min;
@@ -1183,6 +1143,18 @@
     return td;
   }
 
+  function makeTextCell(value, onChange, extraClass = '') {
+    const td = document.createElement('td');
+    td.className = 'num' + (extraClass ? ' ' + extraClass : '');
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = value || '';
+    inp.placeholder = '0';
+    inp.addEventListener('input', () => onChange(inp.value));
+    td.appendChild(inp);
+    return td;
+  }
+
   function makeCalcCell(text, extraClass = '') {
     const td = document.createElement('td');
     td.className = 'num calc-cell' + (extraClass ? ' ' + extraClass : '');
@@ -1191,15 +1163,18 @@
   }
 
   function renderShots() {
-    const data = shotsData;
-    document.getElementById('soulOrePrice').value = data.soulOrePrice || '';
-    document.getElementById('spiritOrePrice').value = data.spiritOrePrice || '';
-    document.getElementById('crystalPrice').value = data.crystalPrice || '';
+    document.getElementById('soulOrePrice').value = shotsData.soulOrePrice || '';
+    document.getElementById('spiritOrePrice').value = shotsData.spiritOrePrice || '';
 
+    document.querySelectorAll('.shot-type-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.type === shotType);
+    });
+
+    const isSoul = shotType === 'soulshot';
     const tbody = document.getElementById('shotsBody');
     tbody.innerHTML = '';
 
-    data.grades.forEach((g, idx) => {
+    shotsData.grades.forEach((g, idx) => {
       const tr = document.createElement('tr');
 
       // 0 — грейд
@@ -1211,50 +1186,54 @@
       tdGrade.appendChild(badge);
       tr.appendChild(tdGrade);
 
-      // 1 — руда/крафт
-      tr.appendChild(makeNumCell(g.ore, v => {
-        data.grades[idx].ore = v; recalcShots(); scheduleSaveShots();
+      // 1 — руда / тык
+      const oreVal = isSoul ? g.oreSS : g.oreSpS;
+      tr.appendChild(makeNumCell(oreVal, v => {
+        if (isSoul) shotsData.grades[idx].oreSS = v;
+        else shotsData.grades[idx].oreSpS = v;
+        recalcShots(); scheduleSaveShots();
       }, 0));
 
-      // 2 — кристаллов/крафт
+      // 2 — крист / тык
       tr.appendChild(makeNumCell(g.crystal, v => {
-        data.grades[idx].crystal = v; recalcShots(); scheduleSaveShots();
+        shotsData.grades[idx].crystal = v; recalcShots(); scheduleSaveShots();
       }, 0));
 
-      // 3 — сосок/крафт
-      tr.appendChild(makeNumCell(g.out, v => {
-        data.grades[idx].out = Math.max(1, v); recalcShots(); scheduleSaveShots();
+      // 3 — сосок / тык
+      tr.appendChild(makeNumCell(g.shots, v => {
+        shotsData.grades[idx].shots = Math.max(1, v); recalcShots(); scheduleSaveShots();
       }, 1));
 
-      // 4 — нужно SS
-      tr.appendChild(makeNumCell(g.needSS, v => {
-        data.grades[idx].needSS = v; recalcShots(); scheduleSaveShots();
-      }, 0, '1'));
+      // 4 — цена крист
+      tr.appendChild(makeTextCell(g.crystalPrice, v => {
+        shotsData.grades[idx].crystalPrice = v; recalcShots(); scheduleSaveShots();
+      }));
 
-      // 5 — нужно SpS
-      tr.appendChild(makeNumCell(g.needSpS, v => {
-        data.grades[idx].needSpS = v; recalcShots(); scheduleSaveShots();
-      }, 0, '1'));
+      // 5 — стоимость тыка (calc)
+      tr.appendChild(makeCalcCell('—', 'total-cell'));
 
-      // 6 — крафтов (calc)
+      // 6 — кристаллов есть (input)
+      tr.appendChild(makeNumCell(g.crystalsHave, v => {
+        shotsData.grades[idx].crystalsHave = Math.max(0, v);
+        recalcShots(); scheduleSaveShots();
+      }, 0, '1', 'input-cell'));
+
+      // 7 — крафтов (calc)
       tr.appendChild(makeCalcCell('—'));
 
-      // 7 — Soul Ore
+      // 8 — сосок получу (calc)
+      tr.appendChild(makeCalcCell('—', 'shots-cell'));
+
+      // 9 — руда нужно (calc)
       tr.appendChild(makeCalcCell('0', 'ore-cell'));
 
-      // 8 — Spirit Ore
-      tr.appendChild(makeCalcCell('0', 'ore-cell'));
+      // 10 — стоимость руды (calc)
+      tr.appendChild(makeCalcCell('0'));
 
-      // 9 — Crystals
+      // 11 — стоимость крист (calc)
       tr.appendChild(makeCalcCell('0', 'crystal-cell'));
 
-      // 10 — стоимость руды
-      tr.appendChild(makeCalcCell('0'));
-
-      // 11 — стоимость кристаллов
-      tr.appendChild(makeCalcCell('0'));
-
-      // 12 — итого
+      // 12 — итого (calc)
       tr.appendChild(makeCalcCell('0', 'total-cell'));
 
       tbody.appendChild(tr);
@@ -1263,77 +1242,64 @@
     recalcShots();
   }
 
-  // ==================== ПЕРЕСЧЁТ: СОСКИ ====================
   function recalcShots() {
-    const data = shotsData;
-    const soulOrePrice = parsePrice(data.soulOrePrice);
-    const spiritOrePrice = parsePrice(data.spiritOrePrice);
-    const crystalPrice = parsePrice(data.crystalPrice);
+    const isSoul = shotType === 'soulshot';
+    const orePrice = parsePrice(isSoul ? shotsData.soulOrePrice : shotsData.spiritOrePrice);
 
     const rows = document.querySelectorAll('#shotsBody tr');
 
-    let totShots = 0;
-    let totCrafts = 0;
-    let totSoulOre = 0;
-    let totSpiritOre = 0;
-    let totCrystals = 0;
-    let totOreCost = 0;
-    let totCrystalCost = 0;
+    let totShots = 0, totCrafts = 0, totOre = 0, totCrystals = 0;
+    let totOreCost = 0, totCrystalCost = 0;
 
-    data.grades.forEach((g, idx) => {
+    shotsData.grades.forEach((g, idx) => {
       const row = rows[idx];
       if (!row) return;
 
-      const needSS = Math.max(0, g.needSS || 0);
-      const needSpS = Math.max(0, g.needSpS || 0);
-      const out = Math.max(1, g.out || 1);
-      const orePer = Math.max(0, g.ore || 0);
-      const crystalPer = Math.max(0, g.crystal || 0);
+      const orePer = Math.max(0, isSoul ? g.oreSS : g.oreSpS);
+      const crystalPer = Math.max(0, g.crystal);
+      const shotsPer = Math.max(1, g.shots);
+      const crystalPrice = parsePrice(g.crystalPrice);
+      const crystalsHave = Math.max(0, g.crystalsHave);
 
-      const craftsSS = needSS > 0 ? Math.ceil(needSS / out) : 0;
-      const craftsSpS = needSpS > 0 ? Math.ceil(needSpS / out) : 0;
-      const crafts = craftsSS + craftsSpS;
+      const crafts = crystalPer > 0 ? Math.floor(crystalsHave / crystalPer) : 0;
+      const crystalsUsed = crafts * crystalPer;
+      const shotsOut = crafts * shotsPer;
+      const oreNeed = crafts * orePer;
 
-      const soulOre = craftsSS * orePer;
-      const spiritOre = craftsSpS * orePer;
-      const crystals = crafts * crystalPer;
+      const oreCost = oreNeed * orePrice;
+      const crystalCost = crystalsUsed * crystalPrice;
+      const total = oreCost + crystalCost;
+      const perCraft = orePer * orePrice + crystalPer * crystalPrice;
 
-      const oreCost = soulOre * soulOrePrice + spiritOre * spiritOrePrice;
-      const crystalCost = crystals * crystalPrice;
-      const totalCost = oreCost + crystalCost;
-
-      row.children[6].textContent  = crafts > 0 ? formatNum(crafts) : '—';
-      row.children[7].textContent  = formatNum(soulOre);
-      row.children[8].textContent  = formatNum(spiritOre);
-      row.children[9].textContent  = formatNum(crystals);
+      row.children[5].textContent  = perCraft > 0 ? formatNum(perCraft) : '—';
+      row.children[7].textContent  = crafts > 0 ? formatNum(crafts) : '—';
+      row.children[8].textContent  = shotsOut > 0 ? formatNum(shotsOut) : '—';
+      row.children[9].textContent  = formatNum(oreNeed);
       row.children[10].textContent = formatNum(oreCost);
       row.children[11].textContent = formatNum(crystalCost);
-      row.children[12].textContent = formatNum(totalCost);
+      row.children[12].textContent = formatNum(total);
 
-      totShots += needSS + needSpS;
+      totShots += shotsOut;
       totCrafts += crafts;
-      totSoulOre += soulOre;
-      totSpiritOre += spiritOre;
-      totCrystals += crystals;
+      totOre += oreNeed;
+      totCrystals += crystalsUsed;
       totOreCost += oreCost;
       totCrystalCost += crystalCost;
     });
 
-    const totTotalCost = totOreCost + totCrystalCost;
-    const perCraft = totCrafts > 0 ? totTotalCost / totCrafts : 0;
+    const totalCost = totOreCost + totCrystalCost;
+    const perShot = totShots > 0 ? totalCost / totShots : 0;
 
     document.getElementById('totShots').textContent = formatNum(totShots);
     document.getElementById('totCrafts').textContent = formatNum(totCrafts);
-    document.getElementById('totSoulOre').textContent = formatNum(totSoulOre);
-    document.getElementById('totSpiritOre').textContent = formatNum(totSpiritOre);
+    document.getElementById('totOre').textContent = formatNum(totOre);
     document.getElementById('totCrystals').textContent = formatNum(totCrystals);
-    document.getElementById('totSoulOreCost').textContent = formatNum(totSoulOre * soulOrePrice) + ' ₽';
-    document.getElementById('totSpiritOreCost').textContent = formatNum(totSpiritOre * spiritOrePrice) + ' ₽';
+    document.getElementById('totOreCost').textContent = formatNum(totOreCost) + ' ₽';
     document.getElementById('totCrystalCost').textContent = formatNum(totCrystalCost) + ' ₽';
-    document.getElementById('totOreCost').textContent = formatNum(totOreCost);
-    document.getElementById('totCrystalCostRow').textContent = formatNum(totCrystalCost);
-    document.getElementById('totTotalCost').textContent = formatNum(totTotalCost);
-    document.getElementById('totPerCraft').textContent = formatNum(perCraft);
+    document.getElementById('totPerShot').textContent = formatNum(perShot);
+    document.getElementById('totTotalCost').textContent = formatNum(totalCost);
+
+    document.getElementById('totOreLabel').textContent = (isSoul ? 'Soul Ore' : 'Spirit Ore') + ' нужно';
   }
 
   // ==================== АВТОСОХРАНЕНИЕ ====================
@@ -1508,29 +1474,29 @@
     recalcShots();
     scheduleSaveShots();
   });
-  document.getElementById('crystalPrice').addEventListener('input', (e) => {
-    shotsData.crystalPrice = e.target.value;
-    recalcShots();
-    scheduleSaveShots();
+
+  document.querySelectorAll('.shot-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      shotType = btn.dataset.type;
+      renderShots();
+    });
   });
 
   document.getElementById('applyBulkBtn').addEventListener('click', () => {
-    const ss = Math.max(0, parseFloat(document.getElementById('bulkSS').value) || 0);
-    const sps = Math.max(0, parseFloat(document.getElementById('bulkSpS').value) || 0);
-    shotsData.grades.forEach(g => { g.needSS = ss; g.needSpS = sps; });
+    const qty = Math.max(0, parseFloat(document.getElementById('bulkCrystals').value) || 0);
+    shotsData.grades.forEach(g => { g.crystalsHave = qty; });
     renderShots();
     saveShots();
-    showToast('Количество применено ко всем грейдам');
+    showToast('Кристаллы применены ко всем грейдам');
   });
 
   document.getElementById('clearShotsBtn').addEventListener('click', () => {
-    shotsData.grades.forEach(g => { g.needSS = 0; g.needSpS = 0; });
+    shotsData.grades.forEach(g => { g.crystalsHave = 0; });
     renderShots();
     saveShots();
     showToast('Количества сброшены');
   });
 
-  // Ctrl+S — сохранить активное
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
       e.preventDefault();
