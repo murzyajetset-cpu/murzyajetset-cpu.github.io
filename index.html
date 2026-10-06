@@ -220,6 +220,75 @@
   .treasury-breakdown .income { color: #16a34a; font-weight: 700; }
   .treasury-breakdown .expense { color: #dc2626; font-weight: 700; }
 
+  /* ===== Сводка по крафту и покупкам ===== */
+  .summary-panel {
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #f9fafc 0%, #f0f3f9 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+  }
+  .summary-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 10px;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .summary-tile {
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .summary-tile-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .summary-tile-value {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+  .summary-tile-sub {
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.2px;
+  }
+  .summary-totals {
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-subtle);
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.2px;
+  }
+  .summary-totals .s-total-craft {
+    color: var(--accent-gold-dark);
+    font-weight: 700;
+  }
+  .summary-totals .s-total-buy {
+    color: var(--accent-blue);
+    font-weight: 700;
+  }
+
   .post-form {
     background: var(--bg-panel); border: 1px solid var(--border-subtle);
     border-radius: 8px; padding: 14px; margin-bottom: 16px;
@@ -456,6 +525,45 @@
     </div>
   </div>
 
+  <div class="summary-panel">
+    <div class="summary-title">📊 Сводка по крафту и покупкам</div>
+    <div class="summary-grid">
+      <div class="summary-tile">
+        <div class="summary-tile-label">🔨 Крафты</div>
+        <div class="summary-tile-value" id="sumCraftActive">0</div>
+        <div class="summary-tile-sub" id="sumCraftDone">готово: 0</div>
+      </div>
+      <div class="summary-tile">
+        <div class="summary-tile-label">💰 Покупки</div>
+        <div class="summary-tile-value" id="sumBuyActive">0</div>
+        <div class="summary-tile-sub" id="sumBuyDone">готово: 0</div>
+      </div>
+      <div class="summary-tile">
+        <div class="summary-tile-label">💎 Казна</div>
+        <div class="summary-tile-value" id="sumTreasury">0</div>
+        <div class="summary-tile-sub" id="sumTreasurySub">постов</div>
+      </div>
+      <div class="summary-tile">
+        <div class="summary-tile-label">⏳ В поиске</div>
+        <div class="summary-tile-value" id="sumNew">0</div>
+        <div class="summary-tile-sub">активных</div>
+      </div>
+      <div class="summary-tile">
+        <div class="summary-tile-label">🔥 В работе</div>
+        <div class="summary-tile-value" id="sumProgress">0</div>
+        <div class="summary-tile-sub">активных</div>
+      </div>
+      <div class="summary-tile">
+        <div class="summary-tile-label">✅ Готово</div>
+        <div class="summary-tile-value" id="sumDone">0</div>
+        <div class="summary-tile-sub">всего</div>
+      </div>
+    </div>
+    <div class="summary-totals" id="craftSummaryTotals">
+      Общая стоимость активного: <span class="s-total-craft">0</span> крафт · <span class="s-total-buy">0</span> покупки
+    </div>
+  </div>
+
   <div class="post-form">
     <div class="post-form-row">
       <div>
@@ -655,8 +763,7 @@
     { name: "Apprentice's Spellbook", grade: 'NG' },
     { name: 'Voodoo Doll', grade: 'NG' },
 
-    // ==================== D Grade (полный список) ====================
-    // --- Одноручные мечи ---
+    // ==================== D Grade ====================
     { name: 'Saber', grade: 'D' },
     { name: "Artisan's Sword", grade: 'D' },
     { name: 'Bastard Sword', grade: 'D' },
@@ -665,20 +772,17 @@
     { name: 'Crimson Sword', grade: 'D' },
     { name: 'Elven Sword', grade: 'D' },
     { name: 'Elven Long Sword', grade: 'D' },
-    // --- Одноручные магические мечи ---
     { name: 'Priest Sword', grade: 'D' },
     { name: 'Sword of Magic', grade: 'D' },
     { name: 'Sword of Mystic', grade: 'D' },
     { name: 'Sword of Occult', grade: 'D' },
     { name: 'Sword of Magic Fog', grade: 'D' },
     { name: 'Sword of Revolution', grade: 'D' },
-    // --- Двуручные мечи ---
     { name: 'Heavy Sword', grade: 'D' },
     { name: 'Steel Sword', grade: 'D' },
     { name: 'Two-Handed Sword', grade: 'D' },
     { name: 'Titan Sword', grade: 'D' },
     { name: 'Claymore', grade: 'D' },
-    // --- Кинжалы ---
     { name: 'Assassin Knife', grade: 'D' },
     { name: 'Crafted Dagger', grade: 'D' },
     { name: 'Poniard Dagger', grade: 'D' },
@@ -686,12 +790,10 @@
     { name: 'Cursed Maingauche', grade: 'D' },
     { name: 'Maingauche', grade: 'D' },
     { name: 'Mithril Dagger', grade: 'D' },
-    // --- Магические кинжалы ---
     { name: "Conjuror's Knife", grade: 'D' },
     { name: 'Dagger of Mana', grade: 'D' },
     { name: 'Mystic Knife', grade: 'D' },
     { name: 'Shilen Knife', grade: 'D' },
-    // --- Копья ---
     { name: 'Trident', grade: 'D' },
     { name: 'Dwarven Trident', grade: 'D' },
     { name: 'Pike', grade: 'D' },
@@ -700,14 +802,12 @@
     { name: 'War Pick', grade: 'D' },
     { name: 'Winged Spear', grade: 'D' },
     { name: 'Glaive', grade: 'D' },
-    // --- Луки ---
     { name: 'Reinforced Bow', grade: 'D' },
     { name: 'Dark Elven Bow', grade: 'D' },
     { name: 'Elven Bow', grade: 'D' },
     { name: 'Long Bow', grade: 'D' },
     { name: 'Gastraphetes', grade: 'D' },
     { name: 'Reinforced Long Bow', grade: 'D' },
-    // --- Одноручные бланты ---
     { name: 'Hand Axe', grade: 'D' },
     { name: 'Heavy Mace', grade: 'D' },
     { name: 'Scalpel', grade: 'D' },
@@ -723,7 +823,6 @@
     { name: 'Skull Breaker', grade: 'D' },
     { name: 'Tarbar', grade: 'D' },
     { name: 'Bonebreaker', grade: 'D' },
-    // --- Одноручное магическое дробящее ---
     { name: "Sage's Blood", grade: 'D' },
     { name: 'Tome of Blood', grade: 'D' },
     { name: 'Crucifix of Blood', grade: 'D' },
@@ -731,7 +830,6 @@
     { name: 'Demon Fangs', grade: 'D' },
     { name: 'Staff of Life', grade: 'D' },
     { name: 'Atuba Mace', grade: 'D' },
-    // --- Двуручное магическое ---
     { name: 'Bone Staff', grade: 'D' },
     { name: "Conjuror's Staff", grade: 'D' },
     { name: 'Mystic Staff', grade: 'D' },
@@ -740,19 +838,16 @@
     { name: 'Goat Head Staff', grade: 'D' },
     { name: 'Atuba Hammer', grade: 'D' },
     { name: 'Ghost Staff', grade: 'D' },
-    // --- Кастеты ---
     { name: 'Baghnakh', grade: 'D' },
     { name: 'Single-Edged Jamadhr', grade: 'D' },
     { name: 'Triple-Edged Jamadhr', grade: 'D' },
     { name: "Bich'hwa", grade: 'D' },
     { name: 'Scallop Jamadhr', grade: 'D' },
-    // --- Одноручное магическое ---
     { name: 'Branch of Life', grade: 'D' },
     { name: 'Temptation of Abyss', grade: 'D' },
     { name: 'Divine Tome', grade: 'D' },
 
-    // ==================== C Grade (полный список) ====================
-    // --- Одноручное магическое дробящее ---
+    // ==================== C Grade ====================
     { name: 'Stick of Faith', grade: 'C' },
     { name: 'Club of Nature', grade: 'C' },
     { name: "Healhren's Book", grade: 'C' },
@@ -761,12 +856,10 @@
     { name: 'Nirvana Axe', grade: 'C' },
     { name: 'Stick of Eternity', grade: 'C' },
     { name: 'Eclipse Axe', grade: 'C' },
-    // --- Одноручные магические мечи ---
     { name: 'Mysterious Sword', grade: 'C' },
     { name: "Homunkulus's Sword", grade: 'C' },
     { name: 'Sword of Whispering Death', grade: 'C' },
     { name: 'Eclipse Sword', grade: 'C' },
-    // --- Двуручное магическое ---
     { name: 'Crystal Staff', grade: 'C' },
     { name: 'Heavy Doom Axe', grade: 'C' },
     { name: 'Heavy Doom Hammer', grade: 'C' },
@@ -778,7 +871,6 @@
     { name: "Deadman's Staff", grade: 'C' },
     { name: "Demon's Staff", grade: 'C' },
     { name: "Ghoul's Staff", grade: 'C' },
-    // --- Одноручные мечи ---
     { name: 'Stormbringer', grade: 'C' },
     { name: 'Caliburs', grade: 'C' },
     { name: 'Katana', grade: 'C' },
@@ -790,7 +882,6 @@
     { name: 'Sword of Nightmare', grade: 'C' },
     { name: 'Tsurugi', grade: 'C' },
     { name: 'Samurai Longsword', grade: 'C' },
-    // --- Дуал-мечи ---
     { name: 'Saber*Sword of Revolution', grade: 'C' },
     { name: "Knight's Sword*Sword of Revolution", grade: 'C' },
     { name: 'Elven Sword*Sword of Revolution', grade: 'C' },
@@ -826,25 +917,21 @@
     { name: 'Elven Long Sword*Elven Long Sword', grade: 'C' },
     { name: 'Stormbringer*Stormbringer', grade: 'C' },
     { name: 'Shamshir*Shamshir', grade: 'C' },
-    // --- Дуал-бланты ---
     { name: 'Tarbar*Tarbar', grade: 'C' },
     { name: 'Battle Axe*Battle Axe', grade: 'C' },
     { name: 'Dwarven War Hammer*Dwarven War Hammer', grade: 'C' },
-    // --- Копья ---
     { name: 'Body Slasher', grade: 'C' },
     { name: 'Orcish Glaive', grade: 'C' },
     { name: 'Scythe', grade: 'C' },
     { name: 'Bec de Corbin', grade: 'C' },
     { name: 'Poleaxe', grade: 'C' },
     { name: 'Orcish Poleaxe', grade: 'C' },
-    // --- Кинжалы ---
     { name: 'Cursed Dagger', grade: 'C' },
     { name: 'Dark Elven Dagger', grade: 'C' },
     { name: 'Dark Screamer', grade: 'C' },
     { name: 'Grace Dagger', grade: 'C' },
     { name: 'Stiletto', grade: 'C' },
     { name: 'Crystal Dagger', grade: 'C' },
-    // --- Одноручные бланты ---
     { name: 'Battle Axe', grade: 'C' },
     { name: 'Big Hammer', grade: 'C' },
     { name: 'Silver Axe', grade: 'C' },
@@ -852,25 +939,20 @@
     { name: 'Dwarven War Hammer', grade: 'C' },
     { name: 'War Axe', grade: 'C' },
     { name: 'Yaksa Mace', grade: 'C' },
-    // --- Двуручные бланты ---
     { name: 'Karik Horn', grade: 'C' },
     { name: 'Dwarven Hammer', grade: 'C' },
-    // --- Луки ---
     { name: 'Crystallized Ice Bow', grade: 'C' },
     { name: 'Akat Long Bow', grade: 'C' },
     { name: 'Elemental Bow', grade: 'C' },
     { name: 'Noble Elven Bow', grade: 'C' },
     { name: 'Eminence Bow', grade: 'C' },
-    // --- Двуручные мечи ---
     { name: 'Flamberge', grade: 'C' },
     { name: "Pa'agrian Sword", grade: 'C' },
     { name: 'Berserker Blade', grade: 'C' },
-    // --- Кастеты ---
     { name: 'Chakram', grade: 'C' },
     { name: 'Fisted Blade', grade: 'C' },
     { name: 'Knuckle Duster', grade: 'C' },
     { name: 'Great Pata', grade: 'C' },
-    // --- Отдельные предметы ---
     { name: 'Crystal Dagger*Cursed Dagger', grade: 'C' },
     { name: 'Soulfire Dirk', grade: 'C' },
 
@@ -1700,6 +1782,54 @@
       ` · Расход: <span class="expense">−${formatBalance(expense)}</span>`;
   }
 
+  function updateCraftSummary() {
+    const craftPosts    = posts.filter(p => p.type === 'craft');
+    const buyPosts      = posts.filter(p => p.type === 'buy');
+    const treasuryPosts = posts.filter(p => p.type === 'treasury');
+
+    const craftActive = craftPosts.filter(p => (p.status || 'new') !== 'done').length;
+    const craftDone   = craftPosts.filter(p => (p.status || 'new') === 'done').length;
+    const buyActive   = buyPosts.filter(p => (p.status || 'new') !== 'done').length;
+    const buyDone     = buyPosts.filter(p => (p.status || 'new') === 'done').length;
+
+    const newCount      = posts.filter(p => (p.status || 'new') === 'new').length;
+    const progressCount = posts.filter(p => (p.status || 'new') === 'progress').length;
+    const doneCount     = posts.filter(p => (p.status || 'new') === 'done').length;
+
+    let activeCraftCost = 0;
+    let activeBuyCost   = 0;
+    posts.forEach(p => {
+      const st = p.status || 'new';
+      if (st === 'done') return;
+      const amount = parsePrice(p.price);
+      if (p.type === 'craft') activeCraftCost += amount;
+      else if (p.type === 'buy') activeBuyCost += amount;
+    });
+
+    const setText = (id, txt) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = txt;
+    };
+    setText('sumCraftActive', craftActive);
+    setText('sumCraftDone', 'готово: ' + craftDone);
+    setText('sumBuyActive', buyActive);
+    setText('sumBuyDone', 'готово: ' + buyDone);
+    setText('sumTreasury', treasuryPosts.length);
+    setText('sumTreasurySub', treasuryPosts.length === 1 ? 'пост' : 'постов');
+    setText('sumNew', newCount);
+    setText('sumProgress', progressCount);
+    setText('sumDone', doneCount);
+
+    const totalsEl = document.getElementById('craftSummaryTotals');
+    if (totalsEl) {
+      totalsEl.innerHTML =
+        `Общая стоимость активного: ` +
+        `<span class="s-total-craft">${formatBalance(activeCraftCost)}</span> крафт` +
+        ` · ` +
+        `<span class="s-total-buy">${formatBalance(activeBuyCost)}</span> покупки`;
+    }
+  }
+
   function renderPosts() {
     postsFeed.innerHTML = '';
     if (posts.length === 0) {
@@ -1708,6 +1838,7 @@
       empty.textContent = 'Пока нет постов. Опубликуйте первый — что нужно скрафтить или купить.';
       postsFeed.appendChild(empty);
       updateTreasuryBalance();
+      updateCraftSummary();
       return;
     }
     posts.forEach(post => {
@@ -1807,6 +1938,7 @@
       postsFeed.appendChild(card);
     });
     updateTreasuryBalance();
+    updateCraftSummary();
   }
 
   function toggleEditPost(card, post) {
@@ -2112,7 +2244,6 @@
         card.appendChild(text);
       }
 
-      // ---- Комментарии ----
       const commentsWrap = document.createElement('div');
       commentsWrap.className = 'dream-comments';
 
