@@ -281,7 +281,6 @@
     background: var(--bg-panel); border: 1px dashed var(--border-strong); border-radius: 8px;
   }
 
-  /* ===== Влажные мечты — стили ===== */
   .dreams-intro {
     display: flex; align-items: center; gap: 16px;
     margin-bottom: 12px; padding: 14px 18px;
@@ -297,16 +296,13 @@
     color: var(--accent-pink); margin-bottom: 3px;
     letter-spacing: 0.3px;
   }
-  .dreams-intro-text {
-    font-size: 11px; color: var(--text-secondary); line-height: 1.4;
-  }
+  .dreams-intro-text { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
 
   .dream-card { border-left-color: var(--accent-pink) !important; }
   .dream-card.type-craft { border-left-color: var(--accent-gold); }
   .dream-card.type-buy { border-left-color: var(--accent-blue); }
   .dream-card.type-other { border-left-color: var(--accent-pink); }
 
-  /* Комментарии */
   .dream-comments {
     margin-top: 10px;
     padding-top: 10px;
@@ -334,12 +330,8 @@
     display: flex; align-items: baseline; gap: 6px;
     margin-bottom: 2px;
   }
-  .dream-comment-author {
-    font-weight: 700; color: var(--text-primary); font-size: 11px;
-  }
-  .dream-comment-time {
-    font-size: 9px; color: var(--text-muted); letter-spacing: 0.2px;
-  }
+  .dream-comment-author { font-weight: 700; color: var(--text-primary); font-size: 11px; }
+  .dream-comment-time { font-size: 9px; color: var(--text-muted); letter-spacing: 0.2px; }
   .dream-comment-delete {
     margin-left: auto;
     background: transparent; border: none; padding: 0 4px;
@@ -349,22 +341,10 @@
     opacity: 0.5; transition: opacity 0.15s;
   }
   .dream-comment-delete:hover { opacity: 1; background: transparent; }
-  .dream-comment-text {
-    color: var(--text-primary); line-height: 1.45;
-    white-space: pre-wrap; word-break: break-word;
-  }
-  .dream-comments-empty {
-    font-size: 10px; color: var(--text-muted);
-    font-style: italic; padding: 4px 0;
-  }
-  .dream-comment-form {
-    display: flex; gap: 6px; margin-top: 8px; align-items: stretch;
-  }
-  .dream-comment-input {
-    flex: 1; min-width: 0;
-    font-size: 11px;
-    padding: 6px 8px;
-  }
+  .dream-comment-text { color: var(--text-primary); line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+  .dream-comments-empty { font-size: 10px; color: var(--text-muted); font-style: italic; padding: 4px 0; }
+  .dream-comment-form { display: flex; gap: 6px; margin-top: 8px; align-items: stretch; }
+  .dream-comment-input { flex: 1; min-width: 0; font-size: 11px; padding: 6px 8px; }
   .dream-comment-send {
     flex-shrink: 0;
     padding: 6px 12px !important;
@@ -653,64 +633,248 @@
     });
   });
 
-  // ==================== ОРУЖИЕ (сокращено для краткости) ====================
+  // ==================== ОРУЖИЕ ====================
   const weaponsData = [
-    { name: 'Short Sword', grade: 'NG' }, { name: 'Long Sword', grade: 'NG' },
-    { name: 'Broadsword', grade: 'NG' }, { name: 'Club', grade: 'NG' },
-    { name: 'Mace', grade: 'NG' }, { name: "Apprentice's Wand", grade: 'NG' },
-    { name: "Apprentice's Rod", grade: 'NG' }, { name: 'Willow Staff', grade: 'NG' },
-    { name: 'Cedar Staff', grade: 'NG' }, { name: 'Dagger', grade: 'NG' },
-    { name: 'Bone Dagger', grade: 'NG' }, { name: 'Knife', grade: 'NG' },
-    { name: 'Short Bow', grade: 'NG' }, { name: 'Bow', grade: 'NG' },
-    { name: 'Short Spear', grade: 'NG' }, { name: 'Great Spear', grade: 'NG' },
-    { name: 'Saber', grade: 'D' }, { name: 'Bastard Sword', grade: 'D' },
-    { name: 'Spinebone Sword', grade: 'D' }, { name: 'Crimson Sword', grade: 'D' },
-    { name: 'Elven Sword', grade: 'D' }, { name: 'Elven Long Sword', grade: 'D' },
-    { name: 'Sword of Revolution', grade: 'D' }, { name: 'Sword of Magic Fog', grade: 'D' },
-    { name: 'Priest Sword', grade: 'D' }, { name: 'Heavy Sword', grade: 'D' },
-    { name: 'Steel Sword', grade: 'D' }, { name: 'Titan Sword', grade: 'D' },
-    { name: 'Two-Handed Sword', grade: 'D' }, { name: 'Claymore', grade: 'D' },
-    { name: 'Assassin Knife', grade: 'D' }, { name: 'Crafted Dagger', grade: 'D' },
-    { name: 'Kukuri', grade: 'D' }, { name: 'Maingauche', grade: 'D' },
-    { name: 'Mithril Dagger', grade: 'D' }, { name: 'Shilen Knife', grade: 'D' },
-    { name: 'Trident', grade: 'D' }, { name: 'Pike', grade: 'D' },
-    { name: 'War Hammer', grade: 'D' }, { name: 'Winged Spear', grade: 'D' },
-    { name: 'Glaive', grade: 'D' }, { name: 'Reinforced Bow', grade: 'D' },
-    { name: 'Dark Elven Bow', grade: 'D' }, { name: 'Elven Bow', grade: 'D' },
-    { name: 'Long Bow', grade: 'D' }, { name: 'Gastraphetes', grade: 'D' },
-    { name: 'Hand Axe', grade: 'D' }, { name: 'Heavy Mace', grade: 'D' },
-    { name: 'Doom Hammer', grade: 'D' }, { name: 'Mace of Judgment', grade: 'D' },
-    { name: 'Tomahawk', grade: 'D' }, { name: 'Morning Star', grade: 'D' },
-    { name: 'Bone Staff', grade: 'D' }, { name: "Conjuror's Staff", grade: 'D' },
-    { name: 'Mystic Staff', grade: 'D' }, { name: 'Staff of Mana', grade: 'D' },
-    { name: 'Goat Head Staff', grade: 'D' }, { name: 'Ghost Staff', grade: 'D' },
-    { name: 'Staff of Life', grade: 'D' }, { name: 'Aluba Mace', grade: 'D' },
-    { name: 'Bagh-Nakh', grade: 'D' }, { name: 'Fisted Blade', grade: 'D' },
-    { name: 'Knuckle Duster', grade: 'D' }, { name: 'Soulfire Dirk', grade: 'D' },
-    { name: 'Stick of Faith', grade: 'C' }, { name: 'Club of Nature', grade: 'C' },
-    { name: 'Mace of Underworld', grade: 'C' }, { name: 'Nirvana Axe', grade: 'C' },
-    { name: 'Eclipse Axe', grade: 'C' }, { name: 'Mysterious Sword', grade: 'C' },
-    { name: "Homunkulus's Sword", grade: 'C' }, { name: 'Eclipse Sword', grade: 'C' },
-    { name: 'Crystal Staff', grade: 'C' }, { name: 'Cursed Staff', grade: 'C' },
-    { name: 'Inferno Staff', grade: 'C' }, { name: 'Paradia Staff', grade: 'C' },
-    { name: "Sage's Staff", grade: 'C' }, { name: "Demon's Staff", grade: 'C' },
-    { name: "Ghoul's Staff", grade: 'C' }, { name: 'Stormbringer', grade: 'C' },
-    { name: 'Caliburs', grade: 'C' }, { name: 'Katana', grade: 'C' },
-    { name: 'Raid Sword', grade: 'C' }, { name: 'Shamshir', grade: 'C' },
-    { name: 'Spirit Sword', grade: 'C' }, { name: 'Sword of Delusion', grade: 'C' },
-    { name: 'Sword of Limit', grade: 'C' }, { name: 'Tsurugi', grade: 'C' },
-    { name: 'Samurai Longsword', grade: 'C' }, { name: 'Body Slasher', grade: 'C' },
-    { name: 'Orcish Glaive', grade: 'C' }, { name: 'Scythe', grade: 'C' },
-    { name: 'Poleaxe', grade: 'C' }, { name: 'Cursed Dagger', grade: 'C' },
-    { name: 'Dark Elven Dagger', grade: 'C' }, { name: 'Dark Screamer', grade: 'C' },
-    { name: 'Grace Dagger', grade: 'C' }, { name: 'Stiletto', grade: 'C' },
-    { name: 'Crystal Dagger', grade: 'C' }, { name: 'Battle Axe', grade: 'C' },
-    { name: 'Big Hammer', grade: 'C' }, { name: 'Skull Graver', grade: 'C' },
-    { name: 'Yaksa Mace', grade: 'C' }, { name: 'Karik Horn', grade: 'C' },
-    { name: 'Dwarven Hammer', grade: 'C' }, { name: 'Akat Long Bow', grade: 'C' },
-    { name: 'Elemental Bow', grade: 'C' }, { name: 'Eminence Bow', grade: 'C' },
-    { name: 'Flamberge', grade: 'C' }, { name: 'Berserker Blade', grade: 'C' },
-    { name: 'Chakram', grade: 'C' }, { name: 'Great Pata', grade: 'C' },
+    // ==================== NG (No Grade) ====================
+    { name: 'Short Sword', grade: 'NG' },
+    { name: 'Long Sword', grade: 'NG' },
+    { name: 'Broadsword', grade: 'NG' },
+    { name: 'Club', grade: 'NG' },
+    { name: 'Mace', grade: 'NG' },
+    { name: "Apprentice's Wand", grade: 'NG' },
+    { name: "Apprentice's Rod", grade: 'NG' },
+    { name: 'Willow Staff', grade: 'NG' },
+    { name: 'Cedar Staff', grade: 'NG' },
+    { name: 'Dagger', grade: 'NG' },
+    { name: 'Bone Dagger', grade: 'NG' },
+    { name: 'Knife', grade: 'NG' },
+    { name: 'Short Bow', grade: 'NG' },
+    { name: 'Bow', grade: 'NG' },
+    { name: 'Short Spear', grade: 'NG' },
+    { name: 'Great Spear', grade: 'NG' },
+    { name: "Apprentice's Spellbook", grade: 'NG' },
+    { name: 'Voodoo Doll', grade: 'NG' },
+
+    // ==================== D Grade (полный список) ====================
+    // --- Одноручные мечи ---
+    { name: 'Saber', grade: 'D' },
+    { name: "Artisan's Sword", grade: 'D' },
+    { name: 'Bastard Sword', grade: 'D' },
+    { name: "Knight's Sword", grade: 'D' },
+    { name: 'Spinebone Sword', grade: 'D' },
+    { name: 'Crimson Sword', grade: 'D' },
+    { name: 'Elven Sword', grade: 'D' },
+    { name: 'Elven Long Sword', grade: 'D' },
+    // --- Одноручные магические мечи ---
+    { name: 'Priest Sword', grade: 'D' },
+    { name: 'Sword of Magic', grade: 'D' },
+    { name: 'Sword of Mystic', grade: 'D' },
+    { name: 'Sword of Occult', grade: 'D' },
+    { name: 'Sword of Magic Fog', grade: 'D' },
+    { name: 'Sword of Revolution', grade: 'D' },
+    // --- Двуручные мечи ---
+    { name: 'Heavy Sword', grade: 'D' },
+    { name: 'Steel Sword', grade: 'D' },
+    { name: 'Two-Handed Sword', grade: 'D' },
+    { name: 'Titan Sword', grade: 'D' },
+    { name: 'Claymore', grade: 'D' },
+    // --- Кинжалы ---
+    { name: 'Assassin Knife', grade: 'D' },
+    { name: 'Crafted Dagger', grade: 'D' },
+    { name: 'Poniard Dagger', grade: 'D' },
+    { name: 'Kukuri', grade: 'D' },
+    { name: 'Cursed Maingauche', grade: 'D' },
+    { name: 'Maingauche', grade: 'D' },
+    { name: 'Mithril Dagger', grade: 'D' },
+    // --- Магические кинжалы ---
+    { name: "Conjuror's Knife", grade: 'D' },
+    { name: 'Dagger of Mana', grade: 'D' },
+    { name: 'Mystic Knife', grade: 'D' },
+    { name: 'Shilen Knife', grade: 'D' },
+    // --- Копья ---
+    { name: 'Trident', grade: 'D' },
+    { name: 'Dwarven Trident', grade: 'D' },
+    { name: 'Pike', grade: 'D' },
+    { name: 'Dwarven Pike', grade: 'D' },
+    { name: 'War Hammer', grade: 'D' },
+    { name: 'War Pick', grade: 'D' },
+    { name: 'Winged Spear', grade: 'D' },
+    { name: 'Glaive', grade: 'D' },
+    // --- Луки ---
+    { name: 'Reinforced Bow', grade: 'D' },
+    { name: 'Dark Elven Bow', grade: 'D' },
+    { name: 'Elven Bow', grade: 'D' },
+    { name: 'Long Bow', grade: 'D' },
+    { name: 'Gastraphetes', grade: 'D' },
+    { name: 'Reinforced Long Bow', grade: 'D' },
+    // --- Одноручные бланты ---
+    { name: 'Hand Axe', grade: 'D' },
+    { name: 'Heavy Mace', grade: 'D' },
+    { name: 'Scalpel', grade: 'D' },
+    { name: 'Work Hammer', grade: 'D' },
+    { name: 'Doom Hammer', grade: 'D' },
+    { name: 'Mace of Judgment', grade: 'D' },
+    { name: 'Mace of Miracle', grade: 'D' },
+    { name: 'Mace of Prayer', grade: 'D' },
+    { name: 'Tomahawk', grade: 'D' },
+    { name: 'Spiked Club', grade: 'D' },
+    { name: 'Heavy Bone Club', grade: 'D' },
+    { name: 'Morning Star', grade: 'D' },
+    { name: 'Skull Breaker', grade: 'D' },
+    { name: 'Tarbar', grade: 'D' },
+    { name: 'Bonebreaker', grade: 'D' },
+    // --- Одноручное магическое дробящее ---
+    { name: "Sage's Blood", grade: 'D' },
+    { name: 'Tome of Blood', grade: 'D' },
+    { name: 'Crucifix of Blood', grade: 'D' },
+    { name: 'Priest Mace', grade: 'D' },
+    { name: 'Demon Fangs', grade: 'D' },
+    { name: 'Staff of Life', grade: 'D' },
+    { name: 'Atuba Mace', grade: 'D' },
+    // --- Двуручное магическое ---
+    { name: 'Bone Staff', grade: 'D' },
+    { name: "Conjuror's Staff", grade: 'D' },
+    { name: 'Mystic Staff', grade: 'D' },
+    { name: 'Staff of Mana', grade: 'D' },
+    { name: 'Staff of Magic', grade: 'D' },
+    { name: 'Goat Head Staff', grade: 'D' },
+    { name: 'Atuba Hammer', grade: 'D' },
+    { name: 'Ghost Staff', grade: 'D' },
+    // --- Кастеты ---
+    { name: 'Baghnakh', grade: 'D' },
+    { name: 'Single-Edged Jamadhr', grade: 'D' },
+    { name: 'Triple-Edged Jamadhr', grade: 'D' },
+    { name: "Bich'hwa", grade: 'D' },
+    { name: 'Scallop Jamadhr', grade: 'D' },
+    // --- Одноручное магическое ---
+    { name: 'Branch of Life', grade: 'D' },
+    { name: 'Temptation of Abyss', grade: 'D' },
+    { name: 'Divine Tome', grade: 'D' },
+
+    // ==================== C Grade (полный список) ====================
+    // --- Одноручное магическое дробящее ---
+    { name: 'Stick of Faith', grade: 'C' },
+    { name: 'Club of Nature', grade: 'C' },
+    { name: "Healhren's Book", grade: 'C' },
+    { name: 'Horn of Glory', grade: 'C' },
+    { name: 'Mace of Underworld', grade: 'C' },
+    { name: 'Nirvana Axe', grade: 'C' },
+    { name: 'Stick of Eternity', grade: 'C' },
+    { name: 'Eclipse Axe', grade: 'C' },
+    // --- Одноручные магические мечи ---
+    { name: 'Mysterious Sword', grade: 'C' },
+    { name: "Homunkulus's Sword", grade: 'C' },
+    { name: 'Sword of Whispering Death', grade: 'C' },
+    { name: 'Eclipse Sword', grade: 'C' },
+    // --- Двуручное магическое ---
+    { name: 'Crystal Staff', grade: 'C' },
+    { name: 'Heavy Doom Axe', grade: 'C' },
+    { name: 'Heavy Doom Hammer', grade: 'C' },
+    { name: 'Cursed Staff', grade: 'C' },
+    { name: 'Inferno Staff', grade: 'C' },
+    { name: "Pa'agrian Hammer", grade: 'C' },
+    { name: 'Paradia Staff', grade: 'C' },
+    { name: "Sage's Staff", grade: 'C' },
+    { name: "Deadman's Staff", grade: 'C' },
+    { name: "Demon's Staff", grade: 'C' },
+    { name: "Ghoul's Staff", grade: 'C' },
+    // --- Одноручные мечи ---
+    { name: 'Stormbringer', grade: 'C' },
+    { name: 'Caliburs', grade: 'C' },
+    { name: 'Katana', grade: 'C' },
+    { name: 'Raid Sword', grade: 'C' },
+    { name: 'Shamshir', grade: 'C' },
+    { name: 'Spirit Sword', grade: 'C' },
+    { name: 'Sword of Delusion', grade: 'C' },
+    { name: 'Sword of Limit', grade: 'C' },
+    { name: 'Sword of Nightmare', grade: 'C' },
+    { name: 'Tsurugi', grade: 'C' },
+    { name: 'Samurai Longsword', grade: 'C' },
+    // --- Дуал-мечи ---
+    { name: 'Saber*Sword of Revolution', grade: 'C' },
+    { name: "Knight's Sword*Sword of Revolution", grade: 'C' },
+    { name: 'Elven Sword*Sword of Revolution', grade: 'C' },
+    { name: 'Sword of Revolution*Sword of Revolution', grade: 'C' },
+    { name: 'Stormbringer*Katana', grade: 'C' },
+    { name: 'Shamshir*Spirit Sword', grade: 'C' },
+    { name: 'Spirit Sword*Spirit Sword', grade: 'C' },
+    { name: 'Crimson Sword*Elven Sword', grade: 'C' },
+    { name: 'Bastard Sword*Sword of Revolution', grade: 'C' },
+    { name: 'Crimson Sword*Sword of Revolution', grade: 'C' },
+    { name: 'Crimson Sword*Elven Long Sword', grade: 'C' },
+    { name: 'Katana*Spirit Sword', grade: 'C' },
+    { name: 'Crimson Sword*Crimson Sword', grade: 'C' },
+    { name: 'Saber*Elven Long Sword', grade: 'C' },
+    { name: 'Spinebone Sword*Elven Long Sword', grade: 'C' },
+    { name: 'Sword of Revolution*Elven Long Sword', grade: 'C' },
+    { name: 'Stormbringer*Spirit Sword', grade: 'C' },
+    { name: 'Shamshir*Raid Sword', grade: 'C' },
+    { name: 'Spirit Sword*Raid Sword', grade: 'C' },
+    { name: 'Spinebone Sword*Sword of Revolution', grade: 'C' },
+    { name: "Knight's Sword*Elven Long Sword", grade: 'C' },
+    { name: 'Stormbringer*Raid Sword', grade: 'C' },
+    { name: 'Katana*Katana', grade: 'C' },
+    { name: 'Raid Sword*Raid Sword', grade: 'C' },
+    { name: "Artisan's Sword*Sword of Revolution", grade: 'C' },
+    { name: 'Bastard Sword*Elven Long Sword', grade: 'C' },
+    { name: "Artisan's Sword*Elven Long Sword", grade: 'C' },
+    { name: 'Elven Sword*Elven Long Sword', grade: 'C' },
+    { name: 'Stormbringer*Shamshir', grade: 'C' },
+    { name: 'Shamshir*Katana', grade: 'C' },
+    { name: 'Katana*Raid Sword', grade: 'C' },
+    { name: 'Elven Sword*Elven Sword', grade: 'C' },
+    { name: 'Elven Long Sword*Elven Long Sword', grade: 'C' },
+    { name: 'Stormbringer*Stormbringer', grade: 'C' },
+    { name: 'Shamshir*Shamshir', grade: 'C' },
+    // --- Дуал-бланты ---
+    { name: 'Tarbar*Tarbar', grade: 'C' },
+    { name: 'Battle Axe*Battle Axe', grade: 'C' },
+    { name: 'Dwarven War Hammer*Dwarven War Hammer', grade: 'C' },
+    // --- Копья ---
+    { name: 'Body Slasher', grade: 'C' },
+    { name: 'Orcish Glaive', grade: 'C' },
+    { name: 'Scythe', grade: 'C' },
+    { name: 'Bec de Corbin', grade: 'C' },
+    { name: 'Poleaxe', grade: 'C' },
+    { name: 'Orcish Poleaxe', grade: 'C' },
+    // --- Кинжалы ---
+    { name: 'Cursed Dagger', grade: 'C' },
+    { name: 'Dark Elven Dagger', grade: 'C' },
+    { name: 'Dark Screamer', grade: 'C' },
+    { name: 'Grace Dagger', grade: 'C' },
+    { name: 'Stiletto', grade: 'C' },
+    { name: 'Crystal Dagger', grade: 'C' },
+    // --- Одноручные бланты ---
+    { name: 'Battle Axe', grade: 'C' },
+    { name: 'Big Hammer', grade: 'C' },
+    { name: 'Silver Axe', grade: 'C' },
+    { name: 'Skull Graver', grade: 'C' },
+    { name: 'Dwarven War Hammer', grade: 'C' },
+    { name: 'War Axe', grade: 'C' },
+    { name: 'Yaksa Mace', grade: 'C' },
+    // --- Двуручные бланты ---
+    { name: 'Karik Horn', grade: 'C' },
+    { name: 'Dwarven Hammer', grade: 'C' },
+    // --- Луки ---
+    { name: 'Crystallized Ice Bow', grade: 'C' },
+    { name: 'Akat Long Bow', grade: 'C' },
+    { name: 'Elemental Bow', grade: 'C' },
+    { name: 'Noble Elven Bow', grade: 'C' },
+    { name: 'Eminence Bow', grade: 'C' },
+    // --- Двуручные мечи ---
+    { name: 'Flamberge', grade: 'C' },
+    { name: "Pa'agrian Sword", grade: 'C' },
+    { name: 'Berserker Blade', grade: 'C' },
+    // --- Кастеты ---
+    { name: 'Chakram', grade: 'C' },
+    { name: 'Fisted Blade', grade: 'C' },
+    { name: 'Knuckle Duster', grade: 'C' },
+    { name: 'Great Pata', grade: 'C' },
+    // --- Отдельные предметы ---
+    { name: 'Crystal Dagger*Cursed Dagger', grade: 'C' },
+    { name: 'Soulfire Dirk', grade: 'C' },
+
+    // ==================== B Grade ====================
     { name: 'Spell Breaker', grade: 'B' }, { name: 'Kaim Vanul Bones', grade: 'B' },
     { name: 'Sword of Valhalla', grade: 'B' }, { name: 'Wizards Tear', grade: 'B' },
     { name: "Sprite's Staff", grade: 'B' }, { name: 'Staff of Evil Spirits', grade: 'B' },
@@ -724,6 +888,8 @@
     { name: 'Guardian Sword', grade: 'B' }, { name: 'Arthro Nail', grade: 'B' },
     { name: 'Bellion Cestus', grade: 'B' }, { name: 'Hell Knife', grade: 'B' },
     { name: 'Yaksa Mace*Yaksa Mace', grade: 'B' },
+
+    // ==================== A Grade ====================
     { name: 'Sword of Miracles', grade: 'A' }, { name: 'Angel Slayer', grade: 'A' },
     { name: "Dark Legion's Edge", grade: 'A' }, { name: 'Soul Separator', grade: 'A' },
     { name: 'Bloody Orchid', grade: 'A' }, { name: 'Soul Bow', grade: 'A' },
@@ -733,6 +899,8 @@
     { name: 'Saint Spear', grade: 'A' }, { name: 'Demon Splinter', grade: 'A' },
     { name: 'Basalt Battlehammer', grade: 'A' }, { name: 'Meteor Shower', grade: 'A' },
     { name: 'Elysian', grade: 'A' }, { name: 'Dragon Grinder', grade: 'A' },
+
+    // ==================== S Grade ====================
     { name: 'Dynasty Sword', grade: 'S' }, { name: 'Dynasty Blade', grade: 'S' },
     { name: 'Dynasty Phantom', grade: 'S' }, { name: "Heaven's Divider", grade: 'S' },
     { name: "Sirra's Blade", grade: 'S' }, { name: 'Draconic Bow', grade: 'S' },
@@ -1874,7 +2042,6 @@
         'type-craft'
       );
 
-      // ---- Заголовок карточки ----
       const header = document.createElement('div');
       header.className = 'post-header';
 
@@ -1910,7 +2077,6 @@
 
       card.appendChild(header);
 
-      // ---- Строка предмета ----
       if (dream.item) {
         const itemLine = document.createElement('div');
         itemLine.className = 'post-item-line';
@@ -1925,7 +2091,6 @@
         card.appendChild(itemLine);
       }
 
-      // ---- Строка цены ----
       if (dream.price) {
         const priceLine = document.createElement('div');
         priceLine.className = 'post-price-line';
@@ -1940,7 +2105,6 @@
         card.appendChild(priceLine);
       }
 
-      // ---- Описание ----
       if (dream.text) {
         const text = document.createElement('div');
         text.className = 'post-text';
@@ -2004,7 +2168,6 @@
       }
       commentsWrap.appendChild(commentsList);
 
-      // ---- Форма добавления комментария ----
       const comForm = document.createElement('div');
       comForm.className = 'dream-comment-form';
 
@@ -2036,7 +2199,6 @@
       commentsWrap.appendChild(comForm);
       card.appendChild(commentsWrap);
 
-      // ---- Футер ----
       const footer = document.createElement('div');
       footer.className = 'post-footer';
 
@@ -2134,9 +2296,7 @@
     hint.textContent = 'Нажмите «Редактировать» ещё раз, чтобы сохранить.';
     area.appendChild(hint);
 
-    // Убираем из карточки прежнее содержимое (кроме header и comments не трогаем — только видимые поля)
     card.querySelectorAll('.post-item-line, .post-price-line').forEach(el => el.remove());
-    // post-text тоже убираем, но он может совпадать с чем-то ещё — ищем только прямых потомков
     const directTexts = card.querySelectorAll(':scope > .post-text');
     directTexts.forEach(el => el.remove());
 
