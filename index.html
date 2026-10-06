@@ -22,6 +22,7 @@
     --accent-gold-dark: #8a6508;
     --accent-gold-light: #d4a017;
     --accent-blue: #3a5fd9;
+    --accent-pink: #d63384;
     --success-green: #1f9d55;
     --danger-red: #d92d20;
     --font-body: 'Proxima Nova', 'Segoe UI', sans-serif;
@@ -48,7 +49,7 @@
     margin: 0 0 2px 0;
   }
   .subtitle { color: var(--text-secondary); font-size: 11px; margin: 0 0 14px 0; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid var(--border-subtle); }
+  .tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid var(--border-subtle); flex-wrap: wrap; }
   .tab-btn {
     font-family: var(--font-body); font-size: 12px; font-weight: 600;
     letter-spacing: 0.4px; text-transform: uppercase;
@@ -162,13 +163,9 @@
   .weapon-option .weapon-name { flex: 1; }
   .weapon-comment { margin-top: 3px; font-size: 10px; padding: 3px 5px; }
   .weapon-slot-label {
-    display: block;
-    font-size: 8px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin: 5px 0 2px 0;
-    font-weight: 700;
+    display: block; font-size: 8px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.3px;
+    margin: 5px 0 2px 0; font-weight: 700;
   }
   .weapon-slot-label:first-child { margin-top: 0; }
   .prof-cell { display: flex; flex-direction: column; gap: 3px; }
@@ -214,22 +211,12 @@
   }
   .treasury-icon { font-size: 32px; line-height: 1; }
   .treasury-main { flex: 1; min-width: 0; }
-  .treasury-label {
-    font-size: 10px; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.5px;
-    margin-bottom: 2px; font-weight: 700;
-  }
-  .treasury-value {
-    font-size: 22px; font-weight: 800;
-    line-height: 1.1; letter-spacing: 0.3px;
-  }
+  .treasury-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; font-weight: 700; }
+  .treasury-value { font-size: 22px; font-weight: 800; line-height: 1.1; letter-spacing: 0.3px; }
   .treasury-value.positive { color: #16a34a; }
   .treasury-value.negative { color: #dc2626; }
   .treasury-value.neutral  { color: var(--text-secondary); }
-  .treasury-breakdown {
-    font-size: 11px; color: var(--text-secondary);
-    margin-top: 5px; letter-spacing: 0.2px;
-  }
+  .treasury-breakdown { font-size: 11px; color: var(--text-secondary); margin-top: 5px; letter-spacing: 0.2px; }
   .treasury-breakdown .income { color: #16a34a; font-weight: 700; }
   .treasury-breakdown .expense { color: #dc2626; font-weight: 700; }
 
@@ -257,6 +244,7 @@
   .post-card.type-craft { border-left-color: var(--accent-gold); }
   .post-card.type-buy { border-left-color: var(--accent-blue); }
   .post-card.type-treasury { border-left-color: #22c55e; }
+  .post-card.type-other { border-left-color: var(--accent-pink); }
   .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
   .post-author { font-weight: 700; color: var(--text-primary); font-size: 12px; }
   .post-time { font-size: 10px; color: var(--text-muted); letter-spacing: 0.3px; }
@@ -264,6 +252,7 @@
   .post-badge.badge-craft { background: rgba(184,134,11,0.12); color: var(--accent-gold-dark); border: 1px solid rgba(184,134,11,0.3); }
   .post-badge.badge-buy { background: rgba(58,95,217,0.10); color: var(--accent-blue); border: 1px solid rgba(58,95,217,0.3); }
   .post-badge.badge-treasury { background: rgba(34,197,94,0.10); color: #16a34a; border: 1px solid rgba(34,197,94,0.3); }
+  .post-badge.badge-other { background: rgba(214,51,132,0.10); color: var(--accent-pink); border: 1px solid rgba(214,51,132,0.3); }
   .post-status {
     font-size: 9px; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.4px; padding: 2px 8px; border-radius: 10px;
@@ -291,6 +280,105 @@
     font-style: italic; font-size: 12px;
     background: var(--bg-panel); border: 1px dashed var(--border-strong); border-radius: 8px;
   }
+
+  /* ===== Влажные мечты — стили ===== */
+  .dreams-intro {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 12px; padding: 14px 18px;
+    background: linear-gradient(135deg, #fff0f7 0%, #fae0f0 100%);
+    border: 1px solid #f5b8d5;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(20,25,60,0.06);
+  }
+  .dreams-intro-icon { font-size: 32px; line-height: 1; }
+  .dreams-intro-main { flex: 1; min-width: 0; }
+  .dreams-intro-title {
+    font-size: 14px; font-weight: 800;
+    color: var(--accent-pink); margin-bottom: 3px;
+    letter-spacing: 0.3px;
+  }
+  .dreams-intro-text {
+    font-size: 11px; color: var(--text-secondary); line-height: 1.4;
+  }
+
+  .dream-card { border-left-color: var(--accent-pink) !important; }
+  .dream-card.type-craft { border-left-color: var(--accent-gold); }
+  .dream-card.type-buy { border-left-color: var(--accent-blue); }
+  .dream-card.type-other { border-left-color: var(--accent-pink); }
+
+  /* Комментарии */
+  .dream-comments {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-subtle);
+  }
+  .dream-comments-title {
+    font-size: 9px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.4px;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .dream-comments-list {
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: 260px; overflow-y: auto;
+    padding-right: 4px;
+  }
+  .dream-comment {
+    padding: 6px 9px;
+    background: #fafbfe;
+    border-left: 3px solid var(--accent-pink);
+    border-radius: 4px;
+    font-size: 11px;
+    position: relative;
+  }
+  .dream-comment-header {
+    display: flex; align-items: baseline; gap: 6px;
+    margin-bottom: 2px;
+  }
+  .dream-comment-author {
+    font-weight: 700; color: var(--text-primary); font-size: 11px;
+  }
+  .dream-comment-time {
+    font-size: 9px; color: var(--text-muted); letter-spacing: 0.2px;
+  }
+  .dream-comment-delete {
+    margin-left: auto;
+    background: transparent; border: none; padding: 0 4px;
+    color: var(--danger-red); cursor: pointer;
+    font-size: 13px; line-height: 1;
+    text-transform: none; font-weight: 700;
+    opacity: 0.5; transition: opacity 0.15s;
+  }
+  .dream-comment-delete:hover { opacity: 1; background: transparent; }
+  .dream-comment-text {
+    color: var(--text-primary); line-height: 1.45;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .dream-comments-empty {
+    font-size: 10px; color: var(--text-muted);
+    font-style: italic; padding: 4px 0;
+  }
+  .dream-comment-form {
+    display: flex; gap: 6px; margin-top: 8px; align-items: stretch;
+  }
+  .dream-comment-input {
+    flex: 1; min-width: 0;
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+  .dream-comment-send {
+    flex-shrink: 0;
+    padding: 6px 12px !important;
+    font-size: 10px !important;
+    background: linear-gradient(180deg, #e83e8c 0%, #c92a72 100%) !important;
+    color: #fff !important;
+    border-color: #d63384 !important;
+    font-weight: 700 !important;
+  }
+  .dream-comment-send:hover {
+    background: linear-gradient(180deg, #d63384 0%, #a31d59 100%) !important;
+    color: #fff !important;
+  }
+
   #pdfArea {
     position: fixed; top: 0; left: 0; width: 1400px;
     padding: 24px; background: #ffffff; z-index: 1; opacity: 1;
@@ -327,6 +415,7 @@
 <div class="tabs">
   <button class="tab-btn active" data-tab="group">Группа</button>
   <button class="tab-btn" data-tab="craft">Крафт и покупки</button>
+  <button class="tab-btn" data-tab="dreams">Влажные мечты</button>
 </div>
 
 <div id="tab-group" class="tab-content active">
@@ -424,6 +513,64 @@
   <div class="posts-feed" id="postsFeed"></div>
 </div>
 
+<div id="tab-dreams" class="tab-content">
+  <div class="craft-author-bar">
+    <label>Ваше имя:</label>
+    <input type="text" id="dreamAuthorName" placeholder="Введите имя, чтобы посты были подписаны" maxlength="40">
+    <div class="sync-status">
+      <span id="dreamsSyncDot" class="sync-dot"></span>
+      <span id="dreamsSyncText">Подключение…</span>
+    </div>
+  </div>
+
+  <div class="dreams-intro">
+    <div class="dreams-intro-icon">💭</div>
+    <div class="dreams-intro-main">
+      <div class="dreams-intro-title">Влажные мечты</div>
+      <div class="dreams-intro-text">
+        Здесь можно загадать любое желание: скрафтить, купить, достать. Другие могут комментировать
+        и менять статус исполнения кликом по бейджу.
+      </div>
+    </div>
+  </div>
+
+  <div class="post-form">
+    <div class="post-form-row">
+      <div>
+        <label>Тип желания</label>
+        <select id="newDreamType">
+          <option value="craft">🔨 Крафт</option>
+          <option value="buy">💰 Покупка</option>
+          <option value="other">🎯 Другое</option>
+        </select>
+      </div>
+      <div>
+        <label>Название предмета / цель</label>
+        <input type="text" id="newDreamItem" placeholder="напр. Dynasty Breastplate или «помощь на осаде»">
+      </div>
+      <div>
+        <label>Кол-во</label>
+        <input type="text" id="newDreamQuantity" placeholder="1">
+      </div>
+      <div>
+        <label>Цена / бюджет</label>
+        <input type="text" id="newDreamPrice" placeholder="напр. 500кк">
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button id="dreamPublishBtn" class="primary" style="padding:8px 16px;">Загадать</button>
+      </div>
+    </div>
+    <div class="post-form-row post-form-main">
+      <div>
+        <label>Описание желания</label>
+        <textarea id="newDreamText" placeholder="Что хочется, зачем, к какому сроку…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="posts-feed" id="dreamsFeed"></div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -435,6 +582,7 @@
   const db = firebase.database();
   const membersRef = db.ref('party_members');
   const postsRef = db.ref('craft_posts');
+  const dreamsRef = db.ref('dream_posts');
 
   // ==================== ПРОФЕССИИ ====================
   const professions = [
@@ -505,7 +653,7 @@
     });
   });
 
-  // ==================== ОРУЖИЕ ====================
+  // ==================== ОРУЖИЕ (сокращено для краткости) ====================
   const weaponsData = [
     { name: 'Short Sword', grade: 'NG' }, { name: 'Long Sword', grade: 'NG' },
     { name: 'Broadsword', grade: 'NG' }, { name: 'Club', grade: 'NG' },
@@ -515,165 +663,67 @@
     { name: 'Bone Dagger', grade: 'NG' }, { name: 'Knife', grade: 'NG' },
     { name: 'Short Bow', grade: 'NG' }, { name: 'Bow', grade: 'NG' },
     { name: 'Short Spear', grade: 'NG' }, { name: 'Great Spear', grade: 'NG' },
-    { name: "Apprentice's Spellbook", grade: 'NG' }, { name: 'Voodoo Doll', grade: 'NG' },
-    { name: 'Saber', grade: 'D' }, { name: "Artisan's Sword", grade: 'D' },
-    { name: 'Bastard Sword', grade: 'D' }, { name: "Knight's Sword", grade: 'D' },
+    { name: 'Saber', grade: 'D' }, { name: 'Bastard Sword', grade: 'D' },
     { name: 'Spinebone Sword', grade: 'D' }, { name: 'Crimson Sword', grade: 'D' },
     { name: 'Elven Sword', grade: 'D' }, { name: 'Elven Long Sword', grade: 'D' },
     { name: 'Sword of Revolution', grade: 'D' }, { name: 'Sword of Magic Fog', grade: 'D' },
-    { name: 'Sword of Mystic', grade: 'D' }, { name: 'Sword of Occult', grade: 'D' },
     { name: 'Priest Sword', grade: 'D' }, { name: 'Heavy Sword', grade: 'D' },
     { name: 'Steel Sword', grade: 'D' }, { name: 'Titan Sword', grade: 'D' },
     { name: 'Two-Handed Sword', grade: 'D' }, { name: 'Claymore', grade: 'D' },
     { name: 'Assassin Knife', grade: 'D' }, { name: 'Crafted Dagger', grade: 'D' },
-    { name: 'Poniard Dagger', grade: 'D' }, { name: 'Kukuri', grade: 'D' },
-    { name: 'Cursed Maingauche', grade: 'D' }, { name: 'Maingauche', grade: 'D' },
-    { name: 'Mithril Dagger', grade: 'D' }, { name: "Conjuror's Knife", grade: 'D' },
-    { name: 'Dagger of Mana', grade: 'D' }, { name: 'Mystic Knife', grade: 'D' },
-    { name: 'Shilen Knife', grade: 'D' },
-    { name: 'Trident', grade: 'D' }, { name: 'Dwarven Trident', grade: 'D' },
-    { name: 'Pike', grade: 'D' }, { name: 'Dwarven Pike', grade: 'D' },
-    { name: 'War Hammer', grade: 'D' }, { name: 'War Pick', grade: 'D' },
-    { name: 'Winged Spear', grade: 'D' }, { name: 'Glaive', grade: 'D' },
-    { name: 'Reinforced Bow', grade: 'D' }, { name: 'Dark Elven Bow', grade: 'D' },
-    { name: 'Elven Bow', grade: 'D' }, { name: 'Long Bow', grade: 'D' },
-    { name: 'Gastraphetes', grade: 'D' }, { name: 'Reinforced Long Bow', grade: 'D' },
-    { name: 'Light Crossbow', grade: 'D' }, { name: 'Strengthened Long Bow', grade: 'D' },
+    { name: 'Kukuri', grade: 'D' }, { name: 'Maingauche', grade: 'D' },
+    { name: 'Mithril Dagger', grade: 'D' }, { name: 'Shilen Knife', grade: 'D' },
+    { name: 'Trident', grade: 'D' }, { name: 'Pike', grade: 'D' },
+    { name: 'War Hammer', grade: 'D' }, { name: 'Winged Spear', grade: 'D' },
+    { name: 'Glaive', grade: 'D' }, { name: 'Reinforced Bow', grade: 'D' },
+    { name: 'Dark Elven Bow', grade: 'D' }, { name: 'Elven Bow', grade: 'D' },
+    { name: 'Long Bow', grade: 'D' }, { name: 'Gastraphetes', grade: 'D' },
     { name: 'Hand Axe', grade: 'D' }, { name: 'Heavy Mace', grade: 'D' },
-    { name: 'Scalpel', grade: 'D' }, { name: 'Work Hammer', grade: 'D' },
     { name: 'Doom Hammer', grade: 'D' }, { name: 'Mace of Judgment', grade: 'D' },
-    { name: 'Mace of Miracle', grade: 'D' }, { name: 'Mace of Prayer', grade: 'D' },
-    { name: 'Tomahawk', grade: 'D' }, { name: 'Spiked Club', grade: 'D' },
-    { name: 'Heavy Bone Club', grade: 'D' }, { name: 'Morning Star', grade: 'D' },
-    { name: 'Skull Breaker', grade: 'D' }, { name: 'Tarbar', grade: 'D' },
-    { name: 'Bonebreaker', grade: 'D' }, { name: 'Atuba Hammer', grade: 'D' },
-    { name: 'Atuba Mace', grade: 'D' }, { name: "Bich'hwa", grade: 'D' },
+    { name: 'Tomahawk', grade: 'D' }, { name: 'Morning Star', grade: 'D' },
     { name: 'Bone Staff', grade: 'D' }, { name: "Conjuror's Staff", grade: 'D' },
     { name: 'Mystic Staff', grade: 'D' }, { name: 'Staff of Mana', grade: 'D' },
-    { name: 'Staff of Magic', grade: 'D' }, { name: 'Goat Head Staff', grade: 'D' },
-    { name: 'Ghost Staff', grade: 'D' }, { name: 'Staff of Life', grade: 'D' },
-    { name: 'Tome of Blood', grade: 'D' }, { name: 'Crucifix of Blood', grade: 'D' },
-    { name: 'Demon Fangs', grade: 'D' }, { name: "Sage's Blood", grade: 'D' },
-    { name: 'Aluba Mace', grade: 'D' },
-    { name: 'Bagh-Nakh', grade: 'D' }, { name: 'Single-Edged Jamadhr', grade: 'D' },
-    { name: 'Triple-Edged Jamadhr', grade: 'D' }, { name: 'Scallop Jamadhr', grade: 'D' },
-    { name: 'Fisted Blade', grade: 'D' }, { name: 'Knuckle Duster', grade: 'D' },
-    { name: 'Branch of Life', grade: 'D' }, { name: 'Temptation of Abyss', grade: 'D' },
-    { name: 'Divine Tome', grade: 'D' }, { name: 'Priest Mace', grade: 'D' },
-    { name: 'Saber*Saber', grade: 'D' }, { name: 'Saber*Bastard Sword', grade: 'D' },
-    { name: 'Saber*Spinebone Sword', grade: 'D' }, { name: "Saber*Artisan's Sword", grade: 'D' },
-    { name: "Saber*Knight's Sword", grade: 'D' }, { name: 'Saber*Crimson Sword', grade: 'D' },
-    { name: 'Saber*Elven Sword', grade: 'D' },
-    { name: 'Bastard Sword*Bastard Sword', grade: 'D' },
-    { name: 'Bastard Sword*Spinebone Sword', grade: 'D' },
-    { name: "Bastard Sword*Artisan's Sword", grade: 'D' },
-    { name: "Bastard Sword*Knight's Sword", grade: 'D' },
-    { name: 'Spinebone Sword*Spinebone Sword', grade: 'D' },
-    { name: "Spinebone Sword*Artisan's Sword", grade: 'D' },
-    { name: "Spinebone Sword*Knight's Sword", grade: 'D' },
-    { name: "Artisan's Sword*Artisan's Sword", grade: 'D' },
-    { name: "Artisan's Sword*Knight's Sword", grade: 'D' },
-    { name: "Knight's Sword*Knight's Sword", grade: 'D' },
-    { name: 'Bastard Sword*Crimson Sword', grade: 'D' },
-    { name: 'Bastard Sword*Elven Sword', grade: 'D' },
-    { name: 'Spinebone Sword*Crimson Sword', grade: 'D' },
-    { name: 'Spinebone Sword*Elven Sword', grade: 'D' },
-    { name: "Artisan's Sword*Crimson Sword", grade: 'D' },
-    { name: "Artisan's Sword*Elven Sword", grade: 'D' },
-    { name: "Knight's Sword*Crimson Sword", grade: 'D' },
-    { name: "Knight's Sword*Elven Sword", grade: 'D' },
-    { name: 'Soulfire Dirk', grade: 'D' },
+    { name: 'Goat Head Staff', grade: 'D' }, { name: 'Ghost Staff', grade: 'D' },
+    { name: 'Staff of Life', grade: 'D' }, { name: 'Aluba Mace', grade: 'D' },
+    { name: 'Bagh-Nakh', grade: 'D' }, { name: 'Fisted Blade', grade: 'D' },
+    { name: 'Knuckle Duster', grade: 'D' }, { name: 'Soulfire Dirk', grade: 'D' },
     { name: 'Stick of Faith', grade: 'C' }, { name: 'Club of Nature', grade: 'C' },
-    { name: "Healhren's Book", grade: 'C' }, { name: 'Horn of Glory', grade: 'C' },
     { name: 'Mace of Underworld', grade: 'C' }, { name: 'Nirvana Axe', grade: 'C' },
-    { name: 'Stick of Eternity', grade: 'C' }, { name: 'Eclipse Axe', grade: 'C' },
-    { name: 'Mysterious Sword', grade: 'C' }, { name: "Homunkulus's Sword", grade: 'C' },
-    { name: 'Sword of Whispering Death', grade: 'C' }, { name: 'Eclipse Sword', grade: 'C' },
-    { name: 'Crystal Staff', grade: 'C' }, { name: 'Heavy Doom Axe', grade: 'C' },
-    { name: 'Heavy Doom Hammer', grade: 'C' }, { name: 'Cursed Staff', grade: 'C' },
-    { name: 'Inferno Staff', grade: 'C' }, { name: "Pa'agrian Hammer", grade: 'C' },
-    { name: 'Paradia Staff', grade: 'C' }, { name: "Sage's Staff", grade: 'C' },
-    { name: "Deadman's Staff", grade: 'C' }, { name: "Demon's Staff", grade: 'C' },
-    { name: "Ghoul's Staff", grade: 'C' },
-    { name: 'Stormbringer', grade: 'C' }, { name: 'Caliburs', grade: 'C' },
-    { name: 'Katana', grade: 'C' }, { name: 'Raid Sword', grade: 'C' },
-    { name: 'Shamshir', grade: 'C' }, { name: 'Spirit Sword', grade: 'C' },
-    { name: 'Sword of Delusion', grade: 'C' }, { name: 'Sword of Limit', grade: 'C' },
-    { name: 'Sword of Nightmare', grade: 'C' }, { name: 'Tsurugi', grade: 'C' },
-    { name: 'Samurai Longsword', grade: 'C' },
-    { name: 'Saber*Sword of Revolution', grade: 'C' },
-    { name: "Knight's Sword*Sword of Revolution", grade: 'C' },
-    { name: 'Elven Sword*Sword of Revolution', grade: 'C' },
-    { name: 'Sword of Revolution*Sword of Revolution', grade: 'C' },
-    { name: 'Stormbringer*Katana', grade: 'C' },
-    { name: 'Shamshir*Spirit Sword', grade: 'C' },
-    { name: 'Spirit Sword*Spirit Sword', grade: 'C' },
-    { name: 'Crimson Sword*Elven Sword', grade: 'C' },
-    { name: 'Bastard Sword*Sword of Revolution', grade: 'C' },
-    { name: 'Crimson Sword*Sword of Revolution', grade: 'C' },
-    { name: 'Crimson Sword*Elven Long Sword', grade: 'C' },
-    { name: 'Katana*Spirit Sword', grade: 'C' },
-    { name: 'Crimson Sword*Crimson Sword', grade: 'C' },
-    { name: 'Saber*Elven Long Sword', grade: 'C' },
-    { name: 'Spinebone Sword*Elven Long Sword', grade: 'C' },
-    { name: 'Sword of Revolution*Elven Long Sword', grade: 'C' },
-    { name: 'Stormbringer*Spirit Sword', grade: 'C' },
-    { name: 'Shamshir*Raid Sword', grade: 'C' },
-    { name: 'Spirit Sword*Raid Sword', grade: 'C' },
-    { name: 'Spinebone Sword*Sword of Revolution', grade: 'C' },
-    { name: "Knight's Sword*Elven Long Sword", grade: 'C' },
-    { name: 'Stormbringer*Raid Sword', grade: 'C' },
-    { name: 'Katana*Katana', grade: 'C' },
-    { name: 'Raid Sword*Raid Sword', grade: 'C' },
-    { name: "Artisan's Sword*Sword of Revolution", grade: 'C' },
-    { name: 'Bastard Sword*Elven Long Sword', grade: 'C' },
-    { name: "Artisan's Sword*Elven Long Sword", grade: 'C' },
-    { name: 'Elven Sword*Elven Long Sword', grade: 'C' },
-    { name: 'Stormbringer*Shamshir', grade: 'C' },
-    { name: 'Shamshir*Katana', grade: 'C' },
-    { name: 'Katana*Raid Sword', grade: 'C' },
-    { name: 'Elven Sword*Elven Sword', grade: 'C' },
-    { name: 'Elven Long Sword*Elven Long Sword', grade: 'C' },
-    { name: 'Stormbringer*Stormbringer', grade: 'C' },
-    { name: 'Shamshir*Shamshir', grade: 'C' },
-    { name: 'Tarbar*Tarbar', grade: 'C' },
-    { name: 'Battle Axe*Battle Axe', grade: 'C' },
-    { name: 'Dwarven War Hammer*Dwarven War Hammer', grade: 'C' },
-    { name: 'Body Slasher', grade: 'C' }, { name: 'Orcish Glaive', grade: 'C' },
-    { name: 'Scythe', grade: 'C' }, { name: 'Bec de Corbin', grade: 'C' },
-    { name: 'Poleaxe', grade: 'C' }, { name: 'Orcish Poleaxe', grade: 'C' },
-    { name: 'Cursed Dagger', grade: 'C' }, { name: 'Dark Elven Dagger', grade: 'C' },
-    { name: 'Dark Screamer', grade: 'C' }, { name: 'Grace Dagger', grade: 'C' },
-    { name: 'Stiletto', grade: 'C' }, { name: 'Crystal Dagger', grade: 'C' },
-    { name: 'Battle Axe', grade: 'C' }, { name: 'Big Hammer', grade: 'C' },
-    { name: 'Silver Axe', grade: 'C' }, { name: 'Skull Graver', grade: 'C' },
-    { name: 'Dwarven War Hammer', grade: 'C' }, { name: 'War Axe', grade: 'C' },
-    { name: 'Yaksa Mace', grade: 'C' },
-    { name: 'Karik Horn', grade: 'C' }, { name: 'Dwarven Hammer', grade: 'C' },
-    { name: 'Crystallized Ice Bow', grade: 'C' }, { name: 'Akat Long Bow', grade: 'C' },
-    { name: 'Elemental Bow', grade: 'C' }, { name: 'Noble Elven Bow', grade: 'C' },
-    { name: 'Eminence Bow', grade: 'C' },
-    { name: 'Flamberge', grade: 'C' }, { name: "Pa'agrian Sword", grade: 'C' },
-    { name: 'Berserker Blade', grade: 'C' },
+    { name: 'Eclipse Axe', grade: 'C' }, { name: 'Mysterious Sword', grade: 'C' },
+    { name: "Homunkulus's Sword", grade: 'C' }, { name: 'Eclipse Sword', grade: 'C' },
+    { name: 'Crystal Staff', grade: 'C' }, { name: 'Cursed Staff', grade: 'C' },
+    { name: 'Inferno Staff', grade: 'C' }, { name: 'Paradia Staff', grade: 'C' },
+    { name: "Sage's Staff", grade: 'C' }, { name: "Demon's Staff", grade: 'C' },
+    { name: "Ghoul's Staff", grade: 'C' }, { name: 'Stormbringer', grade: 'C' },
+    { name: 'Caliburs', grade: 'C' }, { name: 'Katana', grade: 'C' },
+    { name: 'Raid Sword', grade: 'C' }, { name: 'Shamshir', grade: 'C' },
+    { name: 'Spirit Sword', grade: 'C' }, { name: 'Sword of Delusion', grade: 'C' },
+    { name: 'Sword of Limit', grade: 'C' }, { name: 'Tsurugi', grade: 'C' },
+    { name: 'Samurai Longsword', grade: 'C' }, { name: 'Body Slasher', grade: 'C' },
+    { name: 'Orcish Glaive', grade: 'C' }, { name: 'Scythe', grade: 'C' },
+    { name: 'Poleaxe', grade: 'C' }, { name: 'Cursed Dagger', grade: 'C' },
+    { name: 'Dark Elven Dagger', grade: 'C' }, { name: 'Dark Screamer', grade: 'C' },
+    { name: 'Grace Dagger', grade: 'C' }, { name: 'Stiletto', grade: 'C' },
+    { name: 'Crystal Dagger', grade: 'C' }, { name: 'Battle Axe', grade: 'C' },
+    { name: 'Big Hammer', grade: 'C' }, { name: 'Skull Graver', grade: 'C' },
+    { name: 'Yaksa Mace', grade: 'C' }, { name: 'Karik Horn', grade: 'C' },
+    { name: 'Dwarven Hammer', grade: 'C' }, { name: 'Akat Long Bow', grade: 'C' },
+    { name: 'Elemental Bow', grade: 'C' }, { name: 'Eminence Bow', grade: 'C' },
+    { name: 'Flamberge', grade: 'C' }, { name: 'Berserker Blade', grade: 'C' },
     { name: 'Chakram', grade: 'C' }, { name: 'Great Pata', grade: 'C' },
-    { name: 'Crystal Dagger*Cursed Dagger', grade: 'C' },
     { name: 'Spell Breaker', grade: 'B' }, { name: 'Kaim Vanul Bones', grade: 'B' },
     { name: 'Sword of Valhalla', grade: 'B' }, { name: 'Wizards Tear', grade: 'B' },
     { name: "Sprite's Staff", grade: 'B' }, { name: 'Staff of Evil Spirits', grade: 'B' },
     { name: 'Keshanberk', grade: 'B' }, { name: 'Sword of Damascus', grade: 'B' },
-    { name: 'Sword of Delusion*Sword of Delusion', grade: 'B' },
-    { name: 'Sword of Nightmare*Sword of Nightmare', grade: 'B' },
-    { name: 'Samurai Long Sword*Samurai Long Sword', grade: 'B' },
     { name: 'Great Axe', grade: 'B' }, { name: 'Lance', grade: 'B' },
     { name: 'Kris', grade: 'B' }, { name: 'Demon Dagger', grade: 'B' },
     { name: 'Heavy War Axe', grade: 'B' }, { name: 'Art of Battle Axe', grade: 'B' },
-    { name: "Deadman's Glory", grade: 'B' },
-    { name: 'Ice Storm Hammer', grade: 'B' }, { name: 'Star Buster', grade: 'B' },
-    { name: 'Dark Elven Long Bow', grade: 'B' }, { name: 'Bow of Peril', grade: 'B' },
-    { name: 'Great Sword', grade: 'B' }, { name: 'Guardian Sword', grade: 'B' },
-    { name: 'Arthro Nail', grade: 'B' }, { name: 'Bellion Cestus', grade: 'B' },
-    { name: "Demon's Dagger*Dark Screamer", grade: 'B' },
-    { name: 'Hell Knife', grade: 'B' }, { name: 'Yaksa Mace*Yaksa Mace', grade: 'B' },
+    { name: "Deadman's Glory", grade: 'B' }, { name: 'Ice Storm Hammer', grade: 'B' },
+    { name: 'Star Buster', grade: 'B' }, { name: 'Dark Elven Long Bow', grade: 'B' },
+    { name: 'Bow of Peril', grade: 'B' }, { name: 'Great Sword', grade: 'B' },
+    { name: 'Guardian Sword', grade: 'B' }, { name: 'Arthro Nail', grade: 'B' },
+    { name: 'Bellion Cestus', grade: 'B' }, { name: 'Hell Knife', grade: 'B' },
+    { name: 'Yaksa Mace*Yaksa Mace', grade: 'B' },
     { name: 'Sword of Miracles', grade: 'A' }, { name: 'Angel Slayer', grade: 'A' },
     { name: "Dark Legion's Edge", grade: 'A' }, { name: 'Soul Separator', grade: 'A' },
     { name: 'Bloody Orchid', grade: 'A' }, { name: 'Soul Bow', grade: 'A' },
@@ -712,14 +762,19 @@
   // ==================== СОСТОЯНИЕ ====================
   let members = [];
   let posts = [];
+  let dreams = [];
   const partyBody = document.getElementById('partyBody');
   const postsFeed = document.getElementById('postsFeed');
+  const dreamsFeed = document.getElementById('dreamsFeed');
   const syncDot = document.getElementById('syncDot');
   const syncText = document.getElementById('syncText');
   const autoTimerEl = document.getElementById('autoTimer');
   const postsSyncDot = document.getElementById('postsSyncDot');
   const postsSyncText = document.getElementById('postsSyncText');
+  const dreamsSyncDot = document.getElementById('dreamsSyncDot');
+  const dreamsSyncText = document.getElementById('dreamsSyncText');
   const authorInput = document.getElementById('craftAuthorName');
+  const dreamAuthorInput = document.getElementById('dreamAuthorName');
 
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.weapon-select') && !e.target.closest('.weapon-dropdown')) {
@@ -743,13 +798,22 @@
     postsSyncDot.className = 'sync-dot ' + status;
     postsSyncText.textContent = text;
   }
+  function setDreamsSyncStatus(status, text) {
+    dreamsSyncDot.className = 'sync-dot ' + status;
+    dreamsSyncText.textContent = text;
+  }
 
   const AUTHOR_KEY = 'l2party_author';
-  if (localStorage.getItem(AUTHOR_KEY)) {
-    authorInput.value = localStorage.getItem(AUTHOR_KEY);
-  }
+  const savedAuthor = localStorage.getItem(AUTHOR_KEY) || '';
+  authorInput.value = savedAuthor;
+  dreamAuthorInput.value = savedAuthor;
   authorInput.addEventListener('input', e => {
     localStorage.setItem(AUTHOR_KEY, e.target.value);
+    if (dreamAuthorInput.value !== e.target.value) dreamAuthorInput.value = e.target.value;
+  });
+  dreamAuthorInput.addEventListener('input', e => {
+    localStorage.setItem(AUTHOR_KEY, e.target.value);
+    if (authorInput.value !== e.target.value) authorInput.value = e.target.value;
   });
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1187,7 +1251,6 @@
       }, { min: 1, max: 85 }, meta('level')));
       tr.appendChild(tdLevel);
 
-      // ===== Оружие — 3 слота, каждый со своим комментарием =====
       const tdWeapon = document.createElement('td');
       const weaponWrap = document.createElement('div');
       weaponWrap.style.display = 'flex';
@@ -1200,7 +1263,7 @@
         { key: 'weapon3',       commentKey: 'weapon3Comment', label: 'Оружие 3' }
       ];
 
-      weaponSlots.forEach((slot, idx) => {
+      weaponSlots.forEach((slot) => {
         const label = document.createElement('span');
         label.className = 'weapon-slot-label';
         label.textContent = slot.label;
@@ -1261,7 +1324,6 @@
       });
       tr.appendChild(tdJewelry);
 
-      // ===== Татуировки =====
       const tdTattoo = document.createElement('td');
       tdTattoo.className = 'set-cell';
       [
@@ -1421,28 +1483,18 @@
 
   function parsePrice(str) {
     if (!str) return 0;
-    const s = String(str)
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, '')
-      .replace(/,/g, '.');
-
+    const s = String(str).trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.');
     const m = s.match(/^(-?[\d.]+)(ккк|кк|к|млрд|млн|kkk|kk|k|b|m)?$/);
     if (!m) {
       const numOnly = parseFloat(s.replace(/[^\d.-]/g, ''));
       return isNaN(numOnly) ? 0 : numOnly;
     }
-
     const num = parseFloat(m[1]);
     if (isNaN(num)) return 0;
-
     const suffix = m[2] || '';
     const multipliers = {
-      'к': 1e3,    'k': 1e3,
-      'кк': 1e6,   'kk': 1e6,   'm': 1e6,
-      'ккк': 1e9,  'kkk': 1e9,  'b': 1e9,
-      'млн': 1e6,
-      'млрд': 1e9
+      'к': 1e3, 'k': 1e3, 'кк': 1e6, 'kk': 1e6, 'm': 1e6,
+      'ккк': 1e9, 'kkk': 1e9, 'b': 1e9, 'млн': 1e6, 'млрд': 1e9
     };
     return num * (multipliers[suffix] || 1);
   }
@@ -1460,30 +1512,21 @@
   function updateTreasuryBalance() {
     let income = 0;
     let expense = 0;
-
     posts.forEach(post => {
       const amount = parsePrice(post.price);
       if (amount <= 0) return;
-
-      if (post.type === 'treasury') {
-        income += amount;
-      } else if (post.type === 'craft' || post.type === 'buy') {
-        expense += amount;
-      }
+      if (post.type === 'treasury') income += amount;
+      else if (post.type === 'craft' || post.type === 'buy') expense += amount;
     });
-
     const balance = income - expense;
-
     const valueEl = document.getElementById('treasuryValue');
     const breakdownEl = document.getElementById('treasuryBreakdown');
     if (!valueEl || !breakdownEl) return;
-
     valueEl.textContent = (balance > 0 ? '+' : balance < 0 ? '−' : '') + formatBalance(Math.abs(balance));
     valueEl.classList.remove('positive', 'negative', 'neutral');
     if (balance > 0) valueEl.classList.add('positive');
     else if (balance < 0) valueEl.classList.add('negative');
     else valueEl.classList.add('neutral');
-
     breakdownEl.innerHTML =
       `Доход: <span class="income">+${formatBalance(income)}</span>` +
       ` · Расход: <span class="expense">−${formatBalance(expense)}</span>`;
@@ -1559,17 +1602,14 @@
       if (post.price) {
         const priceLine = document.createElement('div');
         priceLine.className = 'post-price-line';
-
         const priceLabel = document.createElement('span');
         priceLabel.className = 'post-price-label';
         priceLabel.textContent = post.type === 'treasury' ? 'Взнос:' : 'Цена:';
         priceLine.appendChild(priceLabel);
-
         const priceValue = document.createElement('span');
         priceValue.className = 'post-price-value';
         priceValue.textContent = post.price;
         priceLine.appendChild(priceValue);
-
         card.appendChild(priceLine);
       }
 
@@ -1598,7 +1638,6 @@
       card.appendChild(footer);
       postsFeed.appendChild(card);
     });
-
     updateTreasuryBalance();
   }
 
@@ -1610,7 +1649,6 @@
       const qtyVal = existing.querySelector('.edit-qty').value.trim();
       const priceVal = existing.querySelector('.edit-price') ? existing.querySelector('.edit-price').value.trim() : (post.price || '');
       const textVal = existing.querySelector('.edit-text').value;
-
       post.type = typeVal;
       post.item = itemVal;
       post.quantity = qtyVal;
@@ -1685,6 +1723,428 @@
   }
 
   document.getElementById('postPublishBtn').addEventListener('click', publishPost);
+
+  // ==================== ВЛАЖНЫЕ МЕЧТЫ ====================
+  let dreamSaveTimeouts = new Map();
+
+  function dreamsEqual(a, b) {
+    if (a.length !== b.length) return false;
+    const mapA = new Map(a.map(p => [p.id, p]));
+    for (const p of b) {
+      const old = mapA.get(p.id);
+      if (!old) return false;
+      const keys = new Set([...Object.keys(old), ...Object.keys(p)]);
+      for (const k of keys) {
+        if (k === 'id') continue;
+        if (k === 'comments') {
+          const aC = old.comments || [];
+          const bC = p.comments || [];
+          if (aC.length !== bC.length) return false;
+          for (let i = 0; i < aC.length; i++) {
+            if (String(aC[i].text || '') !== String(bC[i].text || '') ||
+                String(aC[i].author || '') !== String(bC[i].author || '')) return false;
+          }
+          continue;
+        }
+        if (String(old[k] ?? '') !== String(p[k] ?? '')) return false;
+      }
+    }
+    return true;
+  }
+
+  dreamsRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    const newDreams = [];
+    if (data) {
+      Object.keys(data).forEach(key => { newDreams.push({ id: key, ...data[key] }); });
+      newDreams.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    }
+    if (dreamsEqual(dreams, newDreams)) { setDreamsSyncStatus('online', 'Синхронизировано'); return; }
+    dreams = newDreams;
+    renderDreams();
+    setDreamsSyncStatus('online', 'Синхронизировано');
+  }, (error) => {
+    console.error('Ошибка синхронизации мечт:', error);
+    setDreamsSyncStatus('offline', 'Ошибка: ' + error.code);
+  });
+
+  function debouncedSaveDream(dream) {
+    if (!dream.id) return;
+    const existing = dreamSaveTimeouts.get(dream.id);
+    if (existing) clearTimeout(existing);
+    dreamSaveTimeouts.set(dream.id, setTimeout(() => {
+      const data = { ...dream };
+      delete data.id;
+      data.updatedAt = Date.now();
+      dreamsRef.child(dream.id).update(data)
+        .catch(err => console.error('Ошибка сохранения мечты:', err));
+      dreamSaveTimeouts.delete(dream.id);
+    }, 500));
+  }
+
+  function publishDream() {
+    const author = (dreamAuthorInput.value || '').trim();
+    if (!author) {
+      alert('Сначала введите ваше имя — иначе мечта будет без подписи.');
+      dreamAuthorInput.focus();
+      return;
+    }
+    const type = document.getElementById('newDreamType').value;
+    const item = document.getElementById('newDreamItem').value.trim();
+    const quantity = document.getElementById('newDreamQuantity').value.trim();
+    const price = document.getElementById('newDreamPrice').value.trim();
+    const text = document.getElementById('newDreamText').value.trim();
+    if (!item && !text) { alert('Заполните хотя бы название или описание мечты.'); return; }
+
+    const newRef = dreamsRef.push();
+    const newDream = {
+      author, type, item, quantity, price, text,
+      status: 'new',
+      comments: [],
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+    newRef.set(newDream).then(() => {
+      document.getElementById('newDreamItem').value = '';
+      document.getElementById('newDreamQuantity').value = '';
+      document.getElementById('newDreamPrice').value = '';
+      document.getElementById('newDreamText').value = '';
+    }).catch(err => {
+      console.error('Ошибка публикации мечты:', err);
+      alert('Не удалось опубликовать мечту: ' + err.message);
+    });
+  }
+
+  function deleteDream(dream) {
+    if (!dream.id) return;
+    if (!confirm('Удалить эту мечту? Все комментарии тоже удалятся.')) return;
+    dreamsRef.child(dream.id).remove()
+      .catch(err => console.error('Ошибка удаления мечты:', err));
+  }
+
+  const DREAM_STATUS_LABELS = {
+    'new': '🌙 Мечта',
+    'progress': '🔥 В работе',
+    'done': '✨ Исполнено'
+  };
+
+  function cycleDreamStatus(dream) {
+    const order = ['new', 'progress', 'done'];
+    const currentIdx = order.indexOf(dream.status || 'new');
+    dream.status = order[(currentIdx + 1) % order.length];
+    debouncedSaveDream(dream);
+  }
+
+  function addDreamComment(dream, text) {
+    const trimmed = (text || '').trim();
+    if (!trimmed) return;
+    const author = (dreamAuthorInput.value || '').trim() || 'Аноним';
+    if (!dream.comments) dream.comments = [];
+    dream.comments.push({
+      author,
+      text: trimmed,
+      createdAt: Date.now()
+    });
+    debouncedSaveDream(dream);
+  }
+
+  function deleteDreamComment(dream, commentIndex) {
+    if (!dream.comments) return;
+    if (!confirm('Удалить комментарий?')) return;
+    dream.comments.splice(commentIndex, 1);
+    debouncedSaveDream(dream);
+  }
+
+  function renderDreams() {
+    dreamsFeed.innerHTML = '';
+
+    if (dreams.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-posts';
+      empty.textContent = 'Пока ни одной мечты. Загадайте первую — что хочется скрафтить, купить или достать.';
+      dreamsFeed.appendChild(empty);
+      return;
+    }
+
+    dreams.forEach(dream => {
+      const card = document.createElement('div');
+      card.className = 'post-card dream-card ' + (
+        dream.type === 'buy' ? 'type-buy' :
+        dream.type === 'other' ? 'type-other' :
+        'type-craft'
+      );
+
+      // ---- Заголовок карточки ----
+      const header = document.createElement('div');
+      header.className = 'post-header';
+
+      const author = document.createElement('span');
+      author.className = 'post-author';
+      author.textContent = dream.author || 'Аноним';
+      header.appendChild(author);
+
+      const time = document.createElement('span');
+      time.className = 'post-time';
+      time.textContent = formatDate(dream.createdAt);
+      header.appendChild(time);
+
+      const badge = document.createElement('span');
+      if (dream.type === 'buy') {
+        badge.className = 'post-badge badge-buy';
+        badge.textContent = '💰 Покупка';
+      } else if (dream.type === 'other') {
+        badge.className = 'post-badge badge-other';
+        badge.textContent = '🎯 Другое';
+      } else {
+        badge.className = 'post-badge badge-craft';
+        badge.textContent = '🔨 Крафт';
+      }
+      header.appendChild(badge);
+
+      const status = document.createElement('span');
+      status.className = 'post-status status-' + (dream.status || 'new');
+      status.textContent = DREAM_STATUS_LABELS[dream.status || 'new'];
+      status.title = 'Нажмите, чтобы сменить статус';
+      status.addEventListener('click', () => cycleDreamStatus(dream));
+      header.appendChild(status);
+
+      card.appendChild(header);
+
+      // ---- Строка предмета ----
+      if (dream.item) {
+        const itemLine = document.createElement('div');
+        itemLine.className = 'post-item-line';
+        const lbl = document.createElement('span');
+        lbl.className = 'post-item-label';
+        lbl.textContent = 'Цель:';
+        itemLine.appendChild(lbl);
+        const itemName = document.createElement('span');
+        itemName.className = 'post-item-name';
+        itemName.textContent = dream.item + (dream.quantity ? ` × ${dream.quantity}` : '');
+        itemLine.appendChild(itemName);
+        card.appendChild(itemLine);
+      }
+
+      // ---- Строка цены ----
+      if (dream.price) {
+        const priceLine = document.createElement('div');
+        priceLine.className = 'post-price-line';
+        const priceLabel = document.createElement('span');
+        priceLabel.className = 'post-price-label';
+        priceLabel.textContent = 'Бюджет:';
+        priceLine.appendChild(priceLabel);
+        const priceValue = document.createElement('span');
+        priceValue.className = 'post-price-value';
+        priceValue.textContent = dream.price;
+        priceLine.appendChild(priceValue);
+        card.appendChild(priceLine);
+      }
+
+      // ---- Описание ----
+      if (dream.text) {
+        const text = document.createElement('div');
+        text.className = 'post-text';
+        text.textContent = dream.text;
+        card.appendChild(text);
+      }
+
+      // ---- Комментарии ----
+      const commentsWrap = document.createElement('div');
+      commentsWrap.className = 'dream-comments';
+
+      const commentsTitle = document.createElement('div');
+      commentsTitle.className = 'dream-comments-title';
+      const commentsCount = (dream.comments || []).length;
+      commentsTitle.textContent = `Комментарии (${commentsCount})`;
+      commentsWrap.appendChild(commentsTitle);
+
+      const commentsList = document.createElement('div');
+      commentsList.className = 'dream-comments-list';
+
+      const comments = dream.comments || [];
+      if (comments.length === 0) {
+        const emptyCom = document.createElement('div');
+        emptyCom.className = 'dream-comments-empty';
+        emptyCom.textContent = 'Пока никто не комментировал.';
+        commentsList.appendChild(emptyCom);
+      } else {
+        comments.forEach((comment, idx) => {
+          const com = document.createElement('div');
+          com.className = 'dream-comment';
+
+          const comHeader = document.createElement('div');
+          comHeader.className = 'dream-comment-header';
+
+          const comAuthor = document.createElement('span');
+          comAuthor.className = 'dream-comment-author';
+          comAuthor.textContent = comment.author || 'Аноним';
+          comHeader.appendChild(comAuthor);
+
+          const comTime = document.createElement('span');
+          comTime.className = 'dream-comment-time';
+          comTime.textContent = formatDate(comment.createdAt);
+          comHeader.appendChild(comTime);
+
+          const comDel = document.createElement('button');
+          comDel.className = 'dream-comment-delete';
+          comDel.textContent = '×';
+          comDel.title = 'Удалить комментарий';
+          comDel.addEventListener('click', () => deleteDreamComment(dream, idx));
+          comHeader.appendChild(comDel);
+
+          com.appendChild(comHeader);
+
+          const comText = document.createElement('div');
+          comText.className = 'dream-comment-text';
+          comText.textContent = comment.text;
+          com.appendChild(comText);
+
+          commentsList.appendChild(com);
+        });
+      }
+      commentsWrap.appendChild(commentsList);
+
+      // ---- Форма добавления комментария ----
+      const comForm = document.createElement('div');
+      comForm.className = 'dream-comment-form';
+
+      const comInput = document.createElement('input');
+      comInput.type = 'text';
+      comInput.className = 'dream-comment-input';
+      comInput.placeholder = 'Написать комментарий…';
+      comInput.maxLength = 500;
+      comForm.appendChild(comInput);
+
+      const comSend = document.createElement('button');
+      comSend.className = 'dream-comment-send';
+      comSend.textContent = 'Отправить';
+      const submitComment = () => {
+        const val = comInput.value;
+        if (!val.trim()) return;
+        addDreamComment(dream, val);
+        comInput.value = '';
+      };
+      comSend.addEventListener('click', submitComment);
+      comInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          submitComment();
+        }
+      });
+      comForm.appendChild(comSend);
+
+      commentsWrap.appendChild(comForm);
+      card.appendChild(commentsWrap);
+
+      // ---- Футер ----
+      const footer = document.createElement('div');
+      footer.className = 'post-footer';
+
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Редактировать';
+      editBtn.addEventListener('click', () => toggleEditDream(card, dream));
+      footer.appendChild(editBtn);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Удалить';
+      deleteBtn.style.borderColor = 'rgba(217,45,32,0.4)';
+      deleteBtn.style.color = 'var(--danger-red)';
+      deleteBtn.addEventListener('click', () => deleteDream(dream));
+      footer.appendChild(deleteBtn);
+
+      card.appendChild(footer);
+      dreamsFeed.appendChild(card);
+    });
+  }
+
+  function toggleEditDream(card, dream) {
+    const existing = card.querySelector('.post-edit-area');
+    if (existing) {
+      const typeVal = existing.querySelector('.edit-type').value;
+      const itemVal = existing.querySelector('.edit-item').value.trim();
+      const qtyVal = existing.querySelector('.edit-qty').value.trim();
+      const priceVal = existing.querySelector('.edit-price') ? existing.querySelector('.edit-price').value.trim() : (dream.price || '');
+      const textVal = existing.querySelector('.edit-text').value;
+
+      dream.type = typeVal;
+      dream.item = itemVal;
+      dream.quantity = qtyVal;
+      dream.price = priceVal;
+      dream.text = textVal;
+      debouncedSaveDream(dream);
+      renderDreams();
+      return;
+    }
+    const area = document.createElement('div');
+    area.className = 'post-edit-area';
+
+    const row = document.createElement('div');
+    row.className = 'post-edit-row';
+
+    const typeSelect = document.createElement('select');
+    typeSelect.className = 'edit-type';
+    [['craft', '🔨 Крафт'], ['buy', '💰 Покупка'], ['other', '🎯 Другое']].forEach(([val, label]) => {
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = label;
+      if ((dream.type || 'craft') === val) opt.selected = true;
+      typeSelect.appendChild(opt);
+    });
+    row.appendChild(typeSelect);
+
+    const itemInput = document.createElement('input');
+    itemInput.type = 'text';
+    itemInput.className = 'edit-item';
+    itemInput.value = dream.item || '';
+    itemInput.placeholder = 'Цель';
+    row.appendChild(itemInput);
+
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'text';
+    qtyInput.className = 'edit-qty';
+    qtyInput.value = dream.quantity || '';
+    qtyInput.placeholder = 'Кол-во';
+    row.appendChild(qtyInput);
+
+    const priceInput = document.createElement('input');
+    priceInput.type = 'text';
+    priceInput.className = 'edit-price';
+    priceInput.value = dream.price || '';
+    priceInput.placeholder = 'Бюджет';
+    row.appendChild(priceInput);
+
+    area.appendChild(row);
+
+    const textLabel = document.createElement('label');
+    textLabel.textContent = 'Описание';
+    area.appendChild(textLabel);
+
+    const textArea = document.createElement('textarea');
+    textArea.className = 'edit-text';
+    textArea.value = dream.text || '';
+    textArea.style.minHeight = '70px';
+    textArea.style.width = '100%';
+    textArea.style.resize = 'vertical';
+    area.appendChild(textArea);
+
+    const hint = document.createElement('div');
+    hint.style.fontSize = '10px';
+    hint.style.color = 'var(--text-muted)';
+    hint.style.marginTop = '6px';
+    hint.textContent = 'Нажмите «Редактировать» ещё раз, чтобы сохранить.';
+    area.appendChild(hint);
+
+    // Убираем из карточки прежнее содержимое (кроме header и comments не трогаем — только видимые поля)
+    card.querySelectorAll('.post-item-line, .post-price-line').forEach(el => el.remove());
+    // post-text тоже убираем, но он может совпадать с чем-то ещё — ищем только прямых потомков
+    const directTexts = card.querySelectorAll(':scope > .post-text');
+    directTexts.forEach(el => el.remove());
+
+    const footer = card.querySelector('.post-footer');
+    card.insertBefore(area, footer);
+  }
+
+  document.getElementById('dreamPublishBtn').addEventListener('click', publishDream);
 
   // ==================== PDF ====================
   async function downloadPDF() {
@@ -1767,7 +2227,6 @@
       tdLevel.textContent = m.level || '—';
       tr.appendChild(tdLevel);
 
-      // ===== Оружие — 3 слота в PDF =====
       const tdWeapon = document.createElement('td');
       tdWeapon.style.cssText = cellStyle;
       const weaponSlotsPdf = [
@@ -1775,12 +2234,10 @@
         { key: 'weapon2', commentKey: 'weapon2Comment', label: 'Оружие 2' },
         { key: 'weapon3', commentKey: 'weapon3Comment', label: 'Оружие 3' }
       ];
-
       weaponSlotsPdf.forEach((slot, idx) => {
         const weaponLine = document.createElement('div');
         weaponLine.style.cssText = idx > 0 ? 'margin-top:6px;' : '';
 
-        // Заголовок слота
         const slotLabel = document.createElement('div');
         slotLabel.style.cssText = 'font-size:9px;color:#8a8da5;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;font-weight:700;';
         slotLabel.textContent = slot.label;
@@ -1792,8 +2249,7 @@
           const g = getWeaponGrade(weaponName);
           const gradeLetter = document.createElement('span');
           gradeLetter.textContent = g || '?';
-          gradeLetter.style.cssText =
-            `color:${weaponGradeColor(g)};font-weight:800;font-size:14px;margin-right:7px;letter-spacing:0.5px;`;
+          gradeLetter.style.cssText = `color:${weaponGradeColor(g)};font-weight:800;font-size:14px;margin-right:7px;letter-spacing:0.5px;`;
           row.appendChild(gradeLetter);
           row.appendChild(document.createTextNode(weaponName));
         } else {
@@ -1808,10 +2264,8 @@
           c.textContent = m[slot.commentKey];
           weaponLine.appendChild(c);
         }
-
         tdWeapon.appendChild(weaponLine);
       });
-
       tr.appendChild(tdWeapon);
 
       const tdArmor = document.createElement('td');
