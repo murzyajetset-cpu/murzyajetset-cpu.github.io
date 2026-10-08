@@ -746,7 +746,6 @@
       </div>
     </div>
 
-    <!-- ==== ТАБЛИЦА: ФИЗИЧЕСКИЕ СОСКИ ==== -->
     <div class="shots-table-title">
       <h3>⚔ Физические соски (Soulshot)</h3>
       <span class="hint">работают с Soul Ore</span>
@@ -781,7 +780,6 @@
       <span class="st-total">Итого SS: <b id="ssTotCost">0</b></span>
     </div>
 
-    <!-- ==== ТАБЛИЦА: МАГИЧЕСКИЕ СОСКИ ==== -->
     <div class="shots-table-title">
       <h3>✦ Магические соски (Blessed Spiritshot)</h3>
       <span class="hint">работают со Spirit Ore</span>
@@ -816,7 +814,6 @@
       <span class="st-total">Итого SpS: <b id="spsTotCost">0</b></span>
     </div>
 
-    <!-- ==== ОБЩИЕ ИТОГИ ==== -->
     <div class="totals">
       <div class="totals-row">
         <span class="label">Всего сосок (SS + SpS):</span>
@@ -873,7 +870,7 @@
       стоимость тыка = <code>руда/тык × цена руды + крист./тык × цена кристалла</code>.
       Значения <b>руда / кристаллы / сосок / цена кристалла за тык</b> редактируются прямо в таблицах — подгони под свою хронику.
       <br>
-      <b>Дефолты (из игрового рецепта):</b>
+      <b>Дефолты:</b>
       SS: D = 3 руды + 1 крист → 200; C = 15 + 1 → 600; B = 60 + 1 → 600; A = 60 + 1 → 500.
       SpS: D = 8 руды + 2 крист → 120; C = 30 + 2 → 240; B = 60 + 1 → 600; A = 50 + 1 → 600.
     </div>
@@ -949,13 +946,40 @@
         { name: 'Maestro Anvil Lock', perCraft: 24, price: 0 },
         { name: 'Metallic Fiber', perCraft: 13, price: 0 }
       ]
+    },
+    // ===== НОВЫЙ РЕЦЕПТ ИЗ СКРИНШОТА =====
+    'sword_of_damacus': {
+      name: 'Sword of Damacus', craftCount: 1, salePrice: 0,
+      ingredients: [
+        { name: 'Recipe: Sword of Damacus (60%)', perCraft: 1, price: 0 },
+        { name: 'Sword of Damacus Blade', perCraft: 13, price: 0 },
+        { name: "Artisan's Frame", perCraft: 2, price: 0 },
+        { name: 'Steel Mold', perCraft: 2, price: 0 },
+        { name: 'Braided Hemp', perCraft: 10, price: 0 },
+        { name: 'Stem', perCraft: 50, price: 0 },
+        { name: 'Iron Ore', perCraft: 10, price: 0 },
+        { name: 'Coal', perCraft: 1090, price: 0 },
+        { name: 'Varnish of Purity', perCraft: 130, price: 0 },
+        { name: 'Stone of Purity', perCraft: 130, price: 0 },
+        { name: 'Varnish', perCraft: 390, price: 0 },
+        { name: 'Coarse Bone Powder', perCraft: 390, price: 0 },
+        { name: 'Animal Bone', perCraft: 3900, price: 0 },
+        { name: 'Adamantite Nugget', perCraft: 20, price: 0 },
+        { name: 'Metal Alloy', perCraft: 120, price: 0 },
+        { name: 'Steel', perCraft: 240, price: 0 },
+        { name: 'Mithril Ore', perCraft: 120, price: 0 },
+        { name: 'Synthetic Cokes', perCraft: 120, price: 0 },
+        { name: 'Orichalcum Ore', perCraft: 120, price: 0 },
+        { name: 'Cokes', perCraft: 360, price: 0 },
+        { name: 'Charcoal', perCraft: 1080, price: 0 },
+        { name: 'Enria', perCraft: 60, price: 0 },
+        { name: 'Crystal: B-Grade', perCraft: 160, price: 0 },
+        { name: 'Gemstone B', perCraft: 98, price: 0 }
+      ]
     }
   };
 
   // ==================== ДЕФОЛТНЫЕ СОСКИ ====================
-  // Значения из игрового рецепта:
-  // SS: D=3+1→200, C=15+1→600, B=60+1→600, A=60+1→500
-  // SpS (Blessed): D=8+2→120, C=30+2→240, B=60+1→600, A=50+1→600
   function buildDefaultShotGrades() {
     return [
       { id: 'D', label: 'D',
@@ -1017,15 +1041,28 @@
   }
 
   // ==================== LOCALSTORAGE: РЕЦЕПТЫ ====================
+  // Мягкая загрузка: пользовательские рецепты сохраняются,
+  // новые дефолтные рецепты добавляются, если их ещё нет.
   function loadRecipes() {
+    let saved = null;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        recipes = JSON.parse(raw);
-        if (typeof recipes !== 'object' || Array.isArray(recipes)) recipes = {};
-        return;
-      }
+      if (raw) saved = JSON.parse(raw);
     } catch (e) { console.warn('Ошибка чтения рецептов:', e); }
+
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+      recipes = saved;
+      let added = 0;
+      Object.keys(DEFAULT_RECIPES).forEach(id => {
+        if (!recipes[id]) {
+          recipes[id] = JSON.parse(JSON.stringify(DEFAULT_RECIPES[id]));
+          added++;
+        }
+      });
+      if (added > 0) saveRecipes();
+      return;
+    }
+
     recipes = JSON.parse(JSON.stringify(DEFAULT_RECIPES));
     saveRecipes();
   }
