@@ -733,7 +733,7 @@
         <span class="value" id="totalCount">0</span>
       </div>
       <div class="totals-row">
-        <span class="label">Общая стоимость материалов (по листьям):</span>
+        <span class="label">Общая стоимость материалов:</span>
         <span class="value" id="totalCost">0</span>
       </div>
 
@@ -764,14 +764,14 @@
     </div>
 
     <div class="info-hint">
-      <strong>Многоступенчатый крафт:</strong>
-      если у ингредиента есть компоненты — он считается <b>составным</b>, а в итоговую себестоимость идут только
-      его «листья» (конечные ресурсы с ценой). Значит, <code>Varnish of Purity</code> сам по себе в сумме не учитывается —
-      учитываются только его <code>Stone of Purity</code>, <code>Varnish</code>, <code>Coarse Bone Powder</code>,
-      <code>Animal Bone</code>.
+      <strong>Как считается «Всего нужно»:</strong>
+      <code>«На 1 крафт» × «Количество крафтов»</code> — значение всегда относится к главному предмету.
+      Пример: <code>Artisan's Frame: 2 × 3 = 6</code>, независимо от того, что оно вложено в Blade.
       <br>
-      Кнопка <b>+</b> рядом с названием — добавить компонент (сделать составным). Стрелочка ▾ — свернуть/развернуть.
-      У составных цена за ед. заблокирована — они считаются из детей.
+      <strong>Составные узлы:</strong> если у ингредиента есть дочерние компоненты — его собственная цена не учитывается,
+      в сумму идут только компоненты (по «листьям»).
+      <br>
+      Кнопка <b>+</b> рядом с названием — добавить компонент. Стрелочка ▾/▸ — свернуть/развернуть ветку.
       Цены с суффиксами <code>к</code>, <code>кк</code>, <code>ккк</code>.
     </div>
   </div>
@@ -954,12 +954,13 @@
 <div class="save-toast" id="saveToast">Сохранено</div>
 
 <script>
-  const STORAGE_KEY = 'l2craft_recipes_v2';
-  const SELECTED_KEY = 'l2craft_selected_v2';
+  const STORAGE_KEY = 'l2craft_recipes_v3';
+  const SELECTED_KEY = 'l2craft_selected_v3';
   const SHOTS_KEY = 'l2craft_shots_v7';
 
-  // ==================== ПРЕДУСТАНОВЛЕННЫЕ РЕЦЕПТЫ ====================
-  // Дерево: каждый узел { name, perCraft, price, children: [] }
+  // ==================== РЕЦЕПТЫ ====================
+  // Каждый узел: { name, perCraft, price, expanded, children: [] }
+  // perCraft — «на 1 крафт главного предмета» (без перемножения с родителями)
   // Если children непустой — узел составной, price игнорируется.
 
   const DEFAULT_RECIPES = {
@@ -1025,7 +1026,8 @@
       ]
     },
 
-    // ===== Sword of Damacus — многоступенчатый рецепт из скриншота =====
+    // ===== Sword of Damacus — полное дерево из скриншота =====
+    // Все perCraft — на 1 крафт главного предмета (Sword of Damacus).
     'sword_of_damacus': {
       name: 'Sword of Damacus', craftCount: 1, salePrice: 0,
       ingredients: [
@@ -1039,26 +1041,57 @@
                   name: 'Braided Hemp', perCraft: 10, price: '', children: [
                     { name: 'Stem', perCraft: 50, price: '', children: [] },
                     { name: 'Iron Ore', perCraft: 10, price: '', children: [] },
-                    { name: 'Coal', perCraft: 10, price: '', children: [] }
+                    { name: 'Coal (для Braided Hemp)', perCraft: 10, price: '', children: [] }
                   ]
                 }
               ]
             },
             {
-              name: 'Varnish of Purity', perCraft: 10, price: '', children: [
-                { name: 'Stone of Purity', perCraft: 1, price: '', children: [] },
+              name: 'Varnish of Purity (ветка ×10)', perCraft: 10, price: '', children: [
+                { name: 'Stone of Purity (×10)', perCraft: 10, price: '', children: [] },
                 {
-                  name: 'Varnish', perCraft: 3, price: '', children: [
+                  name: 'Varnish (×10)', perCraft: 30, price: '', children: [
                     {
-                      name: 'Coarse Bone Powder', perCraft: 1, price: '', children: [
-                        { name: 'Animal Bone', perCraft: 10, price: '', children: [] }
+                      name: 'Coarse Bone Powder (×10)', perCraft: 30, price: '', children: [
+                        { name: 'Animal Bone (×10)', perCraft: 300, price: '', children: [] }
                       ]
                     }
                   ]
                 }
               ]
             },
-            { name: 'Adamantite Nugget', perCraft: 20, price: '', children: [] }
+            { name: 'Adamantite Nugget', perCraft: 20, price: '', children: [] },
+            { name: 'Metal Alloy', perCraft: 120, price: '', children: [] },
+            {
+              name: 'Varnish of Purity (ветка ×120)', perCraft: 120, price: '', children: [
+                { name: 'Stone of Purity (×120)', perCraft: 120, price: '', children: [] },
+                {
+                  name: 'Varnish (×120)', perCraft: 360, price: '', children: [
+                    {
+                      name: 'Coarse Bone Powder (×120)', perCraft: 360, price: '', children: [
+                        { name: 'Animal Bone (×120)', perCraft: 3600, price: '', children: [] }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              name: 'Steel', perCraft: 240, price: '', children: [
+                {
+                  name: 'Mithril Ore', perCraft: 120, price: '', children: [
+                    { name: 'Synthetic Cokes (для Steel)', perCraft: 120, price: '', children: [] }
+                  ]
+                },
+                { name: 'Orichalcum Ore', perCraft: 120, price: '', children: [] },
+                {
+                  name: 'Cokes', perCraft: 360, price: '', children: [
+                    { name: 'Coal (для Cokes)', perCraft: 1080, price: '', children: [] },
+                    { name: 'Charcoal', perCraft: 1080, price: '', children: [] }
+                  ]
+                }
+              ]
+            }
           ]
         },
         { name: 'Enria', perCraft: 60, price: '', children: [] },
@@ -1068,7 +1101,7 @@
     }
   };
 
-  // ==================== ДЕФОЛТНЫЕ СОСКИ ====================
+  // ==================== СОСКИ ====================
   function buildDefaultShotGrades() {
     return [
       { id: 'D', label: 'D',
@@ -1087,19 +1120,13 @@
   }
 
   function buildDefaultShots() {
-    return {
-      soulOrePrice: '',
-      spiritOrePrice: '',
-      grades: buildDefaultShotGrades()
-    };
+    return { soulOrePrice: '', spiritOrePrice: '', grades: buildDefaultShotGrades() };
   }
 
   // ==================== СОСТОЯНИЕ ====================
   let recipes = {};
   let currentId = null;
   let shotsData = buildDefaultShots();
-
-  // Ссылки на DOM-строки для обновления без перерисовки
   const nodeRowRefs = new WeakMap();
 
   // ==================== УТИЛИТЫ ====================
@@ -1132,7 +1159,6 @@
     return 'r_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
   }
 
-  // Глубокое копирование с сохранением структуры и добавлением children: []
   function normalizeNode(n) {
     return {
       name: typeof n.name === 'string' ? n.name : '',
@@ -1152,7 +1178,7 @@
     };
   }
 
-  // ==================== LOCALSTORAGE: РЕЦЕПТЫ ====================
+  // ==================== LOCALSTORAGE ====================
   function loadRecipes() {
     let saved = null;
     try {
@@ -1162,10 +1188,7 @@
 
     if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
       recipes = {};
-      Object.keys(saved).forEach(id => {
-        recipes[id] = normalizeRecipe(saved[id]);
-      });
-      // Добавляем новые дефолтные, если их ещё нет
+      Object.keys(saved).forEach(id => { recipes[id] = normalizeRecipe(saved[id]); });
       let added = 0;
       Object.keys(DEFAULT_RECIPES).forEach(id => {
         if (!recipes[id]) {
@@ -1201,7 +1224,6 @@
     try { localStorage.setItem(SELECTED_KEY, id); } catch (e) {}
   }
 
-  // ==================== LOCALSTORAGE: СОСКИ ====================
   function loadShots() {
     try {
       const raw = localStorage.getItem(SHOTS_KEY);
@@ -1277,7 +1299,6 @@
       return;
     }
 
-    // Рекурсивный рендер узла
     function renderNode(node, depth, siblings) {
       const hasChildren = Array.isArray(node.children) && node.children.length > 0;
       const isExpanded = node.expanded !== false;
@@ -1323,12 +1344,11 @@
       });
       wrapper.appendChild(nameInput);
 
-      // Кнопка "+ компонент"
       const btnAddChild = document.createElement('button');
       btnAddChild.type = 'button';
       btnAddChild.className = 'mini-icon-btn';
       btnAddChild.textContent = '+';
-      btnAddChild.title = 'Добавить компонент (сделать составным)';
+      btnAddChild.title = 'Добавить компонент';
       btnAddChild.addEventListener('click', () => {
         if (!Array.isArray(node.children)) node.children = [];
         node.children.push({ name: '', perCraft: 1, price: '', expanded: true, children: [] });
@@ -1413,7 +1433,6 @@
       tbody.appendChild(tr);
       nodeRowRefs.set(node, tr);
 
-      // Рендер детей
       if (hasChildren && isExpanded) {
         node.children.forEach(child => renderNode(child, depth + 1, node.children));
       }
@@ -1422,7 +1441,9 @@
     ingredients.forEach(node => renderNode(node, 0, ingredients));
   }
 
-  // ==================== ПЕРЕСЧЁТ: РЕЦЕПТЫ ====================
+  // ==================== ПЕРЕСЧЁТ: ПЛОСКИЙ ====================
+  // perCraft каждого узла — на 1 крафт главного предмета.
+  // Дети НЕ умножаются на perCraft родителей.
   function recalcAll() {
     const recipe = recipes[currentId];
     if (!recipe) {
@@ -1439,17 +1460,14 @@
     const craftCount = Math.max(1, parseInt(recipe.craftCount, 10) || 1);
     const salePrice = parsePrice(recipe.salePrice);
 
-    // Рекурсивно: возвращает стоимость узла при заданном множителе (сколько родителей)
-    function updateNode(node, multiplier) {
-      const qty = (parseFloat(node.perCraft) || 0) * multiplier;
+    function updateNode(node) {
+      const qty = (parseFloat(node.perCraft) || 0) * craftCount;
       const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 
       let cost;
       if (hasChildren) {
         cost = 0;
-        node.children.forEach(child => {
-          cost += updateNode(child, qty);
-        });
+        node.children.forEach(child => { cost += updateNode(child); });
       } else {
         cost = parsePrice(node.price) * qty;
       }
@@ -1459,13 +1477,12 @@
         tr.children[2].textContent = formatNum(qty);
         tr.children[4].textContent = formatNum(cost);
       }
-
       return cost;
     }
 
     let totalCost = 0;
     (recipe.ingredients || []).forEach(node => {
-      totalCost += updateNode(node, craftCount);
+      totalCost += updateNode(node);
     });
 
     const topCount = (recipe.ingredients || []).length;
@@ -1708,7 +1725,7 @@
     showToast._t = setTimeout(() => toast.classList.remove('show'), 1800);
   }
 
-  // ==================== ДЕЙСТВИЯ: РЕЦЕПТЫ ====================
+  // ==================== ДЕЙСТВИЯ ====================
   function selectRecipe(id) {
     currentId = id;
     saveSelectedId(id);
@@ -1771,9 +1788,7 @@
         const data = JSON.parse(e.target.result);
         if (typeof data !== 'object' || Array.isArray(data)) throw new Error('Неверный формат');
         const importedCount = Object.keys(data).length;
-        Object.keys(data).forEach(id => {
-          recipes[id] = normalizeRecipe(data[id]);
-        });
+        Object.keys(data).forEach(id => { recipes[id] = normalizeRecipe(data[id]); });
         saveRecipes();
         renderRecipeSelect();
         if (Object.keys(data).length > 0) selectRecipe(Object.keys(data)[0]);
@@ -1786,7 +1801,6 @@
     reader.readAsText(file);
   }
 
-  // Раскрыть/свернуть всё рекурсивно
   function setExpandedAll(node, expanded) {
     node.expanded = expanded;
     if (Array.isArray(node.children)) {
@@ -1866,7 +1880,6 @@
     e.target.value = '';
   });
 
-  // ---- События сосок ----
   document.getElementById('soulOrePrice').addEventListener('input', (e) => {
     shotsData.soulOrePrice = e.target.value;
     recalcShots();
