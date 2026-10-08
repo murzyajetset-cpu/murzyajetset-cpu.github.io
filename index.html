@@ -408,7 +408,15 @@
   .dream-comment-delete:hover { opacity: 1; background: transparent; }
   .dream-comment-text { color: var(--text-primary); line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
   .dream-comments-empty { font-size: 10px; color: var(--text-muted); font-style: italic; padding: 4px 0; }
+
   .dream-comment-form { display: flex; gap: 6px; margin-top: 8px; align-items: stretch; }
+  .dream-comment-author-input {
+    flex: 0 0 130px;
+    min-width: 0;
+    font-size: 11px;
+    padding: 6px 8px;
+    font-weight: 600;
+  }
   .dream-comment-input { flex: 1; min-width: 0; font-size: 11px; padding: 6px 8px; }
   .dream-comment-send {
     flex-shrink: 0;
@@ -970,6 +978,7 @@
   }
 
   const AUTHOR_KEY = 'l2party_author';
+  const COMMENT_AUTHOR_KEY = 'l2party_comment_author';
   const savedAuthor = localStorage.getItem(AUTHOR_KEY) || '';
   authorInput.value = savedAuthor;
   dreamAuthorInput.value = savedAuthor;
@@ -2051,10 +2060,10 @@
     debouncedSaveDream(dream);
   }
 
-  function addDreamComment(dream, text) {
+  function addDreamComment(dream, text, authorName) {
     const trimmed = (text || '').trim();
     if (!trimmed) return;
-    const author = (dreamAuthorInput.value || '').trim() || 'Аноним';
+    const author = (authorName || '').trim() || (dreamAuthorInput.value || '').trim() || 'Аноним';
     if (!dream.comments) dream.comments = [];
     dream.comments.push({
       author,
@@ -2218,6 +2227,18 @@
       const comForm = document.createElement('div');
       comForm.className = 'dream-comment-form';
 
+      // Поле для ника
+      const comAuthorInput = document.createElement('input');
+      comAuthorInput.type = 'text';
+      comAuthorInput.className = 'dream-comment-author-input';
+      comAuthorInput.placeholder = 'Ваш ник';
+      comAuthorInput.maxLength = 40;
+      comAuthorInput.value = localStorage.getItem(COMMENT_AUTHOR_KEY) || '';
+      if (!comAuthorInput.value) {
+        comAuthorInput.value = (dreamAuthorInput.value || '').trim();
+      }
+      comForm.appendChild(comAuthorInput);
+
       const comInput = document.createElement('input');
       comInput.type = 'text';
       comInput.className = 'dream-comment-input';
@@ -2231,7 +2252,9 @@
       const submitComment = () => {
         const val = comInput.value;
         if (!val.trim()) return;
-        addDreamComment(dream, val);
+        const author = (comAuthorInput.value || '').trim() || 'Аноним';
+        try { localStorage.setItem(COMMENT_AUTHOR_KEY, author); } catch (e) {}
+        addDreamComment(dream, val, author);
         comInput.value = '';
       };
       comSend.addEventListener('click', submitComment);
@@ -2239,6 +2262,12 @@
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           submitComment();
+        }
+      });
+      comAuthorInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          comInput.focus();
         }
       });
       comForm.appendChild(comSend);
