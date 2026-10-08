@@ -268,6 +268,71 @@
     color: var(--danger-red);
   }
 
+  /* ===== Дерево ингредиентов ===== */
+  td.name-cell { padding: 6px 8px; }
+  .name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .name-wrapper input.ingredient-name {
+    flex: 1;
+    min-width: 0;
+  }
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: 11px;
+    color: var(--accent-gold-dark);
+    width: 18px;
+    height: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+    border-radius: 3px;
+    text-transform: none;
+  }
+  .toggle-btn:hover {
+    background: rgba(184,134,11,0.15);
+    color: var(--accent-gold);
+    border-color: transparent;
+  }
+  .toggle-spacer {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .mini-icon-btn {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--accent-blue);
+    font-size: 12px;
+    font-weight: 700;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+    padding: 0;
+    border-radius: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+    text-transform: none;
+  }
+  .mini-icon-btn:hover {
+    background: rgba(58,95,217,0.12);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+  }
+  .composite-name {
+    font-weight: 700;
+    color: var(--accent-gold-dark);
+  }
+  .tr-composite > td { background: rgba(184,134,11,0.03); }
+  .depth-1 > td:first-child { border-left: 2px solid rgba(184,134,11,0.2); }
+  .depth-2 > td:first-child { border-left: 2px solid rgba(184,134,11,0.35); }
+  .depth-3 > td:first-child { border-left: 2px solid rgba(184,134,11,0.5); }
+
   .totals {
     margin-top: 20px;
     padding: 16px 18px;
@@ -641,18 +706,22 @@
     </div>
 
     <div class="ingredients-title">
-      <h3>Ингредиенты</h3>
-      <button id="addIngredientBtn" class="mini">➕ Добавить строку</button>
+      <h3>Дерево ингредиентов</h3>
+      <div style="display:flex; gap:6px;">
+        <button id="expandAllBtn" class="mini">▾ Развернуть всё</button>
+        <button id="collapseAllBtn" class="mini">▸ Свернуть всё</button>
+        <button id="addIngredientBtn" class="mini primary">➕ Добавить корневой</button>
+      </div>
     </div>
     <table id="ingredientsTable">
       <thead>
         <tr>
-          <th style="width: 40%;">Название ингредиента</th>
-          <th class="num" style="width: 12%;">На 1 крафт</th>
-          <th class="num" style="width: 12%;">Всего нужно</th>
-          <th class="num" style="width: 15%;">Цена за ед.</th>
-          <th class="num" style="width: 15%;">Сумма</th>
-          <th class="center" style="width: 6%;"></th>
+          <th style="width: 38%;">Ингредиент</th>
+          <th class="num" style="width: 10%;">На 1 крафт</th>
+          <th class="num" style="width: 10%;">Всего нужно</th>
+          <th class="num" style="width: 14%;">Цена за ед.</th>
+          <th class="num" style="width: 14%;">Сумма</th>
+          <th class="center" style="width: 14%;">Действие</th>
         </tr>
       </thead>
       <tbody id="ingredientsBody"></tbody>
@@ -660,11 +729,11 @@
 
     <div class="totals">
       <div class="totals-row">
-        <span class="label">Всего ингредиентов:</span>
+        <span class="label">Позиций сверху:</span>
         <span class="value" id="totalCount">0</span>
       </div>
       <div class="totals-row">
-        <span class="label">Общая стоимость материалов:</span>
+        <span class="label">Общая стоимость материалов (по листьям):</span>
         <span class="value" id="totalCost">0</span>
       </div>
 
@@ -695,9 +764,15 @@
     </div>
 
     <div class="info-hint">
-      <strong>Совет:</strong> цены за единицу можно вводить с суффиксами <code>к</code> (тысяча),
-      <code>кк</code> (миллион), <code>ккк</code> (миллиард). Например <code>500к</code> или <code>2кк</code>.
-      Рецепт сохраняется автоматически в браузере.
+      <strong>Многоступенчатый крафт:</strong>
+      если у ингредиента есть компоненты — он считается <b>составным</b>, а в итоговую себестоимость идут только
+      его «листья» (конечные ресурсы с ценой). Значит, <code>Varnish of Purity</code> сам по себе в сумме не учитывается —
+      учитываются только его <code>Stone of Purity</code>, <code>Varnish</code>, <code>Coarse Bone Powder</code>,
+      <code>Animal Bone</code>.
+      <br>
+      Кнопка <b>+</b> рядом с названием — добавить компонент (сделать составным). Стрелочка ▾ — свернуть/развернуть.
+      У составных цена за ед. заблокирована — они считаются из детей.
+      Цены с суффиксами <code>к</code>, <code>кк</code>, <code>ккк</code>.
     </div>
   </div>
 </div>
@@ -868,7 +943,6 @@
       сосок получу = <code>крафтов × сосок за тык</code>;
       руда нужно = <code>крафтов × руда за тык</code>;
       стоимость тыка = <code>руда/тык × цена руды + крист./тык × цена кристалла</code>.
-      Значения <b>руда / кристаллы / сосок / цена кристалла за тык</b> редактируются прямо в таблицах — подгони под свою хронику.
       <br>
       <b>Дефолты:</b>
       SS: D = 3 руды + 1 крист → 200; C = 15 + 1 → 600; B = 60 + 1 → 600; A = 60 + 1 → 500.
@@ -880,101 +954,116 @@
 <div class="save-toast" id="saveToast">Сохранено</div>
 
 <script>
-  const STORAGE_KEY = 'l2craft_recipes_v1';
-  const SELECTED_KEY = 'l2craft_selected_v1';
+  const STORAGE_KEY = 'l2craft_recipes_v2';
+  const SELECTED_KEY = 'l2craft_selected_v2';
   const SHOTS_KEY = 'l2craft_shots_v7';
 
   // ==================== ПРЕДУСТАНОВЛЕННЫЕ РЕЦЕПТЫ ====================
+  // Дерево: каждый узел { name, perCraft, price, children: [] }
+  // Если children непустой — узел составной, price игнорируется.
+
   const DEFAULT_RECIPES = {
     'dynasty_breastplate': {
       name: 'Dynasty Breastplate', craftCount: 1, salePrice: 0,
       ingredients: [
-        { name: 'Dynasty Breastplate Piece', perCraft: 12, price: 0 },
-        { name: 'Dynasty Breastplate Recipe', perCraft: 1, price: 0 },
-        { name: 'Synthetic Cokes', perCraft: 38, price: 0 },
-        { name: "Artisan's Frame", perCraft: 38, price: 0 },
-        { name: 'Crafted Leather', perCraft: 38, price: 0 },
-        { name: 'Maestro Anvil Lock', perCraft: 19, price: 0 },
-        { name: 'Metallic Fiber', perCraft: 12, price: 0 },
-        { name: 'Varnish', perCraft: 6, price: 0 }
+        { name: 'Dynasty Breastplate Piece', perCraft: 12, price: '', children: [] },
+        { name: 'Dynasty Breastplate Recipe', perCraft: 1, price: '', children: [] },
+        { name: 'Synthetic Cokes', perCraft: 38, price: '', children: [] },
+        { name: "Artisan's Frame", perCraft: 38, price: '', children: [] },
+        { name: 'Crafted Leather', perCraft: 38, price: '', children: [] },
+        { name: 'Maestro Anvil Lock', perCraft: 19, price: '', children: [] },
+        { name: 'Metallic Fiber', perCraft: 12, price: '', children: [] },
+        { name: 'Varnish', perCraft: 6, price: '', children: [] }
       ]
     },
     'dynasty_gaiters': {
       name: 'Dynasty Gaiters', craftCount: 1, salePrice: 0,
       ingredients: [
-        { name: 'Dynasty Gaiters Piece', perCraft: 10, price: 0 },
-        { name: 'Dynasty Gaiters Recipe', perCraft: 1, price: 0 },
-        { name: 'Synthetic Cokes', perCraft: 32, price: 0 },
-        { name: "Artisan's Frame", perCraft: 32, price: 0 },
-        { name: 'Crafted Leather', perCraft: 32, price: 0 },
-        { name: 'Maestro Anvil Lock', perCraft: 16, price: 0 },
-        { name: 'Metallic Fiber', perCraft: 10, price: 0 }
+        { name: 'Dynasty Gaiters Piece', perCraft: 10, price: '', children: [] },
+        { name: 'Dynasty Gaiters Recipe', perCraft: 1, price: '', children: [] },
+        { name: 'Synthetic Cokes', perCraft: 32, price: '', children: [] },
+        { name: "Artisan's Frame", perCraft: 32, price: '', children: [] },
+        { name: 'Crafted Leather', perCraft: 32, price: '', children: [] },
+        { name: 'Maestro Anvil Lock', perCraft: 16, price: '', children: [] },
+        { name: 'Metallic Fiber', perCraft: 10, price: '', children: [] }
       ]
     },
     'dynasty_helmet': {
       name: 'Dynasty Helmet', craftCount: 1, salePrice: 0,
       ingredients: [
-        { name: 'Dynasty Helmet Piece', perCraft: 8, price: 0 },
-        { name: 'Dynasty Helmet Recipe', perCraft: 1, price: 0 },
-        { name: 'Synthetic Cokes', perCraft: 26, price: 0 },
-        { name: "Artisan's Frame", perCraft: 26, price: 0 },
-        { name: 'Crafted Leather', perCraft: 26, price: 0 },
-        { name: 'Maestro Anvil Lock', perCraft: 13, price: 0 }
+        { name: 'Dynasty Helmet Piece', perCraft: 8, price: '', children: [] },
+        { name: 'Dynasty Helmet Recipe', perCraft: 1, price: '', children: [] },
+        { name: 'Synthetic Cokes', perCraft: 26, price: '', children: [] },
+        { name: "Artisan's Frame", perCraft: 26, price: '', children: [] },
+        { name: 'Crafted Leather', perCraft: 26, price: '', children: [] },
+        { name: 'Maestro Anvil Lock', perCraft: 13, price: '', children: [] }
       ]
     },
     'vesper_cutter': {
       name: 'Vesper Cutter', craftCount: 1, salePrice: 0,
       ingredients: [
-        { name: 'Vesper Cutter Piece', perCraft: 14, price: 0 },
-        { name: 'Vesper Cutter Recipe', perCraft: 1, price: 0 },
-        { name: 'Synthetic Cokes', perCraft: 56, price: 0 },
-        { name: "Artisan's Frame", perCraft: 56, price: 0 },
-        { name: 'Crafted Leather', perCraft: 56, price: 0 },
-        { name: 'Maestro Anvil Lock', perCraft: 28, price: 0 },
-        { name: 'Vesper Cutter Fragment', perCraft: 14, price: 0 },
-        { name: 'Metallic Fiber', perCraft: 14, price: 0 }
+        { name: 'Vesper Cutter Piece', perCraft: 14, price: '', children: [] },
+        { name: 'Vesper Cutter Recipe', perCraft: 1, price: '', children: [] },
+        { name: 'Synthetic Cokes', perCraft: 56, price: '', children: [] },
+        { name: "Artisan's Frame", perCraft: 56, price: '', children: [] },
+        { name: 'Crafted Leather', perCraft: 56, price: '', children: [] },
+        { name: 'Maestro Anvil Lock', perCraft: 28, price: '', children: [] },
+        { name: 'Vesper Cutter Fragment', perCraft: 14, price: '', children: [] },
+        { name: 'Metallic Fiber', perCraft: 14, price: '', children: [] }
       ]
     },
     'draconic_bow': {
       name: 'Draconic Bow', craftCount: 1, salePrice: 0,
       ingredients: [
-        { name: 'Draconic Bow Shaft', perCraft: 13, price: 0 },
-        { name: 'Draconic Bow Recipe', perCraft: 1, price: 0 },
-        { name: 'Synthetic Cokes', perCraft: 48, price: 0 },
-        { name: "Artisan's Frame", perCraft: 48, price: 0 },
-        { name: 'Crafted Leather', perCraft: 48, price: 0 },
-        { name: 'Maestro Anvil Lock', perCraft: 24, price: 0 },
-        { name: 'Metallic Fiber', perCraft: 13, price: 0 }
+        { name: 'Draconic Bow Shaft', perCraft: 13, price: '', children: [] },
+        { name: 'Draconic Bow Recipe', perCraft: 1, price: '', children: [] },
+        { name: 'Synthetic Cokes', perCraft: 48, price: '', children: [] },
+        { name: "Artisan's Frame", perCraft: 48, price: '', children: [] },
+        { name: 'Crafted Leather', perCraft: 48, price: '', children: [] },
+        { name: 'Maestro Anvil Lock', perCraft: 24, price: '', children: [] },
+        { name: 'Metallic Fiber', perCraft: 13, price: '', children: [] }
       ]
     },
-    // ===== НОВЫЙ РЕЦЕПТ ИЗ СКРИНШОТА =====
+
+    // ===== Sword of Damacus — многоступенчатый рецепт из скриншота =====
     'sword_of_damacus': {
       name: 'Sword of Damacus', craftCount: 1, salePrice: 0,
       ingredients: [
-        { name: 'Recipe: Sword of Damacus (60%)', perCraft: 1, price: 0 },
-        { name: 'Sword of Damacus Blade', perCraft: 13, price: 0 },
-        { name: "Artisan's Frame", perCraft: 2, price: 0 },
-        { name: 'Steel Mold', perCraft: 2, price: 0 },
-        { name: 'Braided Hemp', perCraft: 10, price: 0 },
-        { name: 'Stem', perCraft: 50, price: 0 },
-        { name: 'Iron Ore', perCraft: 10, price: 0 },
-        { name: 'Coal', perCraft: 1090, price: 0 },
-        { name: 'Varnish of Purity', perCraft: 130, price: 0 },
-        { name: 'Stone of Purity', perCraft: 130, price: 0 },
-        { name: 'Varnish', perCraft: 390, price: 0 },
-        { name: 'Coarse Bone Powder', perCraft: 390, price: 0 },
-        { name: 'Animal Bone', perCraft: 3900, price: 0 },
-        { name: 'Adamantite Nugget', perCraft: 20, price: 0 },
-        { name: 'Metal Alloy', perCraft: 120, price: 0 },
-        { name: 'Steel', perCraft: 240, price: 0 },
-        { name: 'Mithril Ore', perCraft: 120, price: 0 },
-        { name: 'Synthetic Cokes', perCraft: 120, price: 0 },
-        { name: 'Orichalcum Ore', perCraft: 120, price: 0 },
-        { name: 'Cokes', perCraft: 360, price: 0 },
-        { name: 'Charcoal', perCraft: 1080, price: 0 },
-        { name: 'Enria', perCraft: 60, price: 0 },
-        { name: 'Crystal: B-Grade', perCraft: 160, price: 0 },
-        { name: 'Gemstone B', perCraft: 98, price: 0 }
+        { name: 'Recipe: Sword of Damacus (60%)', perCraft: 1, price: '', children: [] },
+        {
+          name: 'Sword of Damacus Blade', perCraft: 13, price: '', children: [
+            {
+              name: "Artisan's Frame", perCraft: 2, price: '', children: [
+                { name: 'Steel Mold', perCraft: 2, price: '', children: [] },
+                {
+                  name: 'Braided Hemp', perCraft: 10, price: '', children: [
+                    { name: 'Stem', perCraft: 50, price: '', children: [] },
+                    { name: 'Iron Ore', perCraft: 10, price: '', children: [] },
+                    { name: 'Coal', perCraft: 10, price: '', children: [] }
+                  ]
+                }
+              ]
+            },
+            {
+              name: 'Varnish of Purity', perCraft: 10, price: '', children: [
+                { name: 'Stone of Purity', perCraft: 1, price: '', children: [] },
+                {
+                  name: 'Varnish', perCraft: 3, price: '', children: [
+                    {
+                      name: 'Coarse Bone Powder', perCraft: 1, price: '', children: [
+                        { name: 'Animal Bone', perCraft: 10, price: '', children: [] }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            { name: 'Adamantite Nugget', perCraft: 20, price: '', children: [] }
+          ]
+        },
+        { name: 'Enria', perCraft: 60, price: '', children: [] },
+        { name: 'Crystal: B-Grade', perCraft: 160, price: '', children: [] },
+        { name: 'Gemstone B', perCraft: 98, price: '', children: [] }
       ]
     }
   };
@@ -1010,6 +1099,9 @@
   let currentId = null;
   let shotsData = buildDefaultShots();
 
+  // Ссылки на DOM-строки для обновления без перерисовки
+  const nodeRowRefs = new WeakMap();
+
   // ==================== УТИЛИТЫ ====================
   function parsePrice(str) {
     if (str === 0 || str === '' || str === null || str === undefined) return 0;
@@ -1037,12 +1129,30 @@
   }
 
   function genId() {
-    return 'r_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+    return 'r_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+  }
+
+  // Глубокое копирование с сохранением структуры и добавлением children: []
+  function normalizeNode(n) {
+    return {
+      name: typeof n.name === 'string' ? n.name : '',
+      perCraft: typeof n.perCraft === 'number' ? n.perCraft : (parseFloat(n.perCraft) || 0),
+      price: typeof n.price === 'string' || typeof n.price === 'number' ? n.price : '',
+      expanded: n.expanded !== false,
+      children: Array.isArray(n.children) ? n.children.map(normalizeNode) : []
+    };
+  }
+
+  function normalizeRecipe(r) {
+    return {
+      name: r.name || 'Без названия',
+      craftCount: r.craftCount || 1,
+      salePrice: r.salePrice || 0,
+      ingredients: Array.isArray(r.ingredients) ? r.ingredients.map(normalizeNode) : []
+    };
   }
 
   // ==================== LOCALSTORAGE: РЕЦЕПТЫ ====================
-  // Мягкая загрузка: пользовательские рецепты сохраняются,
-  // новые дефолтные рецепты добавляются, если их ещё нет.
   function loadRecipes() {
     let saved = null;
     try {
@@ -1051,11 +1161,15 @@
     } catch (e) { console.warn('Ошибка чтения рецептов:', e); }
 
     if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
-      recipes = saved;
+      recipes = {};
+      Object.keys(saved).forEach(id => {
+        recipes[id] = normalizeRecipe(saved[id]);
+      });
+      // Добавляем новые дефолтные, если их ещё нет
       let added = 0;
       Object.keys(DEFAULT_RECIPES).forEach(id => {
         if (!recipes[id]) {
-          recipes[id] = JSON.parse(JSON.stringify(DEFAULT_RECIPES[id]));
+          recipes[id] = normalizeRecipe(JSON.parse(JSON.stringify(DEFAULT_RECIPES[id])));
           added++;
         }
       });
@@ -1063,7 +1177,10 @@
       return;
     }
 
-    recipes = JSON.parse(JSON.stringify(DEFAULT_RECIPES));
+    recipes = {};
+    Object.keys(DEFAULT_RECIPES).forEach(id => {
+      recipes[id] = normalizeRecipe(JSON.parse(JSON.stringify(DEFAULT_RECIPES[id])));
+    });
     saveRecipes();
   }
 
@@ -1154,76 +1271,138 @@
     if (ingredients.length === 0) {
       const tr = document.createElement('tr');
       tr.innerHTML = `<td colspan="6" style="text-align:center; color:var(--text-muted); font-style:italic; padding:20px;">
-        Нет ингредиентов. Нажмите «Добавить строку», чтобы начать.
+        Нет ингредиентов. Нажмите «Добавить корневой», чтобы начать.
       </td>`;
       tbody.appendChild(tr);
       return;
     }
 
-    const craftCount = parseInt(recipe.craftCount, 10) || 1;
+    // Рекурсивный рендер узла
+    function renderNode(node, depth, siblings) {
+      const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+      const isExpanded = node.expanded !== false;
 
-    ingredients.forEach((ing, idx) => {
       const tr = document.createElement('tr');
+      tr.className = depth > 0 ? ('depth-' + Math.min(depth, 3)) : '';
+      if (hasChildren) tr.classList.add('tr-composite');
 
+      // === Имя ===
       const tdName = document.createElement('td');
+      tdName.className = 'name-cell';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'name-wrapper';
+      wrapper.style.paddingLeft = (depth * 20) + 'px';
+
+      if (hasChildren) {
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'toggle-btn';
+        toggle.textContent = isExpanded ? '▾' : '▸';
+        toggle.title = isExpanded ? 'Свернуть' : 'Развернуть';
+        toggle.addEventListener('click', () => {
+          node.expanded = !isExpanded;
+          renderIngredients(recipe);
+          recalcAll();
+          scheduleSave();
+        });
+        wrapper.appendChild(toggle);
+      } else {
+        const spacer = document.createElement('span');
+        spacer.className = 'toggle-spacer';
+        wrapper.appendChild(spacer);
+      }
+
       const nameInput = document.createElement('input');
       nameInput.type = 'text';
-      nameInput.value = ing.name || '';
-      nameInput.placeholder = 'название ресурса';
-      nameInput.className = 'ingredient-name';
+      nameInput.value = node.name || '';
+      nameInput.placeholder = 'название';
+      nameInput.className = 'ingredient-name' + (hasChildren ? ' composite-name' : '');
       nameInput.addEventListener('input', () => {
-        recipe.ingredients[idx].name = nameInput.value;
+        node.name = nameInput.value;
         scheduleSave();
       });
-      tdName.appendChild(nameInput);
+      wrapper.appendChild(nameInput);
+
+      // Кнопка "+ компонент"
+      const btnAddChild = document.createElement('button');
+      btnAddChild.type = 'button';
+      btnAddChild.className = 'mini-icon-btn';
+      btnAddChild.textContent = '+';
+      btnAddChild.title = 'Добавить компонент (сделать составным)';
+      btnAddChild.addEventListener('click', () => {
+        if (!Array.isArray(node.children)) node.children = [];
+        node.children.push({ name: '', perCraft: 1, price: '', expanded: true, children: [] });
+        node.expanded = true;
+        renderIngredients(recipe);
+        recalcAll();
+        scheduleSave();
+      });
+      wrapper.appendChild(btnAddChild);
+
+      tdName.appendChild(wrapper);
       tr.appendChild(tdName);
 
+      // === На 1 крафт ===
       const tdPer = document.createElement('td');
       tdPer.className = 'num';
       const perInput = document.createElement('input');
       perInput.type = 'number';
-      perInput.min = 0; perInput.step = 'any';
-      perInput.value = ing.perCraft || 0;
+      perInput.min = 0;
+      perInput.step = 'any';
+      perInput.value = node.perCraft || 0;
       perInput.addEventListener('input', () => {
-        recipe.ingredients[idx].perCraft = parseFloat(perInput.value) || 0;
-        recalcAll(); scheduleSave();
+        node.perCraft = parseFloat(perInput.value) || 0;
+        recalcAll();
+        scheduleSave();
       });
       tdPer.appendChild(perInput);
       tr.appendChild(tdPer);
 
+      // === Всего нужно ===
       const tdTotal = document.createElement('td');
       tdTotal.className = 'num';
-      const totalCount = (parseFloat(ing.perCraft) || 0) * craftCount;
-      tdTotal.textContent = formatNum(totalCount);
       tdTotal.style.fontWeight = '600';
       tr.appendChild(tdTotal);
 
+      // === Цена за ед. ===
       const tdPrice = document.createElement('td');
       tdPrice.className = 'num';
       const priceInput = document.createElement('input');
       priceInput.type = 'text';
-      priceInput.value = ing.price || '';
-      priceInput.placeholder = '0';
-      priceInput.addEventListener('input', () => {
-        recipe.ingredients[idx].price = priceInput.value;
-        recalcAll(); scheduleSave();
-      });
+      priceInput.value = node.price || '';
+      if (hasChildren) {
+        priceInput.placeholder = 'из компонентов';
+        priceInput.disabled = true;
+        priceInput.style.background = '#f0f1f5';
+        priceInput.style.color = '#a0a3b8';
+        priceInput.style.cursor = 'not-allowed';
+      } else {
+        priceInput.placeholder = '0';
+        priceInput.addEventListener('input', () => {
+          node.price = priceInput.value;
+          recalcAll();
+          scheduleSave();
+        });
+      }
       tdPrice.appendChild(priceInput);
       tr.appendChild(tdPrice);
 
+      // === Сумма ===
       const tdSum = document.createElement('td');
       tdSum.className = 'num total-price';
-      tdSum.textContent = formatNum(parsePrice(ing.price) * totalCount);
       tr.appendChild(tdSum);
 
+      // === Удалить ===
       const tdRemove = document.createElement('td');
       tdRemove.className = 'center';
       const btnRemove = document.createElement('button');
+      btnRemove.type = 'button';
       btnRemove.className = 'remove-row';
       btnRemove.textContent = '×';
-      btnRemove.title = 'Удалить ингредиент';
+      btnRemove.title = 'Удалить';
       btnRemove.addEventListener('click', () => {
-        recipe.ingredients.splice(idx, 1);
+        const i = siblings.indexOf(node);
+        if (i >= 0) siblings.splice(i, 1);
         renderIngredients(recipe);
         recalcAll();
         scheduleSave();
@@ -1232,9 +1411,18 @@
       tr.appendChild(tdRemove);
 
       tbody.appendChild(tr);
-    });
+      nodeRowRefs.set(node, tr);
+
+      // Рендер детей
+      if (hasChildren && isExpanded) {
+        node.children.forEach(child => renderNode(child, depth + 1, node.children));
+      }
+    }
+
+    ingredients.forEach(node => renderNode(node, 0, ingredients));
   }
 
+  // ==================== ПЕРЕСЧЁТ: РЕЦЕПТЫ ====================
   function recalcAll() {
     const recipe = recipes[currentId];
     if (!recipe) {
@@ -1251,21 +1439,42 @@
     const craftCount = Math.max(1, parseInt(recipe.craftCount, 10) || 1);
     const salePrice = parsePrice(recipe.salePrice);
 
-    let totalCount = 0, totalCost = 0;
-    (recipe.ingredients || []).forEach(ing => {
-      const per = parseFloat(ing.perCraft) || 0;
-      const count = per * craftCount;
-      const unitPrice = parsePrice(ing.price);
-      totalCount += count;
-      totalCost += unitPrice * count;
+    // Рекурсивно: возвращает стоимость узла при заданном множителе (сколько родителей)
+    function updateNode(node, multiplier) {
+      const qty = (parseFloat(node.perCraft) || 0) * multiplier;
+      const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+
+      let cost;
+      if (hasChildren) {
+        cost = 0;
+        node.children.forEach(child => {
+          cost += updateNode(child, qty);
+        });
+      } else {
+        cost = parsePrice(node.price) * qty;
+      }
+
+      const tr = nodeRowRefs.get(node);
+      if (tr) {
+        tr.children[2].textContent = formatNum(qty);
+        tr.children[4].textContent = formatNum(cost);
+      }
+
+      return cost;
+    }
+
+    let totalCost = 0;
+    (recipe.ingredients || []).forEach(node => {
+      totalCost += updateNode(node, craftCount);
     });
 
+    const topCount = (recipe.ingredients || []).length;
     const unitCost = totalCost / craftCount;
     const revenue = salePrice * craftCount;
     const profit = revenue - totalCost;
     const margin = revenue > 0 ? (profit / revenue * 100) : 0;
 
-    document.getElementById('totalCount').textContent = formatNum(totalCount);
+    document.getElementById('totalCount').textContent = formatNum(topCount);
     document.getElementById('totalCost').textContent = formatNum(totalCost);
     document.getElementById('unitCost').textContent = formatNum(unitCost);
     document.getElementById('revenue').value = formatNum(revenue);
@@ -1277,19 +1486,6 @@
     profitRow.classList.remove('profit', 'loss');
     if (revenue > 0 && profit > 0) profitRow.classList.add('profit');
     else if (revenue > 0 && profit < 0) profitRow.classList.add('loss');
-
-    const rows = document.querySelectorAll('#ingredientsBody tr');
-    rows.forEach((row, idx) => {
-      const ing = recipe.ingredients[idx];
-      if (!ing) return;
-      const totalCell = row.children[2];
-      if (totalCell) totalCell.textContent = formatNum((parseFloat(ing.perCraft) || 0) * craftCount);
-      const sumCell = row.children[4];
-      if (sumCell) {
-        const total = (parseFloat(ing.perCraft) || 0) * craftCount;
-        sumCell.textContent = formatNum(parsePrice(ing.price) * total);
-      }
-    });
   }
 
   // ==================== РЕНДЕР: СОСКИ ====================
@@ -1526,7 +1722,7 @@
       name: 'Новый рецепт',
       craftCount: 1,
       salePrice: 0,
-      ingredients: [{ name: '', perCraft: 1, price: '' }]
+      ingredients: [{ name: '', perCraft: 1, price: '', expanded: true, children: [] }]
     };
     saveRecipes();
     selectRecipe(id);
@@ -1575,7 +1771,9 @@
         const data = JSON.parse(e.target.result);
         if (typeof data !== 'object' || Array.isArray(data)) throw new Error('Неверный формат');
         const importedCount = Object.keys(data).length;
-        Object.assign(recipes, data);
+        Object.keys(data).forEach(id => {
+          recipes[id] = normalizeRecipe(data[id]);
+        });
         saveRecipes();
         renderRecipeSelect();
         if (Object.keys(data).length > 0) selectRecipe(Object.keys(data)[0]);
@@ -1586,6 +1784,14 @@
       }
     };
     reader.readAsText(file);
+  }
+
+  // Раскрыть/свернуть всё рекурсивно
+  function setExpandedAll(node, expanded) {
+    node.expanded = expanded;
+    if (Array.isArray(node.children)) {
+      node.children.forEach(c => setExpandedAll(c, expanded));
+    }
   }
 
   // ==================== СОБЫТИЯ ====================
@@ -1613,7 +1819,6 @@
   document.getElementById('craftCount').addEventListener('input', (e) => {
     if (!currentId || !recipes[currentId]) return;
     recipes[currentId].craftCount = parseInt(e.target.value, 10) || 1;
-    renderIngredients(recipes[currentId]);
     recalcAll();
     scheduleSave();
   });
@@ -1627,8 +1832,24 @@
 
   document.getElementById('addIngredientBtn').addEventListener('click', () => {
     if (!currentId || !recipes[currentId]) { newRecipe(); return; }
-    if (!recipes[currentId].ingredients) recipes[currentId].ingredients = [];
-    recipes[currentId].ingredients.push({ name: '', perCraft: 1, price: '' });
+    if (!Array.isArray(recipes[currentId].ingredients)) recipes[currentId].ingredients = [];
+    recipes[currentId].ingredients.push({ name: '', perCraft: 1, price: '', expanded: true, children: [] });
+    renderIngredients(recipes[currentId]);
+    recalcAll();
+    scheduleSave();
+  });
+
+  document.getElementById('expandAllBtn').addEventListener('click', () => {
+    if (!currentId || !recipes[currentId]) return;
+    (recipes[currentId].ingredients || []).forEach(n => setExpandedAll(n, true));
+    renderIngredients(recipes[currentId]);
+    recalcAll();
+    scheduleSave();
+  });
+
+  document.getElementById('collapseAllBtn').addEventListener('click', () => {
+    if (!currentId || !recipes[currentId]) return;
+    (recipes[currentId].ingredients || []).forEach(n => setExpandedAll(n, false));
     renderIngredients(recipes[currentId]);
     recalcAll();
     scheduleSave();
