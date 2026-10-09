@@ -124,7 +124,7 @@
   tbody tr:hover { background: #fafbfe; }
   tbody tr:last-child td { border-bottom: none; }
   .col-name { width: 110px; } .col-class { width: 230px; } .col-level { width: 52px; }
-  .col-weapon { width: 150px; } .col-armor { width: 130px; } .col-jewelry { width: 130px; }
+  .col-weapon { width: 150px; } .col-armor { width: 130px; } .col-jewelry { width: 170px; }
   .col-tattoo { width: 170px; } .col-comment { width: 150px; } .col-remove { width: 34px; }
   input, select, textarea {
     font-family: var(--font-body); font-size: 11px; color: var(--text-primary);
@@ -144,8 +144,8 @@
   select optgroup { background: #f0f2f8; color: var(--accent-gold-dark); font-weight: 700; font-style: normal; }
   .weapon-select { position: relative; width: 100%; }
   .weapon-trigger {
-    display: flex; align-items: center; gap: 6px; width: 100%;
-    padding: 4px 6px; font-family: var(--font-body); font-size: 11px;
+    display: flex; align-items: center; gap: 5px; width: 100%;
+    padding: 4px 5px; font-family: var(--font-body); font-size: 11px;
     color: var(--text-primary); background: var(--bg-input);
     border: 1px solid var(--border-subtle); border-radius: 4px;
     cursor: pointer; text-align: left; text-transform: none; letter-spacing: 0;
@@ -153,7 +153,7 @@
   }
   .weapon-trigger:hover { border-color: var(--accent-gold); }
   .weapon-trigger.open { border-color: var(--accent-gold); box-shadow: 0 0 0 2px rgba(184,134,11,0.15); }
-  .weapon-trigger .weapon-grade { font-weight: 800; font-size: 12px; letter-spacing: 0.3px; flex-shrink: 0; min-width: 14px; }
+  .weapon-trigger .weapon-grade { font-weight: 800; font-size: 12px; letter-spacing: 0.3px; flex-shrink: 0; min-width: 12px; }
   .weapon-trigger .weapon-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
   .weapon-trigger .weapon-arrow { font-size: 8px; color: var(--accent-gold); flex-shrink: 0; transition: transform 0.15s; }
   .weapon-trigger.open .weapon-arrow { transform: rotate(180deg); }
@@ -198,6 +198,28 @@
   .set-label { display: block; font-size: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin: 3px 0 1px 0; }
   .set-label:first-child { margin-top: 0; }
   .tattoo-select { font-size: 10px; padding: 3px 18px 3px 5px; background-size: 8px; }
+
+  /* ===== Ряд бижутерии: селект + заточка ===== */
+  .jewelry-row {
+    display: flex;
+    gap: 3px;
+    align-items: stretch;
+    margin-bottom: 2px;
+  }
+  .jewelry-row .weapon-select {
+    flex: 1;
+    min-width: 0;
+  }
+  .jewelry-enchant {
+    width: 46px;
+    flex-shrink: 0;
+    text-align: center;
+    padding: 4px 2px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent-gold-dark);
+  }
+
   .remove-btn {
     background: transparent; color: var(--danger-red);
     border: 1px solid rgba(217,45,32,0.35); border-radius: 4px;
@@ -500,7 +522,7 @@
           <th>Ур.</th>
           <th>Оружие<br><span class="set-label">(3 слота: оружие + комментарий)</span></th>
           <th>Сет брони<br><span class="set-label">(шлем / тело / низ / перчатки / ботинки / щит)</span></th>
-          <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2)</span></th>
+          <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2 + заточка)</span></th>
           <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
           <th>Комментарий<br><span class="set-label">(заметка о персонаже)</span></th>
           <th></th>
@@ -750,7 +772,6 @@
 
   // ==================== ОРУЖИЕ ====================
   const weaponsData = [
-    // NG
     { name: 'Short Sword', grade: 'NG' }, { name: 'Long Sword', grade: 'NG' },
     { name: 'Broadsword', grade: 'NG' }, { name: 'Club', grade: 'NG' },
     { name: 'Mace', grade: 'NG' }, { name: "Apprentice's Wand", grade: 'NG' },
@@ -760,8 +781,6 @@
     { name: 'Short Bow', grade: 'NG' }, { name: 'Bow', grade: 'NG' },
     { name: 'Short Spear', grade: 'NG' }, { name: 'Great Spear', grade: 'NG' },
     { name: "Apprentice's Spellbook", grade: 'NG' }, { name: 'Voodoo Doll', grade: 'NG' },
-
-    // D (полный список)
     { name: 'Saber', grade: 'D' }, { name: "Artisan's Sword", grade: 'D' },
     { name: 'Bastard Sword', grade: 'D' }, { name: "Knight's Sword", grade: 'D' },
     { name: 'Spinebone Sword', grade: 'D' }, { name: 'Crimson Sword', grade: 'D' },
@@ -803,8 +822,6 @@
     { name: 'Triple-Edged Jamadhr', grade: 'D' }, { name: "Bich'hwa", grade: 'D' },
     { name: 'Scallop Jamadhr', grade: 'D' }, { name: 'Branch of Life', grade: 'D' },
     { name: 'Temptation of Abyss', grade: 'D' }, { name: 'Divine Tome', grade: 'D' },
-
-    // C (полный список)
     { name: 'Stick of Faith', grade: 'C' }, { name: 'Club of Nature', grade: 'C' },
     { name: "Healhren's Book", grade: 'C' }, { name: 'Horn of Glory', grade: 'C' },
     { name: 'Mace of Underworld', grade: 'C' }, { name: 'Nirvana Axe', grade: 'C' },
@@ -879,8 +896,6 @@
     { name: 'Great Pata', grade: 'C' },
     { name: 'Crystal Dagger*Cursed Dagger', grade: 'C' },
     { name: 'Soulfire Dirk', grade: 'C' },
-
-    // B
     { name: 'Spell Breaker', grade: 'B' }, { name: 'Kaim Vanul Bones', grade: 'B' },
     { name: 'Sword of Valhalla', grade: 'B' }, { name: 'Wizards Tear', grade: 'B' },
     { name: "Sprite's Staff", grade: 'B' }, { name: 'Staff of Evil Spirits', grade: 'B' },
@@ -894,8 +909,6 @@
     { name: 'Guardian Sword', grade: 'B' }, { name: 'Arthro Nail', grade: 'B' },
     { name: 'Bellion Cestus', grade: 'B' }, { name: 'Hell Knife', grade: 'B' },
     { name: 'Yaksa Mace*Yaksa Mace', grade: 'B' },
-
-    // A
     { name: 'Sword of Miracles', grade: 'A' }, { name: 'Angel Slayer', grade: 'A' },
     { name: "Dark Legion's Edge", grade: 'A' }, { name: 'Soul Separator', grade: 'A' },
     { name: 'Bloody Orchid', grade: 'A' }, { name: 'Soul Bow', grade: 'A' },
@@ -905,8 +918,6 @@
     { name: 'Saint Spear', grade: 'A' }, { name: 'Demon Splinter', grade: 'A' },
     { name: 'Basalt Battlehammer', grade: 'A' }, { name: 'Meteor Shower', grade: 'A' },
     { name: 'Elysian', grade: 'A' }, { name: 'Dragon Grinder', grade: 'A' },
-
-    // S
     { name: 'Dynasty Sword', grade: 'S' }, { name: 'Dynasty Blade', grade: 'S' },
     { name: 'Dynasty Phantom', grade: 'S' }, { name: "Heaven's Divider", grade: 'S' },
     { name: "Sirra's Blade", grade: 'S' }, { name: 'Draconic Bow', grade: 'S' },
@@ -924,6 +935,92 @@
   function getWeaponGrade(weaponName) {
     const w = weaponsData.find(item => item.name === weaponName);
     return w ? w.grade : '';
+  }
+
+  // ==================== БИЖУТЕРИЯ ====================
+  // По скриншотам — D / C / B / A грейды
+  const jewelryData = {
+    earring: {
+      'D Grade': [
+        'Enchanted Earring',
+        'Elven Earring',
+        "Omen Beast's Eye Earring",
+        'Red Crescent Earring',
+        "Tiger's Eye Earring"
+      ],
+      'C Grade': [
+        'Earring of Protection',
+        'Earring of Seal',
+        "Nassen's Earring"
+      ],
+      'B Grade': [
+        'Adamantite Earring',
+        'Earring of Black Ore'
+      ],
+      'A Grade': [
+        'Majestic Earring',
+        'Phoenix Earring'
+      ]
+    },
+    necklace: {
+      'D Grade': [
+        'Necklace of Devotion',
+        'Enchanted Necklace',
+        'Elven Necklace',
+        'Near Forest Necklace',
+        'Necklace of Darkness'
+      ],
+      'C Grade': [
+        'Necklace of Protection',
+        'Necklace of Seal',
+        'Necklace of Mermaid'
+      ],
+      'B Grade': [
+        'Adamantite Necklace',
+        'Necklace of Black Ore'
+      ],
+      'A Grade': [
+        'Majestic Necklace',
+        'Phoenix Necklace'
+      ]
+    },
+    ring: {
+      'D Grade': [
+        'Ring of Devotion',
+        'Enchanted Ring',
+        'Elven Ring',
+        'Black Pearl Ring',
+        'Mithril Ring'
+      ],
+      'C Grade': [
+        'Ring of Protection',
+        'Ring of Seal',
+        'Ring of Ages'
+      ],
+      'B Grade': [
+        'Adamantite Ring',
+        'Ring of Black Ore'
+      ],
+      'A Grade': [
+        'Majestic Ring',
+        'Phoenix Ring'
+      ]
+    }
+  };
+
+  // Плоская карта name -> grade для быстрого поиска
+  const jewelryGradesMap = {};
+  Object.keys(jewelryData).forEach(type => {
+    Object.keys(jewelryData[type]).forEach(gradeKey => {
+      const gradeLetter = gradeKey.replace(' Grade', '').trim();
+      jewelryData[type][gradeKey].forEach(name => {
+        jewelryGradesMap[name] = gradeLetter;
+      });
+    });
+  });
+
+  function getJewelryGrade(name) {
+    return jewelryGradesMap[name] || '';
   }
 
   function weaponGradeColor(grade) {
@@ -1099,7 +1196,11 @@
       weapon2: '', weapon2Comment: '',
       weapon3: '', weapon3Comment: '',
       helmet: '', armor: '', legs: '', gloves: '', boots: '', shield: '',
-      earring1: '', earring2: '', necklace: '', ring1: '', ring2: '',
+      earring1: '', earring1Enchant: '',
+      earring2: '', earring2Enchant: '',
+      necklace: '', necklaceEnchant: '',
+      ring1: '', ring1Enchant: '',
+      ring2: '', ring2Enchant: '',
       tattoo1: '', tattoo2: '', tattoo3: '', comment: ''
     };
     newMemberRef.set(newMember)
@@ -1156,7 +1257,8 @@
     return select;
   }
 
-  function buildWeaponSelect(value, onChange, meta = null) {
+  // ===== Универсальный дропдаун для оружия / бижутерии =====
+  function buildItemSelect(itemsByGrade, getGradeFn, value, onChange, emptyLabel, meta = null) {
     const wrap = document.createElement('div');
     wrap.className = 'weapon-select';
     if (meta) {
@@ -1188,12 +1290,12 @@
     function updateTrigger(val) {
       if (!val) {
         triggerGrade.textContent = '';
-        triggerName.textContent = '— выберите оружие —';
+        triggerName.textContent = emptyLabel;
         triggerName.style.color = '#8a8da5';
         return;
       }
-      const g = getWeaponGrade(val);
-      triggerGrade.textContent = g || '?';
+      const g = getGradeFn(val);
+      triggerGrade.textContent = g || '';
       triggerGrade.style.color = weaponGradeColor(g);
       triggerName.textContent = val;
       triggerName.style.color = '';
@@ -1212,35 +1314,35 @@
     const emptyOpt = document.createElement('div');
     emptyOpt.className = 'weapon-option';
     emptyOpt.dataset.value = '';
-    emptyOpt.textContent = '— выберите оружие —';
+    emptyOpt.textContent = emptyLabel;
     emptyOpt.addEventListener('click', () => selectValue(''));
     dropdown.appendChild(emptyOpt);
 
-    Object.keys(weaponsByGrade).forEach(gradeKey => {
+    Object.keys(itemsByGrade).forEach(gradeKey => {
       const groupTitle = document.createElement('div');
       groupTitle.className = 'weapon-group-title';
       groupTitle.textContent = gradeKey;
       dropdown.appendChild(groupTitle);
 
-      weaponsByGrade[gradeKey].forEach(weaponName => {
+      itemsByGrade[gradeKey].forEach(itemName => {
         const opt = document.createElement('div');
         opt.className = 'weapon-option';
-        opt.dataset.value = weaponName;
+        opt.dataset.value = itemName;
 
-        const g = getWeaponGrade(weaponName);
+        const g = getGradeFn(itemName);
         const badge = document.createElement('span');
         badge.className = 'weapon-grade';
-        badge.textContent = g || '?';
+        badge.textContent = g || '';
         badge.style.color = weaponGradeColor(g);
 
         const nameEl = document.createElement('span');
         nameEl.className = 'weapon-name';
-        nameEl.textContent = weaponName;
+        nameEl.textContent = itemName;
 
         opt.appendChild(badge);
         opt.appendChild(nameEl);
 
-        opt.addEventListener('click', () => selectValue(weaponName));
+        opt.addEventListener('click', () => selectValue(itemName));
         dropdown.appendChild(opt);
       });
     });
@@ -1281,6 +1383,14 @@
     updateTrigger(value);
 
     return wrap;
+  }
+
+  function buildWeaponSelect(value, onChange, meta = null) {
+    return buildItemSelect(weaponsByGrade, getWeaponGrade, value, onChange, '— выберите оружие —', meta);
+  }
+
+  function buildJewelrySelect(type, value, onChange, meta = null) {
+    return buildItemSelect(jewelryData[type], getJewelryGrade, value, onChange, '— не выбрано —', meta);
   }
 
   function buildTattooSelect(value, onChange, meta = null) {
@@ -1480,22 +1590,37 @@
       });
       tr.appendChild(tdArmor);
 
+      // ===== Бижутерия: селект + заточка =====
       const tdJewelry = document.createElement('td');
       tdJewelry.className = 'set-cell';
       [
-        { key: 'earring1', label: 'Серьга 1', ph: 'Dynasty Earring' },
-        { key: 'earring2', label: 'Серьга 2', ph: 'Dynasty Earring' },
-        { key: 'necklace', label: 'Ожерелье', ph: 'Dynasty Necklace' },
-        { key: 'ring1', label: 'Кольцо 1', ph: 'Dynasty Ring' },
-        { key: 'ring2', label: 'Кольцо 2', ph: 'Dynasty Ring' }
+        { key: 'earring1', enchantKey: 'earring1Enchant', label: 'Серьга 1', type: 'earring' },
+        { key: 'earring2', enchantKey: 'earring2Enchant', label: 'Серьга 2', type: 'earring' },
+        { key: 'necklace', enchantKey: 'necklaceEnchant', label: 'Ожерелье', type: 'necklace' },
+        { key: 'ring1',    enchantKey: 'ring1Enchant',    label: 'Кольцо 1', type: 'ring' },
+        { key: 'ring2',    enchantKey: 'ring2Enchant',    label: 'Кольцо 2', type: 'ring' }
       ].forEach(field => {
         const label = document.createElement('span');
         label.className = 'set-label';
         label.textContent = field.label;
         tdJewelry.appendChild(label);
-        tdJewelry.appendChild(createInput('text', member[field.key] || '', val => {
-          member[field.key] = val; debouncedSave(member);
-        }, { placeholder: field.ph }, meta(field.key)));
+
+        const row = document.createElement('div');
+        row.className = 'jewelry-row';
+
+        const jewelrySelect = buildJewelrySelect(field.type, member[field.key] || '', val => {
+          member[field.key] = val;
+          debouncedSave(member);
+        }, meta(field.key));
+        row.appendChild(jewelrySelect);
+
+        const enchantInput = createInput('text', member[field.enchantKey] || '', val => {
+          member[field.enchantKey] = val;
+          debouncedSave(member);
+        }, { placeholder: '+0', class: 'jewelry-enchant' }, meta(field.enchantKey));
+        row.appendChild(enchantInput);
+
+        tdJewelry.appendChild(row);
       });
       tr.appendChild(tdJewelry);
 
@@ -2227,7 +2352,6 @@
       const comForm = document.createElement('div');
       comForm.className = 'dream-comment-form';
 
-      // Поле для ника
       const comAuthorInput = document.createElement('input');
       comAuthorInput.type = 'text';
       comAuthorInput.className = 'dream-comment-author-input';
@@ -2516,16 +2640,40 @@
         });
       tr.appendChild(tdArmor);
 
+      // ===== Бижутерия с заточкой в PDF =====
       const tdJewelry = document.createElement('td');
       tdJewelry.style.cssText = cellStyle + 'font-size:11px;';
-      [['Серьга 1', m.earring1], ['Серьга 2', m.earring2], ['Ожерелье', m.necklace], ['Кольцо 1', m.ring1], ['Кольцо 2', m.ring2]]
-        .forEach(([label, val]) => {
-          const d = document.createElement('div');
-          d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
-          d.textContent = `${label}: ${val || '—'}`;
-          if (!val) d.style.color = '#8a8da5';
-          tdJewelry.appendChild(d);
-        });
+      const jewelryFieldsPdf = [
+        { key: 'earring1', enchantKey: 'earring1Enchant', label: 'Серьга 1' },
+        { key: 'earring2', enchantKey: 'earring2Enchant', label: 'Серьга 2' },
+        { key: 'necklace', enchantKey: 'necklaceEnchant', label: 'Ожерелье' },
+        { key: 'ring1',    enchantKey: 'ring1Enchant',    label: 'Кольцо 1' },
+        { key: 'ring2',    enchantKey: 'ring2Enchant',    label: 'Кольцо 2' }
+      ];
+      jewelryFieldsPdf.forEach(field => {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin-bottom:3px;line-height:1.35;';
+        const val = m[field.key];
+        const enh = m[field.enchantKey];
+        if (val) {
+          const gradeLetter = getJewelryGrade(val);
+          const gSpan = document.createElement('span');
+          gSpan.textContent = gradeLetter ? gradeLetter + ' ' : '';
+          gSpan.style.cssText = `color:${weaponGradeColor(gradeLetter)};font-weight:800;font-size:12px;`;
+          d.appendChild(gSpan);
+          d.appendChild(document.createTextNode(`${field.label}: ${val}`));
+          if (enh) {
+            const eSpan = document.createElement('span');
+            eSpan.textContent = ` ${enh}`;
+            eSpan.style.cssText = 'color:#8a6508;font-weight:800;';
+            d.appendChild(eSpan);
+          }
+        } else {
+          d.textContent = `${field.label}: —`;
+          d.style.color = '#8a8da5';
+        }
+        tdJewelry.appendChild(d);
+      });
       tr.appendChild(tdJewelry);
 
       const tdTattoo = document.createElement('td');
