@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КП DARAMs — Группа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<h1>КП DARAMs</h1>
+<p class="subtitle">Состав топовой гей-консты</p>
+
+<div class="tabs">
+  <a href="index.html" class="tab-btn active">Группа</a>
+  <a href="craft.html" class="tab-btn">Крафт и покупки</a>
+  <a href="dreams.html" class="tab-btn">Влажные мечты</a>
+  <a href="calc.html" class="tab-btn">🧮 Калькулятор крафта</a>
+</div>
+
+<div class="toolbar">
+  <button id="addMember" class="primary">Добавить персонажа</button>
+  <button id="saveToFirebase" class="save-btn">Сохранить изменения</button>
+  <button id="downloadPDF" class="pdf-btn">Скачать PDF</button>
+  <div class="sync-status">
+    <span id="syncDot" class="sync-dot"></span>
+    <span id="syncText">Подключение…</span>
+    <span id="autoTimer" class="auto-timer">Автосейв: 30 с</span>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table id="partyTable">
+    <colgroup>
+      <col class="col-name"><col class="col-class"><col class="col-level">
+      <col class="col-weapon"><col class="col-armor"><col class="col-jewelry">
+      <col class="col-tattoo"><col class="col-comment"><col class="col-remove">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Имя</th>
+        <th>Профессия и саб-классы<br><span class="set-label">(основная + 3 саба с уровнями)</span></th>
+        <th>Ур.</th>
+        <th>Оружие<br><span class="set-label">(3 слота: оружие + комментарий)</span></th>
+        <th>Сет брони<br><span class="set-label">(шлем / тело / низ / перчатки / ботинки / щит + заточка)</span></th>
+        <th>Сет бижутерии<br><span class="set-label">(серьга ×2 / ожерелье / кольцо ×2 + заточка)</span></th>
+        <th>Татуировки<br><span class="set-label">(три независимых поля)</span></th>
+        <th>Комментарий<br><span class="set-label">(заметка о персонаже)</span></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="partyBody"></tbody>
+  </table>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="shared.js"></script>
+<script>
+  let members=[];
+  const partyBody=document.getElementById('partyBody');
+  const syncDot=document.getElementById('syncDot');
+  const syncText=document.getElementById('syncText');
+  const autoTimerEl=document.getElementById('autoTimer');
+
+  function setSyncStatus(status,text){syncDot.className='sync-dot '+status;syncText.textContent=text;}
+
+  function membersEqual(a,b){
+    if(a.length!==b.length)return false;
+    const mapA=new Map(a.map(m=>[m.id,m]));
+    for(const m of b){
+      const old=mapA.get(m.id);
+      if(!old)return false;
+      const keys=new Set([...Object.keys(old),...Object.keys(m)]);
+      for(const k of keys){if(k==='id')continue;if(String(old[k]??'')!==String(m[k]??''))return false;}
+    }
+    return true;
+  }
+
+  membersRef.on('value',(snapshot)=>{
+    const data=snapshot.val();
+    const newMembers=[];
+    if(data){Object.keys(data).forEach(key=>{newMembers.push({id:key,...data[key]});});}
+    if(membersEqual(members,newMembers)){setSyncStatus('online','Синхронизировано');return;}
+    members=newMembers;
+    renderTable();
+    setSyncStatus('online','Синхронизировано');
+  },(error)=>{console.error('Ошибка синхронизации:',error);setSyncStatus('offline','Ошибка: '+error.code);});
+
+  let saveTimeouts=new Map();
+  function debouncedSave(member){
+    if(!member.id)return;
+    const existing=saveTimeouts.get(member.id);
+    if(existing)clearTimeout(existing);
+    saveTimeouts.set(member.id,setTimeout(()=>{
+      setSyncStatus('syncing','Сохранение…');
+      const memberData={...member};delete memberData.id;
+      membersRef.child(member.id).update(memberData).then(()=>setSyncStatus('online','Сохранено')).catch(err=>{console.error('Ошибка сохранения:',err);setSyncStatus('offline','Ошибка сохранения');});
+      saveTimeouts.delete(member.id);
+    },500));
+  }
+
+  async function forceSaveAll(){
+    if(members.length===0){setSyncStatus('online','Нечего сохранять');return;}
+    setSyncStatus('syncing','Принудительное сохранение…');
+    try{
+      const updates={};
+      members.forEach(m=>{const id=m.id;const data={...m};delete data.id;updates[id]=data;});
+      await membersRef.update(updates);
+      setSyncStatus('online','✓ Все данные сохранены');
+    }catch(err){console.error('Ошибка принудительного сохранения:',err);setSyncStatus('offline','Ошибка сохранения');}
+  }
+
+  let secondsLeft=30;
+  function tickTimer(){secondsLeft--;if(secondsLeft<=0){secondsLeft=30;forceSaveAll();}autoTimerEl.textContent='Автосейв: '+secondsLeft+' с';}
+  setInterval(tickTimer,1000);
+
+  function addMember(){
+    setSyncStatus('syncing','Добавление…');
+    const newMemberRef=membersRef.push();
+    const newMember={name:'Персонаж '+(members.length+1),profession:'',sub1:'',sub2:'',sub3:'',sub1Level:'',sub2Level:'',sub3Level:'',level:1,weapon:'',weaponComment:'',weapon2:'',weapon2Comment:'',weapon3:'',weapon3Comment:'',helmet:'',helmetEnchant:'',armor:'',armorEnchant:'',legs:'',legsEnchant:'',gloves:'',glovesEnchant:'',boots:'',bootsEnchant:'',shield:'',shieldEnchant:'',earring1:'',earring1Enchant:'',earring2:'',earring2Enchant:'',necklace:'',necklaceEnchant:'',ring1:'',ring1Enchant:'',ring2:'',ring2Enchant:'',tattoo1:'',tattoo2:'',tattoo3:'',comment:''};
+    newMemberRef.set(newMember).then(()=>setSyncStatus('online','Синхронизировано')).catch(err=>{console.error('Ошибка добавления:',err);setSyncStatus('offline','Ошибка добавления');alert('Не удалось добавить персонажа: '+err.message);});
+  }
+
+  function deleteMember(member){
+    if(!member.id)return;
+    setSyncStatus('syncing','Удаление…');
+    membersRef.child(member.id).remove().then(()=>setSyncStatus('online','Синхронизировано')).catch(err=>{console.error('Ошибка удаления:',err);setSyncStatus('offline','Ошибка удаления');});
+  }
+
+  function renderTable(){
+    const active=document.activeElement;
+    let focusInfo=null;
+    const isFieldEl=active&&(active.tagName==='INPUT'||active.tagName==='SELECT'||active.tagName==='TEXTAREA');
+    if(isFieldEl&&active.dataset&&active.dataset.field&&active.dataset.memberId&&partyBody.contains(active)){
+      focusInfo={memberId:active.dataset.memberId,field:active.dataset.field,selectionStart:active.selectionStart,selectionEnd:active.selectionEnd,isSelect:active.tagName==='SELECT'};
+    }
+    partyBody.innerHTML='';
+    if(members.length===0){
+      const tr=document.createElement('tr');
+      const td=document.createElement('td');
+      td.colSpan=9;td.className='empty';td.textContent='Нет персонажей. Нажмите «Добавить персонажа».';
+      tr.appendChild(td);partyBody.appendChild(tr);return;
+    }
+    members.forEach((member)=>{
+      const tr=document.createElement('tr');
+      const mid=member.id;
+      const meta=(field)=>({memberId:mid,field});
+      const tdName=document.createElement('td');
+      tdName.appendChild(createInput('text',member.name||'',val=>{member.name=val;debouncedSave(member);},{},meta('name')));
+      tr.appendChild(tdName);
+      const tdProf=document.createElement('td');
+      const profCell=document.createElement('div');profCell.className='prof-cell';
+      const mainWrap=document.createElement('div');mainWrap.className='prof-main';
+      const iconSpan=document.createElement('span');iconSpan.className='prof-icon';
+      const selectedProf=professions.find(p=>p.name===member.profession);
+      iconSpan.textContent=selectedProf?selectedProf.icon:'❓';
+      const mainSelect=buildProfessionSelect(member.profession||'',val=>{member.profession=val;const newProf=professions.find(p=>p.name===val);iconSpan.textContent=newProf?newProf.icon:'❓';debouncedSave(member);},'',meta('profession'));
+      mainWrap.appendChild(iconSpan);mainWrap.appendChild(mainSelect);
+      profCell.appendChild(mainWrap);
+      [{key:'sub1',levelKey:'sub1Level',label:'Саб-класс 1'},{key:'sub2',levelKey:'sub2Level',label:'Саб-класс 2'},{key:'sub3',levelKey:'sub3Level',label:'Саб-класс 3'}].forEach(field=>{
+        const group=document.createElement('div');group.className='sub-group';
+        const label=document.createElement('span');label.className='sub-label';label.textContent=field.label;
+        const row=document.createElement('div');row.className='sub-row';
+        const subSelect=buildProfessionSelect(member[field.key]||'',val=>{member[field.key]=val;debouncedSave(member);},'sub-select',meta(field.key));
+        const levelInput=createInput('number',member[field.levelKey]||'',val=>{member[field.levelKey]=val;debouncedSave(member);},{class:'sub-level',min:1,max:85,placeholder:'ур.'},meta(field.levelKey));
+        row.appendChild(subSelect);row.appendChild(levelInput);
+        group.appendChild(label);group.appendChild(row);
+        profCell.appendChild(group);
+      });
+      tdProf.appendChild(profCell);tr.appendChild(tdProf);
+      const tdLevel=document.createElement('td');
+      tdLevel.appendChild(createInput('number',member.level||1,val=>{member.level=val;debouncedSave(member);},{min:1,max:85},meta('level')));
+      tr.appendChild(tdLevel);
+      const tdWeapon=document.createElement('td');
+      const weaponWrap=document.createElement('div');
+      weaponWrap.style.display='flex';weaponWrap.style.flexDirection='column';weaponWrap.style.gap='2px';
+      [{key:'weapon',commentKey:'weaponComment',label:'Оружие 1'},{key:'weapon2',commentKey:'weapon2Comment',label:'Оружие 2'},{key:'weapon3',commentKey:'weapon3Comment',label:'Оружие 3'}].forEach(slot=>{
+        const label=document.createElement('span');label.className='weapon-slot-label';label.textContent=slot.label;
+        weaponWrap.appendChild(label);
+        const weaponSelect=buildWeaponSelect(member[slot.key]||'',val=>{member[slot.key]=val;debouncedSave(member);},meta(slot.key));
+        weaponWrap.appendChild(weaponSelect);
+        const weaponCommentInput=createInput('text',member[slot.commentKey]||'',val=>{member[slot.commentKey]=val;debouncedSave(member);},{placeholder:'+16 [Focus] / SA / заметка…',class:'weapon-comment'},meta(slot.commentKey));
+        weaponWrap.appendChild(weaponCommentInput);
+      });
+      tdWeapon.appendChild(weaponWrap);tr.appendChild(tdWeapon);
+      const tdArmor=document.createElement('td');
+      tdArmor.className='set-cell';
+      [{key:'helmet',enchantKey:'helmetEnchant',label:'Шлем',slot:'helmet'},{key:'armor',enchantKey:'armorEnchant',label:'Тело',slot:'armor'},{key:'legs',enchantKey:'legsEnchant',label:'Низ',slot:'legs'},{key:'gloves',enchantKey:'glovesEnchant',label:'Перчатки',slot:'gloves'},{key:'boots',enchantKey:'bootsEnchant',label:'Ботинки',slot:'boots'},{key:'shield',enchantKey:'shieldEnchant',label:'Щит',slot:'shield'}].forEach(field=>{
+        const label=document.createElement('span');label.className='set-label';label.textContent=field.label;
+        tdArmor.appendChild(label);
+        const row=document.createElement('div');row.className='slot-row';
+        const armorSelect=buildArmorSelect(field.slot,member[field.key]||'',val=>{member[field.key]=val;debouncedSave(member);},meta(field.key));
+        row.appendChild(armorSelect);
+        const enchantInput=createInput('text',member[field.enchantKey]||'',val=>{member[field.enchantKey]=val;debouncedSave(member);},{placeholder:'+0',class:'slot-enchant'},meta(field.enchantKey));
+        row.appendChild(enchantInput);
+        tdArmor.appendChild(row);
+      });
+      tr.appendChild(tdArmor);
+      const tdJewelry=document.createElement('td');
+      tdJewelry.className='set-cell';
+      [{key:'earring1',enchantKey:'earring1Enchant',label:'Серьга 1',type:'earring'},{key:'earring2',enchantKey:'earring2Enchant',label:'Серьга 2',type:'earring'},{key:'necklace',enchantKey:'necklaceEnchant',label:'Ожерелье',type:'necklace'},{key:'ring1',enchantKey:'ring1Enchant',label:'Кольцо 1',type:'ring'},{key:'ring2',enchantKey:'ring2Enchant',label:'Кольцо 2',type:'ring'}].forEach(field=>{
+        const label=document.createElement('span');label.className='set-label';label.textContent=field.label;
+        tdJewelry.appendChild(label);
+        const row=document.createElement('div');row.className='slot-row';
+        const jewelrySelect=buildJewelrySelect(field.type,member[field.key]||'',val=>{member[field.key]=val;debouncedSave(member);},meta(field.key));
+        row.appendChild(jewelrySelect);
+        const enchantInput=createInput('text',member[field.enchantKey]||'',val=>{member[field.enchantKey]=val;debouncedSave(member);},{placeholder:'+0',class:'slot-enchant'},meta(field.enchantKey));
+        row.appendChild(enchantInput);
+        tdJewelry.appendChild(row);
+      });
+      tr.appendChild(tdJewelry);
+      const tdTattoo=document.createElement('td');
+      tdTattoo.className='set-cell';
+      [{key:'tattoo1',label:'Тату 1'},{key:'tattoo2',label:'Тату 2'},{key:'tattoo3',label:'Тату 3'}].forEach(field=>{
+        const label=document.createElement('span');label.className='set-label';label.textContent=field.label;
+        tdTattoo.appendChild(label);
+        const tattooSelect=buildTattooSelect(member[field.key]||'',val=>{member[field.key]=val;debouncedSave(member);},meta(field.key));
+        tdTattoo.appendChild(tattooSelect);
+      });
+      tr.appendChild(tdTattoo);
+      const tdComment=document.createElement('td');
+      tdComment.appendChild(createInput('text',member.comment||'',val=>{member.comment=val;debouncedSave(member);},{placeholder:'заметка…'},meta('comment')));
+      tr.appendChild(tdComment);
+      const tdRemove=document.createElement('td');
+      const btnRemove=document.createElement('button');
+      btnRemove.textContent='×';btnRemove.className='remove-btn';btnRemove.title='Удалить персонажа';
+      btnRemove.addEventListener('click',()=>deleteMember(member));
+      tdRemove.appendChild(btnRemove);tr.appendChild(tdRemove);
+      partyBody.appendChild(tr);
+    });
+    if(focusInfo){
+      const el=partyBody.querySelector(`[data-member-id="${focusInfo.memberId}"][data-field="${focusInfo.field}"]`);
+      if(el){el.focus();if(!focusInfo.isSelect&&el.setSelectionRange&&focusInfo.selectionStart!=null){try{el.setSelectionRange(focusInfo.selectionStart,focusInfo.selectionEnd);}catch(e){}}}
+    }
+  }
+
+  // ===== PDF =====
+  async function downloadPDF(){
+    if(members.length===0){alert('Таблица пуста — нечего сохранять в PDF.');return;}
+    setSyncStatus('syncing','Готовим PDF…');
+    const overlay=document.createElement('div');overlay.id='pdfOverlay';
+    overlay.innerHTML='<div class="box"><span class="spinner"></span>Готовим PDF…</div>';
+    document.body.appendChild(overlay);
+    const pdfArea=document.createElement('div');pdfArea.id='pdfArea';
+    const title=document.createElement('h2');
+    title.textContent='КП DARAMs — Состав топовой гей-консты';
+    title.style.cssText="margin:0 0 4px 0;color:#b8860b;font-family:'Cinzel',serif;font-size:22px;letter-spacing:0.04em;";
+    pdfArea.appendChild(title);
+    const subtitle=document.createElement('p');
+    subtitle.textContent='Сформировано: '+new Date().toLocaleString('ru-RU');
+    subtitle.style.cssText='margin:0 0 16px 0;color:#5a5d75;font-size:12px;';
+    pdfArea.appendChild(subtitle);
+    const table=document.createElement('table');
+    table.style.cssText='width:100%;border-collapse:collapse;table-layout:auto;font-size:12px;background:#fff;';
+    const thead=document.createElement('thead');
+    const headerRow=document.createElement('tr');
+    ['Имя','Профессия и саб-классы','Ур.','Оружие','Сет брони','Сет бижутерии','Татуировки','Комментарий'].forEach(text=>{const th=document.createElement('th');th.textContent=text;th.style.cssText='padding:8px;background:#fafbfe;color:#8a6508;border-bottom:2px solid #b8860b;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;';headerRow.appendChild(th);});
+    thead.appendChild(headerRow);table.appendChild(thead);
+    const tbody=document.createElement('tbody');const cellStyle='padding:8px;border-bottom:1px solid #e2e4ec;vertical-align:top;font-size:12px;';
+
+    members.forEach(m=>{
+      const tr=document.createElement('tr');
+      const tdName=document.createElement('td');tdName.style.cssText=cellStyle;tdName.textContent=m.name||'—';tr.appendChild(tdName);
+      const tdProf=document.createElement('td');tdProf.style.cssText=cellStyle;
+      const prof=professions.find(p=>p.name===m.profession);const profLine=document.createElement('div');profLine.style.cssText='font-weight:600;font-size:12px;';profLine.textContent=(prof&&prof.name)?`${prof.icon} ${prof.name}`:'—';tdProf.appendChild(profLine);
+      [{key:'sub1',levelKey:'sub1Level',num:1},{key:'sub2',levelKey:'sub2Level',num:2},{key:'sub3',levelKey:'sub3Level',num:3}].forEach(s=>{const subName=m[s.key];const subLevel=m[s.levelKey];if(subName||subLevel){const sub=professions.find(p=>p.name===subName);const line=document.createElement('div');line.style.cssText='font-size:11px;color:#5a5d75;margin-top:3px;';const nameText=(sub&&sub.name)?`${sub.icon} ${sub.name}`:(subName||'—');const levelText=subLevel?` (ур. ${subLevel})`:'';line.textContent=`Саб ${s.num}: `+nameText+levelText;tdProf.appendChild(line);}});
+      tr.appendChild(tdProf);
+      const tdLevel=document.createElement('td');tdLevel.style.cssText=cellStyle;tdLevel.textContent=m.level||'—';tr.appendChild(tdLevel);
+      const tdWeapon=document.createElement('td');tdWeapon.style.cssText=cellStyle;
+      [{key:'weapon',commentKey:'weaponComment',label:'Оружие 1'},{key:'weapon2',commentKey:'weapon2Comment',label:'Оружие 2'},{key:'weapon3',commentKey:'weapon3Comment',label:'Оружие 3'}].forEach((slot,idx)=>{
+        const weaponLine=document.createElement('div');weaponLine.style.cssText=idx>0?'margin-top:6px;':'';
+        const slotLabel=document.createElement('div');slotLabel.style.cssText='font-size:9px;color:#8a8da5;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;font-weight:700;';slotLabel.textContent=slot.label;weaponLine.appendChild(slotLabel);
+        const row=document.createElement('div');const weaponName=m[slot.key];
+        if(weaponName){const g=getWeaponGrade(weaponName);const gradeLetter=document.createElement('span');gradeLetter.textContent=g||'?';gradeLetter.style.cssText=`color:${weaponGradeColor(g)};font-weight:800;font-size:14px;margin-right:7px;letter-spacing:0.5px;`;row.appendChild(gradeLetter);row.appendChild(document.createTextNode(weaponName));}
+        else{row.textContent='—';row.style.color='#8a8da5';}
+        weaponLine.appendChild(row);
+        if(m[slot.commentKey]){const c=document.createElement('div');c.style.cssText='font-size:11px;color:#8a8da5;margin-top:2px;';c.textContent=m[slot.commentKey];weaponLine.appendChild(c);}
+        tdWeapon.appendChild(weaponLine);
+      });
+      tr.appendChild(tdWeapon);
+      const tdArmor=document.createElement('td');tdArmor.style.cssText=cellStyle+'font-size:11px;';
+      [{key:'helmet',enchantKey:'helmetEnchant',label:'Шлем'},{key:'armor',enchantKey:'armorEnchant',label:'Тело'},{key:'legs',enchantKey:'legsEnchant',label:'Низ'},{key:'gloves',enchantKey:'glovesEnchant',label:'Перчатки'},{key:'boots',enchantKey:'bootsEnchant',label:'Ботинки'},{key:'shield',enchantKey:'shieldEnchant',label:'Щит'}].forEach(field=>{
+        const d=document.createElement('div');d.style.cssText='margin-bottom:3px;line-height:1.35;';
+        const val=m[field.key];const enh=m[field.enchantKey];
+        if(val){const gradeLetter=getArmorGrade(val);const gSpan=document.createElement('span');gSpan.textContent=gradeLetter?gradeLetter+' ':'';gSpan.style.cssText=`color:${weaponGradeColor(gradeLetter)};font-weight:800;font-size:12px;`;d.appendChild(gSpan);d.appendChild(document.createTextNode(`${field.label}: ${val}`));if(enh){const eSpan=document.createElement('span');eSpan.textContent=` ${enh}`;eSpan.style.cssText='color:#8a6508;font-weight:800;';d.appendChild(eSpan);}}
+        else{d.textContent=`${field.label}: —`;d.style.color='#8a8da5';}
+        tdArmor.appendChild(d);
+      });
+      tr.appendChild(tdArmor);
+      const tdJewelry=document.createElement('td');tdJewelry.style.cssText=cellStyle+'font-size:11px;';
+      [{key:'earring1',enchantKey:'earring1Enchant',label:'Серьга 1'},{key:'earring2',enchantKey:'earring2Enchant',label:'Серьга 2'},{key:'necklace',enchantKey:'necklaceEnchant',label:'Ожерелье'},{key:'ring1',enchantKey:'ring1Enchant',label:'Кольцо 1'},{key:'ring2',enchantKey:'ring2Enchant',label:'Кольцо 2'}].forEach(field=>{
+        const d=document.createElement('div');d.style.cssText='margin-bottom:3px;line-height:1.35;';
+        const val=m[field.key];const enh=m[field.enchantKey];
+        if(val){const gradeLetter=getJewelryGrade(val);const gSpan=document.createElement('span');gSpan.textContent=gradeLetter?gradeLetter+' ':'';gSpan.style.cssText=`color:${weaponGradeColor(gradeLetter)};font-weight:800;font-size:12px;`;d.appendChild(gSpan);d.appendChild(document.createTextNode(`${field.label}: ${val}`));if(enh){const eSpan=document.createElement('span');eSpan.textContent=` ${enh}`;eSpan.style.cssText='color:#8a6508;font-weight:800;';d.appendChild(eSpan);}}
+        else{d.textContent=`${field.label}: —`;d.style.color='#8a8da5';}
+        tdJewelry.appendChild(d);
+      });
+      tr.appendChild(tdJewelry);
+      const tdTattoo=document.createElement('td');tdTattoo.style.cssText=cellStyle+'font-size:11px;';
+      [m.tattoo1,m.tattoo2,m.tattoo3].forEach((t,i)=>{const d=document.createElement('div');d.style.cssText='margin-bottom:3px;line-height:1.35;';d.textContent=`Тату ${i+1}: ${t||'—'}`;if(!t)d.style.color='#8a8da5';tdTattoo.appendChild(d);});
+      tr.appendChild(tdTattoo);
+      const tdComment=document.createElement('td');tdComment.style.cssText=cellStyle;tdComment.textContent=m.comment||'—';if(!m.comment)tdComment.style.color='#8a8da5';tr.appendChild(tdComment);
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);pdfArea.appendChild(table);document.body.appendChild(pdfArea);
+    await new Promise(r=>setTimeout(r,400));
+    const fileName='KP_DARAMs_'+new Date().toISOString().slice(0,10)+'.pdf';
+    try{
+      const canvas=await html2canvas(pdfArea,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false,width:pdfArea.scrollWidth,height:pdfArea.scrollHeight,windowWidth:pdfArea.scrollWidth,windowHeight:pdfArea.scrollHeight,scrollX:0,scrollY:0});
+      if(!canvas||canvas.width===0||canvas.height===0)throw new Error('canvas пустой');
+      const imgData=canvas.toDataURL('image/jpeg',0.95);
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+      const pageWidth=pdf.internal.pageSize.getWidth();const pageHeight=pdf.internal.pageSize.getHeight();
+      const margin=8;const imgWidth=pageWidth-margin*2;const imgHeight=(canvas.height*imgWidth)/canvas.width;
+      let heightLeft=imgHeight;let position=margin;
+      pdf.addImage(imgData,'JPEG',margin,position,imgWidth,imgHeight);heightLeft-=(pageHeight-margin*2);
+      while(heightLeft>0){position=margin-(imgHeight-heightLeft);pdf.addPage();pdf.addImage(imgData,'JPEG',margin,position,imgWidth,imgHeight);heightLeft-=(pageHeight-margin*2);}
+      pdf.save(fileName);setSyncStatus('online','PDF сохранён');
+    }catch(err){console.error('Ошибка PDF:',err);setSyncStatus('offline','Ошибка PDF');alert('Не удалось создать PDF: '+err.message);}
+    finally{if(pdfArea.parentNode)pdfArea.parentNode.removeChild(pdfArea);if(overlay.parentNode)overlay.parentNode.removeChild(overlay);}
+  }
+
+  document.getElementById('addMember').addEventListener('click',addMember);
+  document.getElementById('saveToFirebase').addEventListener('click',forceSaveAll);
+  document.getElementById('downloadPDF').addEventListener('click',downloadPDF);
+</script>
+</body>
+</html>

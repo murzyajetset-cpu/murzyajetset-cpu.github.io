@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КП DARAMs — Крафт и покупки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<h1>КП DARAMs</h1>
+<p class="subtitle">Состав топовой гей-консты</p>
+
+<div class="tabs">
+  <a href="index.html" class="tab-btn">Группа</a>
+  <a href="craft.html" class="tab-btn active">Крафт и покупки</a>
+  <a href="dreams.html" class="tab-btn">Влажные мечты</a>
+  <a href="calc.html" class="tab-btn">🧮 Калькулятор крафта</a>
+</div>
+
+<div class="craft-author-bar">
+  <label>Ваше имя:</label>
+  <input type="text" id="craftAuthorName" placeholder="Введите имя, чтобы посты были подписаны" maxlength="40">
+  <div class="sync-status">
+    <span id="postsSyncDot" class="sync-dot"></span>
+    <span id="postsSyncText">Подключение…</span>
+  </div>
+</div>
+
+<div class="treasury-panel">
+  <div class="treasury-icon">💰</div>
+  <div class="treasury-main">
+    <div class="treasury-label">Баланс казны</div>
+    <div class="treasury-value neutral" id="treasuryValue">0</div>
+    <div class="treasury-breakdown" id="treasuryBreakdown">
+      Доход: <span class="income">+0</span> · Расход: <span class="expense">−0</span>
+    </div>
+  </div>
+</div>
+
+<div class="summary-panel">
+  <div class="summary-title">📊 Сводка по крафту и покупкам</div>
+  <div class="summary-grid">
+    <div class="summary-tile"><div class="summary-tile-label">🔨 Крафты</div><div class="summary-tile-value" id="sumCraftActive">0</div><div class="summary-tile-sub" id="sumCraftDone">готово: 0</div></div>
+    <div class="summary-tile"><div class="summary-tile-label">💰 Покупки</div><div class="summary-tile-value" id="sumBuyActive">0</div><div class="summary-tile-sub" id="sumBuyDone">готово: 0</div></div>
+    <div class="summary-tile"><div class="summary-tile-label">💎 Казна</div><div class="summary-tile-value" id="sumTreasury">0</div><div class="summary-tile-sub" id="sumTreasurySub">постов</div></div>
+    <div class="summary-tile"><div class="summary-tile-label">⏳ В поиске</div><div class="summary-tile-value" id="sumNew">0</div><div class="summary-tile-sub">активных</div></div>
+    <div class="summary-tile"><div class="summary-tile-label">🔥 В работе</div><div class="summary-tile-value" id="sumProgress">0</div><div class="summary-tile-sub">активных</div></div>
+    <div class="summary-tile"><div class="summary-tile-label">✅ Готово</div><div class="summary-tile-value" id="sumDone">0</div><div class="summary-tile-sub">всего</div></div>
+  </div>
+  <div class="summary-totals" id="craftSummaryTotals">
+    Общая стоимость активного: <span class="s-total-craft">0</span> крафт · <span class="s-total-buy">0</span> покупки
+  </div>
+</div>
+
+<div class="post-form">
+  <div class="post-form-row">
+    <div><label>Тип</label>
+      <select id="newPostType">
+        <option value="craft">🔨 Крафт</option>
+        <option value="buy">💰 Покупка</option>
+        <option value="treasury">💎 Пополнение казны</option>
+      </select>
+    </div>
+    <div><label>Название предмета</label><input type="text" id="newPostItem" placeholder="напр. Dynasty Breastplate"></div>
+    <div><label>Кол-во</label><input type="text" id="newPostQuantity" placeholder="1"></div>
+    <div><label>Цена</label><input type="text" id="newPostPrice" placeholder="напр. 500кк"></div>
+    <div style="display:flex;align-items:flex-end;"><button id="postPublishBtn" class="primary" style="padding:8px 16px;">Опубликовать</button></div>
+  </div>
+  <div class="post-form-row post-form-main">
+    <div><label>Описание</label><textarea id="newPostText" placeholder="Что нужно и для кого — материалы, рецепт, куски, сроки…"></textarea></div>
+  </div>
+</div>
+
+<div class="posts-feed" id="postsFeed"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+<script>
+  let posts=[];
+  const postsFeed=document.getElementById('postsFeed');
+  const postsSyncDot=document.getElementById('postsSyncDot');
+  const postsSyncText=document.getElementById('postsSyncText');
+  const authorInput=document.getElementById('craftAuthorName');
+  authorInput.value=savedAuthor;
+
+  function setPostsSyncStatus(status,text){postsSyncDot.className='sync-dot '+status;postsSyncText.textContent=text;}
+
+  let postSaveTimeouts=new Map();
+  function postsEqual(a,b){if(a.length!==b.length)return false;const mapA=new Map(a.map(p=>[p.id,p]));for(const p of b){const old=mapA.get(p.id);if(!old)return false;const keys=new Set([...Object.keys(old),...Object.keys(p)]);for(const k of keys){if(k==='id')continue;if(String(old[k]??'')!==String(p[k]??''))return false;}}return true;}
+
+  postsRef.on('value',(snapshot)=>{const data=snapshot.val();const newPosts=[];if(data){Object.keys(data).forEach(key=>{newPosts.push({id:key,...data[key]});});newPosts.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));}if(postsEqual(posts,newPosts)){setPostsSyncStatus('online','Синхронизировано');return;}posts=newPosts;renderPosts();setPostsSyncStatus('online','Синхронизировано');},(error)=>{console.error('Ошибка синхронизации постов:',error);setPostsSyncStatus('offline','Ошибка: '+error.code);});
+
+  function debouncedSavePost(post){if(!post.id)return;const existing=postSaveTimeouts.get(post.id);if(existing)clearTimeout(existing);postSaveTimeouts.set(post.id,setTimeout(()=>{const postData={...post};delete postData.id;postData.updatedAt=Date.now();postsRef.child(post.id).update(postData).catch(err=>console.error('Ошибка сохранения поста:',err));postSaveTimeouts.delete(post.id);},500));}
+
+  function publishPost(){const author=(authorInput.value||'').trim();if(!author){alert('Сначала введите ваше имя в поле «Ваше имя» — иначе пост будет без подписи.');authorInput.focus();return;}const type=document.getElementById('newPostType').value;const item=document.getElementById('newPostItem').value.trim();const quantity=document.getElementById('newPostQuantity').value.trim();const price=document.getElementById('newPostPrice').value.trim();const text=document.getElementById('newPostText').value.trim();if(!item&&!text){alert('Заполните хотя бы название предмета или описание.');return;}const newPostRef=postsRef.push();const newPost={author,type,item,quantity,price,text,status:'new',createdAt:Date.now(),updatedAt:Date.now()};newPostRef.set(newPost).then(()=>{document.getElementById('newPostItem').value='';document.getElementById('newPostQuantity').value='';document.getElementById('newPostPrice').value='';document.getElementById('newPostText').value='';}).catch(err=>{console.error('Ошибка публикации:',err);alert('Не удалось опубликовать пост: '+err.message);});}
+
+  function deletePost(post){if(!post.id)return;if(!confirm('Удалить этот пост?'))return;postsRef.child(post.id).remove().catch(err=>console.error('Ошибка удаления поста:',err));}
+
+  function cycleStatus(post){const order=['new','progress','done'];const currentIdx=order.indexOf(post.status||'new');post.status=order[(currentIdx+1)%order.length];debouncedSavePost(post);}
+
+  const STATUS_LABELS={new:'В поиске',progress:'В работе',done:'Готово'};
+
+  function updateTreasuryBalance(){let income=0;let expense=0;posts.forEach(post=>{const amount=parsePrice(post.price);if(amount<=0)return;if(post.type==='treasury')income+=amount;else if(post.type==='craft'||post.type==='buy')expense+=amount;});const balance=income-expense;const valueEl=document.getElementById('treasuryValue');const breakdownEl=document.getElementById('treasuryBreakdown');if(!valueEl||!breakdownEl)return;valueEl.textContent=(balance>0?'+':balance<0?'−':'')+formatBalance(Math.abs(balance));valueEl.classList.remove('positive','negative','neutral');if(balance>0)valueEl.classList.add('positive');else if(balance<0)valueEl.classList.add('negative');else valueEl.classList.add('neutral');breakdownEl.innerHTML=`Доход: <span class="income">+${formatBalance(income)}</span> · Расход: <span class="expense">−${formatBalance(expense)}</span>`;}
+
+  function updateCraftSummary(){const craftPosts=posts.filter(p=>p.type==='craft');const buyPosts=posts.filter(p=>p.type==='buy');const treasuryPosts=posts.filter(p=>p.type==='treasury');const craftActive=craftPosts.filter(p=>(p.status||'new')!=='done').length;const craftDone=craftPosts.filter(p=>(p.status||'new')==='done').length;const buyActive=buyPosts.filter(p=>(p.status||'new')!=='done').length;const buyDone=buyPosts.filter(p=>(p.status||'new')==='done').length;const newCount=posts.filter(p=>(p.status||'new')==='new').length;const progressCount=posts.filter(p=>(p.status||'new')==='progress').length;const doneCount=posts.filter(p=>(p.status||'new')==='done').length;let activeCraftCost=0;let activeBuyCost=0;posts.forEach(p=>{const st=p.status||'new';if(st==='done')return;const amount=parsePrice(p.price);if(p.type==='craft')activeCraftCost+=amount;else if(p.type==='buy')activeBuyCost+=amount;});const setText=(id,txt)=>{const el=document.getElementById(id);if(el)el.textContent=txt;};setText('sumCraftActive',craftActive);setText('sumCraftDone','готово: '+craftDone);setText('sumBuyActive',buyActive);setText('sumBuyDone','готово: '+buyDone);setText('sumTreasury',treasuryPosts.length);setText('sumTreasurySub',treasuryPosts.length===1?'пост':'постов');setText('sumNew',newCount);setText('sumProgress',progressCount);setText('sumDone',doneCount);const totalsEl=document.getElementById('craftSummaryTotals');if(totalsEl){totalsEl.innerHTML=`Общая стоимость активного: <span class="s-total-craft">${formatBalance(activeCraftCost)}</span> крафт · <span class="s-total-buy">${formatBalance(activeBuyCost)}</span> покупки`;}}
+
+  function renderPosts(){
+    postsFeed.innerHTML='';
+    if(posts.length===0){const empty=document.createElement('div');empty.className='empty-posts';empty.textContent='Пока нет постов. Опубликуйте первый — что нужно скрафтить или купить.';postsFeed.appendChild(empty);updateTreasuryBalance();updateCraftSummary();return;}
+    posts.forEach(post=>{
+      const card=document.createElement('div');
+      card.className='post-card '+(post.type==='buy'?'type-buy':post.type==='treasury'?'type-treasury':'type-craft');
+      const header=document.createElement('div');header.className='post-header';
+      const author=document.createElement('span');author.className='post-author';author.textContent=post.author||'Аноним';header.appendChild(author);
+      const time=document.createElement('span');time.className='post-time';time.textContent=formatDate(post.createdAt);header.appendChild(time);
+      const badge=document.createElement('span');
+      if(post.type==='buy'){badge.className='post-badge badge-buy';badge.textContent='💰 Покупка';}
+      else if(post.type==='treasury'){badge.className='post-badge badge-treasury';badge.textContent='💎 Пополнение казны';}
+      else{badge.className='post-badge badge-craft';badge.textContent='🔨 Крафт';}
+      header.appendChild(badge);
+      const status=document.createElement('span');status.className='post-status status-'+(post.status||'new');status.textContent=STATUS_LABELS[post.status||'new'];status.title='Нажмите, чтобы сменить статус';status.addEventListener('click',()=>cycleStatus(post));header.appendChild(status);
+      card.appendChild(header);
+      if(post.item){const itemLine=document.createElement('div');itemLine.className='post-item-line';const lbl=document.createElement('span');lbl.className='post-item-label';lbl.textContent='Предмет:';itemLine.appendChild(lbl);const itemName=document.createElement('span');itemName.className='post-item-name';itemName.textContent=post.item+(post.quantity?` × ${post.quantity}`:'');itemLine.appendChild(itemName);card.appendChild(itemLine);}
+      if(post.price){const priceLine=document.createElement('div');priceLine.className='post-price-line';const priceLabel=document.createElement('span');priceLabel.className='post-price-label';priceLabel.textContent=post.type==='treasury'?'Взнос:':'Цена:';priceLine.appendChild(priceLabel);const priceValue=document.createElement('span');priceValue.className='post-price-value';priceValue.textContent=post.price;priceLine.appendChild(priceValue);card.appendChild(priceLine);}
+      if(post.text){const text=document.createElement('div');text.className='post-text';text.textContent=post.text;card.appendChild(text);}
+      const footer=document.createElement('div');footer.className='post-footer';
+      const editBtn=document.createElement('button');editBtn.textContent='Редактировать';editBtn.addEventListener('click',()=>toggleEditPost(card,post));footer.appendChild(editBtn);
+      const deleteBtn=document.createElement('button');deleteBtn.textContent='Удалить';deleteBtn.style.borderColor='rgba(217,45,32,0.4)';deleteBtn.style.color='var(--danger-red)';deleteBtn.addEventListener('click',()=>deletePost(post));footer.appendChild(deleteBtn);
+      card.appendChild(footer);postsFeed.appendChild(card);
+    });
+    updateTreasuryBalance();updateCraftSummary();
+  }
+
+  function toggleEditPost(card,post){
+    const existing=card.querySelector('.post-edit-area');
+    if(existing){
+      const typeVal=existing.querySelector('.edit-type').value;const itemVal=existing.querySelector('.edit-item').value.trim();const qtyVal=existing.querySelector('.edit-qty').value.trim();const priceVal=existing.querySelector('.edit-price')?existing.querySelector('.edit-price').value.trim():(post.price||'');const textVal=existing.querySelector('.edit-text').value;
+      post.type=typeVal;post.item=itemVal;post.quantity=qtyVal;post.price=priceVal;post.text=textVal;
+      debouncedSavePost(post);renderPosts();return;
+    }
+    const area=document.createElement('div');area.className='post-edit-area';
+    const row=document.createElement('div');row.className='post-edit-row';
+    const typeSelect=document.createElement('select');typeSelect.className='edit-type';
+    [['craft','🔨 Крафт'],['buy','💰 Покупка'],['treasury','💎 Пополнение казны']].forEach(([val,label])=>{const opt=document.createElement('option');opt.value=val;opt.textContent=label;if((post.type||'craft')===val)opt.selected=true;typeSelect.appendChild(opt);});
+    row.appendChild(typeSelect);
+    const itemInput=document.createElement('input');itemInput.type='text';itemInput.className='edit-item';itemInput.value=post.item||'';itemInput.placeholder='Название предмета';row.appendChild(itemInput);
+    const qtyInput=document.createElement('input');qtyInput.type='text';qtyInput.className='edit-qty';qtyInput.value=post.quantity||'';qtyInput.placeholder='Кол-во';row.appendChild(qtyInput);
+    const priceInput=document.createElement('input');priceInput.type='text';priceInput.className='edit-price';priceInput.value=post.price||'';priceInput.placeholder='Цена';row.appendChild(priceInput);
+    area.appendChild(row);
+    const textLabel=document.createElement('label');textLabel.textContent='Описание';area.appendChild(textLabel);
+    const textArea=document.createElement('textarea');textArea.className='edit-text';textArea.value=post.text||'';textArea.style.minHeight='70px';textArea.style.width='100%';textArea.style.resize='vertical';area.appendChild(textArea);
+    const hint=document.createElement('div');hint.style.fontSize='10px';hint.style.color='var(--text-muted)';hint.style.marginTop='6px';hint.textContent='Нажмите «Редактировать» ещё раз, чтобы сохранить.';area.appendChild(hint);
+    card.querySelectorAll('.post-item-line, .post-price-line, .post-text').forEach(el=>el.remove());
+    const footer=card.querySelector('.post-footer');card.insertBefore(area,footer);
+  }
+
+  document.getElementById('postPublishBtn').addEventListener('click',publishPost);
+  authorInput.addEventListener('input',e=>{localStorage.setItem(AUTHOR_KEY,e.target.value);});
+</script>
+</body>
+</html>

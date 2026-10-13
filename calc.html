@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КП DARAMs — Калькулятор крафта</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<h1>КП DARAMs</h1>
+<p class="subtitle">Состав топовой гей-консты</p>
+
+<div class="tabs">
+  <a href="index.html" class="tab-btn">Группа</a>
+  <a href="craft.html" class="tab-btn">Крафт и покупки</a>
+  <a href="dreams.html" class="tab-btn">Влажные мечты</a>
+  <a href="calc.html" class="tab-btn active">🧮 Калькулятор крафта</a>
+</div>
+
+<div class="calc-toolbar">
+  <label>Рецепт:</label>
+  <select id="recipeSelect"></select>
+  <button id="newRecipeBtn">➕ Новый рецепт</button>
+  <button id="saveRecipeBtn" class="primary">💾 Сохранить</button>
+  <button id="deleteRecipeBtn" class="danger">🗑 Удалить</button>
+  <button id="exportCalcBtn">📤 Экспорт JSON</button>
+  <button id="importCalcBtn">📥 Импорт JSON</button>
+  <input type="file" id="importCalcFile" accept=".json" style="display:none;">
+</div>
+
+<div class="calc-card">
+  <div class="calc-header">
+    <div class="calc-header-full">
+      <label class="calc-field-label">Название предмета для крафта</label>
+      <input type="text" id="recipeName" class="calc-recipe-name" placeholder="напр. Dynasty Breastplate">
+    </div>
+    <div>
+      <label class="calc-field-label">Количество крафтов</label>
+      <input type="number" id="calcCraftCount" value="1" min="1" step="1">
+    </div>
+    <div>
+      <label class="calc-field-label">Цена продажи за 1 шт</label>
+      <input type="number" id="calcSalePrice" value="0" min="0" step="any">
+    </div>
+  </div>
+
+  <div class="calc-ingredients-title">
+    <h3>Ингредиенты</h3>
+    <button id="addIngredientBtn" class="mini">➕ Добавить строку</button>
+  </div>
+  <table class="calc-ingredients-table">
+    <thead>
+      <tr>
+        <th style="width:40%;">Название ингредиента</th>
+        <th class="num" style="width:12%;">На 1 крафт</th>
+        <th class="num" style="width:12%;">Всего нужно</th>
+        <th class="num" style="width:15%;">Цена за ед.</th>
+        <th class="num" style="width:15%;">Сумма</th>
+        <th class="center" style="width:6%;"></th>
+      </tr>
+    </thead>
+    <tbody id="calcIngredientsBody"></tbody>
+  </table>
+
+  <div class="calc-totals">
+    <div class="calc-totals-row"><span class="label">Всего ингредиентов:</span><span class="value" id="calcTotalCount">0</span></div>
+    <div class="calc-totals-row"><span class="label">Общая стоимость материалов:</span><span class="value" id="calcTotalCost">0</span></div>
+    <div class="calc-unit-row"><span class="unit-label">Себестоимость 1 крафта:</span><span class="unit-value" id="calcUnitCost">0</span></div>
+    <div class="calc-sale-section">
+      <div><label class="calc-field-label">Выручка</label><input type="text" id="calcRevenue" value="0" readonly></div>
+      <div><label class="calc-field-label">Прибыль</label><input type="text" id="calcProfit" value="0" readonly></div>
+      <div><label class="calc-field-label">Маржа</label><input type="text" id="calcMargin" value="0%" readonly></div>
+    </div>
+    <div class="calc-totals-row big" id="calcProfitRow">
+      <span class="label">Чистая прибыль (выручка − материалы):</span>
+      <span class="value" id="calcNetProfit">0</span>
+    </div>
+  </div>
+
+  <div class="calc-info-hint">
+    <strong>Совет:</strong> цены за единицу можно вводить с суффиксами <code>к</code> (тысяча),
+    <code>кк</code> (миллион), <code>ккк</code> (миллиард). Например <code>500к</code> или <code>2кк</code>.
+    Рецепт сохраняется автоматически в браузере.
+  </div>
+</div>
+
+<div class="calc-save-toast" id="calcSaveToast">Рецепт сохранён</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+<script>
+  const CALC_STORAGE_KEY='l2craft_recipes_v1';
+  const CALC_SELECTED_KEY='l2craft_selected_v1';
+
+  const CALC_DEFAULT_RECIPES={
+    dynasty_breastplate:{name:'Dynasty Breastplate',craftCount:1,salePrice:0,ingredients:[{name:'Dynasty Breastplate Piece',perCraft:12,price:0},{name:'Dynasty Breastplate Recipe',perCraft:1,price:0},{name:'Synthetic Cokes',perCraft:38,price:0},{name:"Artisan's Frame",perCraft:38,price:0},{name:'Crafted Leather',perCraft:38,price:0},{name:'Maestro Anvil Lock',perCraft:19,price:0},{name:'Metallic Fiber',perCraft:12,price:0},{name:'Varnish',perCraft:6,price:0}]},
+    dynasty_gaiters:{name:'Dynasty Gaiters',craftCount:1,salePrice:0,ingredients:[{name:'Dynasty Gaiters Piece',perCraft:10,price:0},{name:'Dynasty Gaiters Recipe',perCraft:1,price:0},{name:'Synthetic Cokes',perCraft:32,price:0},{name:"Artisan's Frame",perCraft:32,price:0},{name:'Crafted Leather',perCraft:32,price:0},{name:'Maestro Anvil Lock',perCraft:16,price:0},{name:'Metallic Fiber',perCraft:10,price:0}]},
+    dynasty_helmet:{name:'Dynasty Helmet',craftCount:1,salePrice:0,ingredients:[{name:'Dynasty Helmet Piece',perCraft:8,price:0},{name:'Dynasty Helmet Recipe',perCraft:1,price:0},{name:'Synthetic Cokes',perCraft:26,price:0},{name:"Artisan's Frame",perCraft:26,price:0},{name:'Crafted Leather',perCraft:26,price:0},{name:'Maestro Anvil Lock',perCraft:13,price:0}]},
+    vesper_cutter:{name:'Vesper Cutter',craftCount:1,salePrice:0,ingredients:[{name:'Vesper Cutter Piece',perCraft:14,price:0},{name:'Vesper Cutter Recipe',perCraft:1,price:0},{name:'Synthetic Cokes',perCraft:56,price:0},{name:"Artisan's Frame",perCraft:56,price:0},{name:'Crafted Leather',perCraft:56,price:0},{name:'Maestro Anvil Lock',perCraft:28,price:0},{name:'Vesper Cutter Fragment',perCraft:14,price:0},{name:'Metallic Fiber',perCraft:14,price:0}]},
+    draconic_bow:{name:'Draconic Bow',craftCount:1,salePrice:0,ingredients:[{name:'Draconic Bow Shaft',perCraft:13,price:0},{name:'Draconic Bow Recipe',perCraft:1,price:0},{name:'Synthetic Cokes',perCraft:48,price:0},{name:"Artisan's Frame",perCraft:48,price:0},{name:'Crafted Leather',perCraft:48,price:0},{name:'Maestro Anvil Lock',perCraft:24,price:0},{name:'Metallic Fiber',perCraft:13,price:0}]}
+  };
+
+  let calcRecipes={};
+  let calcCurrentId=null;
+
+  function calcParsePrice(str){if(str===0||str===''||str===null||str===undefined)return 0;const s=String(str).trim().toLowerCase().replace(/\s+/g,'').replace(/,/g,'.');const m=s.match(/^(-?[\d.]+)(ккк|кк|к|kkk|kk|k)?$/);if(!m){const n=parseFloat(s.replace(/[^\d.\-]/g,''));return isNaN(n)?0:n;}const num=parseFloat(m[1]);if(isNaN(num))return 0;const suffix=m[2]||'';const mult={к:1e3,k:1e3,кк:1e6,kk:1e6,ккк:1e9,kkk:1e9};return num*(mult[suffix]||1);}
+
+  function calcFormatNum(n){if(!n||n===0)return '0';if(!isFinite(n))return '∞';const abs=Math.abs(n);if(abs>=1e9)return (n/1e9).toFixed(2).replace(/\.?0+$/,'')+'ккк';if(abs>=1e6)return (n/1e6).toFixed(2).replace(/\.?0+$/,'')+'кк';if(abs>=1e3)return (n/1e3).toFixed(2).replace(/\.?0+$/,'')+'к';return n.toLocaleString('ru-RU',{maximumFractionDigits:2});}
+
+  function calcGenId(){return 'r_'+Date.now()+'_'+Math.floor(Math.random()*1000);}
+
+  function calcLoadRecipes(){try{const raw=localStorage.getItem(CALC_STORAGE_KEY);if(raw){calcRecipes=JSON.parse(raw);if(typeof calcRecipes!=='object'||Array.isArray(calcRecipes))calcRecipes={};return;}}catch(e){console.warn('Ошибка чтения рецептов:',e);}calcRecipes=JSON.parse(JSON.stringify(CALC_DEFAULT_RECIPES));calcSaveRecipes();}
+  function calcSaveRecipes(){try{localStorage.setItem(CALC_STORAGE_KEY,JSON.stringify(calcRecipes));return true;}catch(e){console.error('Ошибка сохранения:',e);return false;}}
+  function calcLoadSelectedId(){try{const id=localStorage.getItem(CALC_SELECTED_KEY);if(id&&calcRecipes[id])return id;}catch(e){}return Object.keys(calcRecipes)[0]||null;}
+  function calcSaveSelectedId(id){try{localStorage.setItem(CALC_SELECTED_KEY,id);}catch(e){}}
+
+  function calcRenderSelect(){const select=document.getElementById('recipeSelect');select.innerHTML='';const ids=Object.keys(calcRecipes);if(ids.length===0){const opt=document.createElement('option');opt.value='';opt.textContent='— нет рецептов —';select.appendChild(opt);return;}ids.forEach(id=>{const opt=document.createElement('option');opt.value=id;opt.textContent=calcRecipes[id].name||'Без названия';if(id===calcCurrentId)opt.selected=true;select.appendChild(opt);});}
+
+  function calcRenderCalculator(){
+    const recipe=calcRecipes[calcCurrentId];
+    if(!recipe){document.getElementById('recipeName').value='';document.getElementById('calcCraftCount').value=1;document.getElementById('calcSalePrice').value=0;document.getElementById('calcIngredientsBody').innerHTML='';calcRecalcAll();return;}
+    document.getElementById('recipeName').value=recipe.name||'';
+    document.getElementById('calcCraftCount').value=recipe.craftCount||1;
+    document.getElementById('calcSalePrice').value=recipe.salePrice||0;
+    calcRenderIngredients(recipe);
+    calcRecalcAll();
+  }
+
+  function calcRenderIngredients(recipe){
+    const tbody=document.getElementById('calcIngredientsBody');
+    tbody.innerHTML='';
+    const ingredients=recipe.ingredients||[];
+    if(ingredients.length===0){const tr=document.createElement('tr');tr.innerHTML=`<td colspan="6" style="text-align:center;color:var(--text-muted);font-style:italic;padding:20px;">Нет ингредиентов. Нажмите «Добавить строку», чтобы начать.</td>`;tbody.appendChild(tr);return;}
+    const craftCount=parseInt(recipe.craftCount,10)||1;
+    ingredients.forEach((ing,idx)=>{
+      const tr=document.createElement('tr');
+      const tdName=document.createElement('td');
+      const nameInput=document.createElement('input');nameInput.type='text';nameInput.value=ing.name||'';nameInput.placeholder='название ресурса';nameInput.className='calc-ing-name';
+      nameInput.addEventListener('input',()=>{recipe.ingredients[idx].name=nameInput.value;calcScheduleSave();});
+      tdName.appendChild(nameInput);tr.appendChild(tdName);
+      const tdPer=document.createElement('td');tdPer.className='num';
+      const perInput=document.createElement('input');perInput.type='number';perInput.min=0;perInput.step='any';perInput.value=ing.perCraft||0;
+      perInput.addEventListener('input',()=>{recipe.ingredients[idx].perCraft=parseFloat(perInput.value)||0;calcRecalcAll();calcScheduleSave();});
+      tdPer.appendChild(perInput);tr.appendChild(tdPer);
+      const tdTotal=document.createElement('td');tdTotal.className='num';
+      const totalCount=(parseFloat(ing.perCraft)||0)*craftCount;
+      tdTotal.textContent=calcFormatNum(totalCount);tdTotal.style.fontWeight='600';tr.appendChild(tdTotal);
+      const tdPrice=document.createElement('td');tdPrice.className='num';
+      const priceInput=document.createElement('input');priceInput.type='text';priceInput.value=ing.price||'';priceInput.placeholder='0';
+      priceInput.addEventListener('input',()=>{recipe.ingredients[idx].price=priceInput.value;calcRecalcAll();calcScheduleSave();});
+      tdPrice.appendChild(priceInput);tr.appendChild(tdPrice);
+      const tdSum=document.createElement('td');tdSum.className='num total-price';
+      const unitPrice=calcParsePrice(ing.price);const sum=unitPrice*totalCount;
+      tdSum.textContent=calcFormatNum(sum);tr.appendChild(tdSum);
+      const tdRemove=document.createElement('td');tdRemove.className='center';
+      const btnRemove=document.createElement('button');btnRemove.className='calc-remove-row';btnRemove.textContent='×';btnRemove.title='Удалить ингредиент';
+      btnRemove.addEventListener('click',()=>{recipe.ingredients.splice(idx,1);calcRenderIngredients(recipe);calcRecalcAll();calcScheduleSave();});
+      tdRemove.appendChild(btnRemove);tr.appendChild(tdRemove);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function calcRecalcAll(){
+    const recipe=calcRecipes[calcCurrentId];
+    if(!recipe){document.getElementById('calcTotalCount').textContent='0';document.getElementById('calcTotalCost').textContent='0';document.getElementById('calcUnitCost').textContent='0';document.getElementById('calcRevenue').value='0';document.getElementById('calcProfit').value='0';document.getElementById('calcMargin').value='0%';document.getElementById('calcNetProfit').textContent='0';return;}
+    const craftCount=Math.max(1,parseInt(recipe.craftCount,10)||1);
+    const salePrice=calcParsePrice(recipe.salePrice);
+    let totalCount=0;let totalCost=0;
+    (recipe.ingredients||[]).forEach(ing=>{const per=parseFloat(ing.perCraft)||0;const count=per*craftCount;const unitPrice=calcParsePrice(ing.price);totalCount+=count;totalCost+=unitPrice*count;});
+    const unitCost=totalCost/craftCount;
+    const revenue=salePrice*craftCount;
+    const profit=revenue-totalCost;
+    const margin=revenue>0?(profit/revenue*100):0;
+    document.getElementById('calcTotalCount').textContent=calcFormatNum(totalCount);
+    document.getElementById('calcTotalCost').textContent=calcFormatNum(totalCost);
+    document.getElementById('calcUnitCost').textContent=calcFormatNum(unitCost);
+    document.getElementById('calcRevenue').value=calcFormatNum(revenue);
+    document.getElementById('calcProfit').value=calcFormatNum(profit);
+    document.getElementById('calcMargin').value=revenue>0?margin.toFixed(1)+'%':'0%';
+    document.getElementById('calcNetProfit').textContent=calcFormatNum(profit);
+    const profitRow=document.getElementById('calcProfitRow');
+    profitRow.classList.remove('profit','loss');
+    if(revenue>0&&profit>0)profitRow.classList.add('profit');
+    else if(revenue>0&&profit<0)profitRow.classList.add('loss');
+    const rows=document.querySelectorAll('#calcIngredientsBody tr');
+    rows.forEach((row,idx)=>{const ing=recipe.ingredients[idx];if(!ing)return;const totalCell=row.children[2];if(totalCell)totalCell.textContent=calcFormatNum((parseFloat(ing.perCraft)||0)*craftCount);const sumCell=row.children[4];if(sumCell){const total=(parseFloat(ing.perCraft)||0)*craftCount;sumCell.textContent=calcFormatNum(calcParsePrice(ing.price)*total);}});
+  }
+
+  let calcSaveTimeout=null;
+  function calcScheduleSave(){clearTimeout(calcSaveTimeout);calcSaveTimeout=setTimeout(()=>{calcSaveRecipes();calcShowToast('Рецепт сохранён');},600);}
+  function calcShowToast(text,isError=false){const toast=document.getElementById('calcSaveToast');toast.textContent=text;toast.classList.toggle('error',isError);toast.classList.add('show');clearTimeout(calcShowToast._t);calcShowToast._t=setTimeout(()=>toast.classList.remove('show'),1800);}
+
+  function calcSelectRecipe(id){calcCurrentId=id;calcSaveSelectedId(id);calcRenderSelect();calcRenderCalculator();}
+  function calcNewRecipe(){const id=calcGenId();calcRecipes[id]={name:'Новый рецепт',craftCount:1,salePrice:0,ingredients:[{name:'',perCraft:1,price:''}]};calcSaveRecipes();calcSelectRecipe(id);setTimeout(()=>document.getElementById('recipeName').focus(),50);}
+  function calcSaveCurrent(){if(!calcCurrentId||!calcRecipes[calcCurrentId])return;calcRecipes[calcCurrentId].name=document.getElementById('recipeName').value.trim()||'Без названия';calcRecipes[calcCurrentId].craftCount=parseInt(document.getElementById('calcCraftCount').value,10)||1;calcRecipes[calcCurrentId].salePrice=document.getElementById('calcSalePrice').value;calcSaveRecipes();calcRenderSelect();calcShowToast('Рецепт сохранён');}
+  function calcDeleteCurrent(){if(!calcCurrentId)return;if(!confirm('Удалить этот рецепт?'))return;delete calcRecipes[calcCurrentId];calcSaveRecipes();const ids=Object.keys(calcRecipes);if(ids.length>0)calcSelectRecipe(ids[0]);else{calcCurrentId=null;calcRenderSelect();calcRenderCalculator();}calcShowToast('Рецепт удалён');}
+  function calcExport(){const blob=new Blob([JSON.stringify(calcRecipes,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='l2craft_recipes_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);}
+  function calcImport(file){const reader=new FileReader();reader.onload=(e)=>{try{const data=JSON.parse(e.target.result);if(typeof data!=='object'||Array.isArray(data))throw new Error('Неверный формат');const importedCount=Object.keys(data).length;Object.assign(calcRecipes,data);calcSaveRecipes();calcRenderSelect();if(Object.keys(data).length>0)calcSelectRecipe(Object.keys(data)[0]);calcShowToast('Импортировано рецептов: '+importedCount);}catch(err){console.error(err);calcShowToast('Ошибка импорта: '+err.message,true);}};reader.readAsText(file);}
+
+  document.getElementById('recipeSelect').addEventListener('change',(e)=>{calcSelectRecipe(e.target.value);});
+  document.getElementById('recipeName').addEventListener('input',(e)=>{if(!calcCurrentId||!calcRecipes[calcCurrentId])return;calcRecipes[calcCurrentId].name=e.target.value;const opt=document.querySelector(`#recipeSelect option[value="${calcCurrentId}"]`);if(opt)opt.textContent=e.target.value||'Без названия';calcScheduleSave();});
+  document.getElementById('calcCraftCount').addEventListener('input',(e)=>{if(!calcCurrentId||!calcRecipes[calcCurrentId])return;calcRecipes[calcCurrentId].craftCount=parseInt(e.target.value,10)||1;calcRenderIngredients(calcRecipes[calcCurrentId]);calcRecalcAll();calcScheduleSave();});
+  document.getElementById('calcSalePrice').addEventListener('input',(e)=>{if(!calcCurrentId||!calcRecipes[calcCurrentId])return;calcRecipes[calcCurrentId].salePrice=e.target.value;calcRecalcAll();calcScheduleSave();});
+  document.getElementById('addIngredientBtn').addEventListener('click',()=>{if(!calcCurrentId||!calcRecipes[calcCurrentId]){calcNewRecipe();return;}if(!calcRecipes[calcCurrentId].ingredients)calcRecipes[calcCurrentId].ingredients=[];calcRecipes[calcCurrentId].ingredients.push({name:'',perCraft:1,price:''});calcRenderIngredients(calcRecipes[calcCurrentId]);calcRecalcAll();calcScheduleSave();});
+  document.getElementById('newRecipeBtn').addEventListener('click',calcNewRecipe);
+  document.getElementById('saveRecipeBtn').addEventListener('click',calcSaveCurrent);
+  document.getElementById('deleteRecipeBtn').addEventListener('click',calcDeleteCurrent);
+  document.getElementById('exportCalcBtn').addEventListener('click',calcExport);
+  document.getElementById('importCalcBtn').addEventListener('click',()=>{document.getElementById('importCalcFile').click();});
+  document.getElementById('importCalcFile').addEventListener('change',(e)=>{const file=e.target.files[0];if(file)calcImport(file);e.target.value='';});
+  document.addEventListener('keydown',(e)=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();calcSaveCurrent();}});
+
+  calcLoadRecipes();
+  calcCurrentId=calcLoadSelectedId();
+  if(!calcCurrentId&&Object.keys(calcRecipes).length>0)calcCurrentId=Object.keys(calcRecipes)[0];
+  if(!calcCurrentId)calcNewRecipe();
+  else{calcRenderSelect();calcRenderCalculator();}
+</script>
+</body>
+</html>

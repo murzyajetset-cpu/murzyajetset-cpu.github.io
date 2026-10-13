@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КП DARAMs — Влажные мечты</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<h1>КП DARAMs</h1>
+<p class="subtitle">Состав топовой гей-консты</p>
+
+<div class="tabs">
+  <a href="index.html" class="tab-btn">Группа</a>
+  <a href="craft.html" class="tab-btn">Крафт и покупки</a>
+  <a href="dreams.html" class="tab-btn active">Влажные мечты</a>
+  <a href="calc.html" class="tab-btn">🧮 Калькулятор крафта</a>
+</div>
+
+<div class="craft-author-bar">
+  <label>Ваше имя:</label>
+  <input type="text" id="dreamAuthorName" placeholder="Введите имя, чтобы посты были подписаны" maxlength="40">
+  <div class="sync-status">
+    <span id="dreamsSyncDot" class="sync-dot"></span>
+    <span id="dreamsSyncText">Подключение…</span>
+  </div>
+</div>
+
+<div class="dreams-intro">
+  <div class="dreams-intro-icon">💭</div>
+  <div class="dreams-intro-main">
+    <div class="dreams-intro-title">Влажные мечты</div>
+    <div class="dreams-intro-text">Здесь можно загадать любое желание: скрафтить, купить, достать. Другие могут комментировать и менять статус исполнения кликом по бейджу.</div>
+  </div>
+</div>
+
+<div class="post-form">
+  <div class="post-form-row">
+    <div><label>Тип желания</label>
+      <select id="newDreamType">
+        <option value="craft">🔨 Крафт</option>
+        <option value="buy">💰 Покупка</option>
+        <option value="other">🎯 Другое</option>
+      </select>
+    </div>
+    <div><label>Название предмета / цель</label><input type="text" id="newDreamItem" placeholder="напр. Dynasty Breastplate или «помощь на осаде»"></div>
+    <div><label>Кол-во</label><input type="text" id="newDreamQuantity" placeholder="1"></div>
+    <div><label>Цена / бюджет</label><input type="text" id="newDreamPrice" placeholder="напр. 500кк"></div>
+    <div style="display:flex;align-items:flex-end;"><button id="dreamPublishBtn" class="primary" style="padding:8px 16px;">Загадать</button></div>
+  </div>
+  <div class="post-form-row post-form-main">
+    <div><label>Описание желания</label><textarea id="newDreamText" placeholder="Что хочется, зачем, к какому сроку…"></textarea></div>
+  </div>
+</div>
+
+<div class="posts-feed" id="dreamsFeed"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+<script>
+  let dreams=[];
+  const dreamsFeed=document.getElementById('dreamsFeed');
+  const dreamsSyncDot=document.getElementById('dreamsSyncDot');
+  const dreamsSyncText=document.getElementById('dreamsSyncText');
+  const dreamAuthorInput=document.getElementById('dreamAuthorName');
+  dreamAuthorInput.value=savedAuthor;
+
+  function setDreamsSyncStatus(status,text){dreamsSyncDot.className='sync-dot '+status;dreamsSyncText.textContent=text;}
+
+  let dreamSaveTimeouts=new Map();
+  function dreamsEqual(a,b){if(a.length!==b.length)return false;const mapA=new Map(a.map(p=>[p.id,p]));for(const p of b){const old=mapA.get(p.id);if(!old)return false;const keys=new Set([...Object.keys(old),...Object.keys(p)]);for(const k of keys){if(k==='id')continue;if(k==='comments'){const aC=old.comments||[];const bC=p.comments||[];if(aC.length!==bC.length)return false;for(let i=0;i<aC.length;i++){if(String(aC[i].text||'')!==String(bC[i].text||'')||String(aC[i].author||'')!==String(bC[i].author||''))return false;}continue;}if(String(old[k]??'')!==String(p[k]??''))return false;}}return true;}
+
+  dreamsRef.on('value',(snapshot)=>{const data=snapshot.val();const newDreams=[];if(data){Object.keys(data).forEach(key=>{newDreams.push({id:key,...data[key]});});newDreams.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));}if(dreamsEqual(dreams,newDreams)){setDreamsSyncStatus('online','Синхронизировано');return;}dreams=newDreams;renderDreams();setDreamsSyncStatus('online','Синхронизировано');},(error)=>{console.error('Ошибка синхронизации:',error);setDreamsSyncStatus('offline','Ошибка: '+error.code);});
+
+  function debouncedSaveDream(dream){if(!dream.id)return;const existing=dreamSaveTimeouts.get(dream.id);if(existing)clearTimeout(existing);dreamSaveTimeouts.set(dream.id,setTimeout(()=>{const data={...dream};delete data.id;data.updatedAt=Date.now();dreamsRef.child(dream.id).update(data).catch(err=>console.error('Ошибка сохранения мечты:',err));dreamSaveTimeouts.delete(dream.id);},500));}
+
+  function publishDream(){const author=(dreamAuthorInput.value||'').trim();if(!author){alert('Сначала введите ваше имя — иначе мечта будет без подписи.');dreamAuthorInput.focus();return;}const type=document.getElementById('newDreamType').value;const item=document.getElementById('newDreamItem').value.trim();const quantity=document.getElementById('newDreamQuantity').value.trim();const price=document.getElementById('newDreamPrice').value.trim();const text=document.getElementById('newDreamText').value.trim();if(!item&&!text){alert('Заполните хотя бы название или описание мечты.');return;}const newRef=dreamsRef.push();const newDream={author,type,item,quantity,price,text,status:'new',comments:[],createdAt:Date.now(),updatedAt:Date.now()};newRef.set(newDream).then(()=>{document.getElementById('newDreamItem').value='';document.getElementById('newDreamQuantity').value='';document.getElementById('newDreamPrice').value='';document.getElementById('newDreamText').value='';}).catch(err=>{console.error('Ошибка публикации:',err);alert('Не удалось опубликовать мечту: '+err.message);});}
+
+  function deleteDream(dream){if(!dream.id)return;if(!confirm('Удалить эту мечту? Все комментарии тоже удалятся.'))return;dreamsRef.child(dream.id).remove().catch(err=>console.error('Ошибка удаления мечты:',err));}
+
+  const DREAM_STATUS_LABELS={new:'🌙 Мечта',progress:'🔥 В работе',done:'✨ Исполнено'};
+
+  function cycleDreamStatus(dream){const order=['new','progress','done'];const currentIdx=order.indexOf(dream.status||'new');dream.status=order[(currentIdx+1)%order.length];debouncedSaveDream(dream);}
+
+  function addDreamComment(dream,text,authorName){const trimmed=(text||'').trim();if(!trimmed)return;const author=(authorName||'').trim()||(dreamAuthorInput.value||'').trim()||'Аноним';if(!dream.comments)dream.comments=[];dream.comments.push({author,text:trimmed,createdAt:Date.now()});debouncedSaveDream(dream);}
+
+  function deleteDreamComment(dream,commentIndex){if(!dream.comments)return;if(!confirm('Удалить комментарий?'))return;dream.comments.splice(commentIndex,1);debouncedSaveDream(dream);}
+
+  function renderDreams(){
+    dreamsFeed.innerHTML='';
+    if(dreams.length===0){const empty=document.createElement('div');empty.className='empty-posts';empty.textContent='Пока ни одной мечты. Загадайте первую — что хочется скрафтить, купить или достать.';dreamsFeed.appendChild(empty);return;}
+    dreams.forEach(dream=>{
+      const card=document.createElement('div');
+      card.className='post-card dream-card '+(dream.type==='buy'?'type-buy':dream.type==='other'?'type-other':'type-craft');
+      const header=document.createElement('div');header.className='post-header';
+      const author=document.createElement('span');author.className='post-author';author.textContent=dream.author||'Аноним';header.appendChild(author);
+      const time=document.createElement('span');time.className='post-time';time.textContent=formatDate(dream.createdAt);header.appendChild(time);
+      const badge=document.createElement('span');
+      if(dream.type==='buy'){badge.className='post-badge badge-buy';badge.textContent='💰 Покупка';}
+      else if(dream.type==='other'){badge.className='post-badge badge-other';badge.textContent='🎯 Другое';}
+      else{badge.className='post-badge badge-craft';badge.textContent='🔨 Крафт';}
+      header.appendChild(badge);
+      const status=document.createElement('span');status.className='post-status status-'+(dream.status||'new');status.textContent=DREAM_STATUS_LABELS[dream.status||'new'];status.title='Нажмите, чтобы сменить статус';status.addEventListener('click',()=>cycleDreamStatus(dream));header.appendChild(status);
+      card.appendChild(header);
+      if(dream.item){const itemLine=document.createElement('div');itemLine.className='post-item-line';const lbl=document.createElement('span');lbl.className='post-item-label';lbl.textContent='Цель:';itemLine.appendChild(lbl);const itemName=document.createElement('span');itemName.className='post-item-name';itemName.textContent=dream.item+(dream.quantity?` × ${dream.quantity}`:'');itemLine.appendChild(itemName);card.appendChild(itemLine);}
+      if(dream.price){const priceLine=document.createElement('div');priceLine.className='post-price-line';const priceLabel=document.createElement('span');priceLabel.className='post-price-label';priceLabel.textContent='Бюджет:';priceLine.appendChild(priceLabel);const priceValue=document.createElement('span');priceValue.className='post-price-value';priceValue.textContent=dream.price;priceLine.appendChild(priceValue);card.appendChild(priceLine);}
+      if(dream.text){const text=document.createElement('div');text.className='post-text';text.textContent=dream.text;card.appendChild(text);}
+
+      const commentsWrap=document.createElement('div');commentsWrap.className='dream-comments';
+      const commentsTitle=document.createElement('div');commentsTitle.className='dream-comments-title';
+      const commentsCount=(dream.comments||[]).length;
+      commentsTitle.textContent=`Комментарии (${commentsCount})`;
+      commentsWrap.appendChild(commentsTitle);
+      const commentsList=document.createElement('div');commentsList.className='dream-comments-list';
+      const comments=dream.comments||[];
+      if(comments.length===0){const emptyCom=document.createElement('div');emptyCom.className='dream-comments-empty';emptyCom.textContent='Пока никто не комментировал.';commentsList.appendChild(emptyCom);}
+      else{comments.forEach((comment,idx)=>{const com=document.createElement('div');com.className='dream-comment';const comHeader=document.createElement('div');comHeader.className='dream-comment-header';const comAuthor=document.createElement('span');comAuthor.className='dream-comment-author';comAuthor.textContent=comment.author||'Аноним';comHeader.appendChild(comAuthor);const comTime=document.createElement('span');comTime.className='dream-comment-time';comTime.textContent=formatDate(comment.createdAt);comHeader.appendChild(comTime);const comDel=document.createElement('button');comDel.className='dream-comment-delete';comDel.textContent='×';comDel.title='Удалить комментарий';comDel.addEventListener('click',()=>deleteDreamComment(dream,idx));comHeader.appendChild(comDel);com.appendChild(comHeader);const comText=document.createElement('div');comText.className='dream-comment-text';comText.textContent=comment.text;com.appendChild(comText);commentsList.appendChild(com);});}
+      commentsWrap.appendChild(commentsList);
+
+      const comForm=document.createElement('div');comForm.className='dream-comment-form';
+      const comAuthorInput=document.createElement('input');comAuthorInput.type='text';comAuthorInput.className='dream-comment-author-input';comAuthorInput.placeholder='Ваш ник';comAuthorInput.maxLength=40;comAuthorInput.value=localStorage.getItem(COMMENT_AUTHOR_KEY)||'';if(!comAuthorInput.value)comAuthorInput.value=(dreamAuthorInput.value||'').trim();comForm.appendChild(comAuthorInput);
+      const comInput=document.createElement('input');comInput.type='text';comInput.className='dream-comment-input';comInput.placeholder='Написать комментарий…';comInput.maxLength=500;comForm.appendChild(comInput);
+      const comSend=document.createElement('button');comSend.className='dream-comment-send';comSend.textContent='Отправить';
+      const submitComment=()=>{const val=comInput.value;if(!val.trim())return;const author=(comAuthorInput.value||'').trim()||'Аноним';try{localStorage.setItem(COMMENT_AUTHOR_KEY,author);}catch(e){}addDreamComment(dream,val,author);comInput.value='';};
+      comSend.addEventListener('click',submitComment);comInput.addEventListener('keydown',(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitComment();}});comAuthorInput.addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.preventDefault();comInput.focus();}});comForm.appendChild(comSend);
+      commentsWrap.appendChild(comForm);
+      card.appendChild(commentsWrap);
+
+      const footer=document.createElement('div');footer.className='post-footer';
+      const editBtn=document.createElement('button');editBtn.textContent='Редактировать';editBtn.addEventListener('click',()=>toggleEditDream(card,dream));footer.appendChild(editBtn);
+      const deleteBtn=document.createElement('button');deleteBtn.textContent='Удалить';deleteBtn.style.borderColor='rgba(217,45,32,0.4)';deleteBtn.style.color='var(--danger-red)';deleteBtn.addEventListener('click',()=>deleteDream(dream));footer.appendChild(deleteBtn);
+      card.appendChild(footer);
+      dreamsFeed.appendChild(card);
+    });
+  }
+
+  function toggleEditDream(card,dream){
+    const existing=card.querySelector('.post-edit-area');
+    if(existing){
+      const typeVal=existing.querySelector('.edit-type').value;const itemVal=existing.querySelector('.edit-item').value.trim();const qtyVal=existing.querySelector('.edit-qty').value.trim();const priceVal=existing.querySelector('.edit-price')?existing.querySelector('.edit-price').value.trim():(dream.price||'');const textVal=existing.querySelector('.edit-text').value;
+      dream.type=typeVal;dream.item=itemVal;dream.quantity=qtyVal;dream.price=priceVal;dream.text=textVal;
+      debouncedSaveDream(dream);renderDreams();return;
+    }
+    const area=document.createElement('div');area.className='post-edit-area';
+    const row=document.createElement('div');row.className='post-edit-row';
+    const typeSelect=document.createElement('select');typeSelect.className='edit-type';
+    [['craft','🔨 Крафт'],['buy','💰 Покупка'],['other','🎯 Другое']].forEach(([val,label])=>{const opt=document.createElement('option');opt.value=val;opt.textContent=label;if((dream.type||'craft')===val)opt.selected=true;typeSelect.appendChild(opt);});
+    row.appendChild(typeSelect);
+    const itemInput=document.createElement('input');itemInput.type='text';itemInput.className='edit-item';itemInput.value=dream.item||'';itemInput.placeholder='Цель';row.appendChild(itemInput);
+    const qtyInput=document.createElement('input');qtyInput.type='text';qtyInput.className='edit-qty';qtyInput.value=dream.quantity||'';qtyInput.placeholder='Кол-во';row.appendChild(qtyInput);
+    const priceInput=document.createElement('input');priceInput.type='text';priceInput.className='edit-price';priceInput.value=dream.price||'';priceInput.placeholder='Бюджет';row.appendChild(priceInput);
+    area.appendChild(row);
+    const textLabel=document.createElement('label');textLabel.textContent='Описание';area.appendChild(textLabel);
+    const textArea=document.createElement('textarea');textArea.className='edit-text';textArea.value=dream.text||'';textArea.style.minHeight='70px';textArea.style.width='100%';textArea.style.resize='vertical';area.appendChild(textArea);
+    const hint=document.createElement('div');hint.style.fontSize='10px';hint.style.color='var(--text-muted)';hint.style.marginTop='6px';hint.textContent='Нажмите «Редактировать» ещё раз, чтобы сохранить.';area.appendChild(hint);
+    card.querySelectorAll('.post-item-line, .post-price-line').forEach(el=>el.remove());
+    const directTexts=card.querySelectorAll(':scope > .post-text');directTexts.forEach(el=>el.remove());
+    const footer=card.querySelector('.post-footer');card.insertBefore(area,footer);
+  }
+
+  document.getElementById('dreamPublishBtn').addEventListener('click',publishDream);
+  dreamAuthorInput.addEventListener('input',e=>{localStorage.setItem(AUTHOR_KEY,e.target.value);});
+</script>
+</body>
+</html>
